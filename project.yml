@@ -1,0 +1,100 @@
+name: Tokenometer
+options:
+  bundleIdPrefix: net.timkennedy
+  deploymentTarget:
+    macOS: "27.0"
+  createIntermediateGroups: true
+  generateEmptyDirectories: true
+packages:
+  TokenometerCore:
+    path: TokenometerCore
+  Sparkle:
+    url: https://github.com/sparkle-project/Sparkle
+    from: 2.7.0
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    SWIFT_STRICT_CONCURRENCY: complete
+    MARKETING_VERSION: 1.0.0
+    CURRENT_PROJECT_VERSION: 14
+    CODE_SIGN_STYLE: Manual
+    DEVELOPMENT_TEAM: F5ED28X889
+    CODE_SIGN_IDENTITY: Developer ID Application
+    PROVISIONING_PROFILE_SPECIFIER: ""
+    ENABLE_HARDENED_RUNTIME: YES
+    DEAD_CODE_STRIPPING: YES
+targets:
+  Tokenometer:
+    type: application
+    platform: macOS
+    sources:
+      - path: Tokenometer
+    dependencies:
+      - package: TokenometerCore
+        product: TokenometerCore
+      - package: TokenometerCore
+        product: TokenometerUI
+      - package: Sparkle
+      - target: TokenometerWidget
+    info:
+      path: Tokenometer/Info.plist
+      properties:
+        CFBundleDisplayName: Tokenometer
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        LSUIElement: true
+        LSApplicationCategoryType: public.app-category.developer-tools
+        NSHumanReadableCopyright: Tim Kennedy
+        SUFeedURL: https://github.com/tksunw/Tokenometer/releases/latest/download/appcast.xml
+        SUPublicEDKey: b6aRrGA2Sv3M6VuLc6CTWG4Pg6xlIMDsmx9rloM27OA=
+        SUEnableAutomaticChecks: true
+        SUScheduledCheckInterval: 86400
+        SUEnableSystemProfiling: false
+    entitlements:
+      path: Tokenometer/Tokenometer.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - F5ED28X889.net.timkennedy.tokenometer
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: net.timkennedy.Tokenometer
+        PRODUCT_NAME: Tokenometer
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+  TokenometerWidget:
+    type: app-extension
+    platform: macOS
+    sources:
+      - path: TokenometerWidget
+    dependencies:
+      - package: TokenometerCore
+        product: TokenometerCore
+      - package: TokenometerCore
+        product: TokenometerUI
+    info:
+      path: TokenometerWidget/Info.plist
+      properties:
+        CFBundleDisplayName: Tokenometer
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    entitlements:
+      path: TokenometerWidget/TokenometerWidget.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.application-groups:
+          - F5ED28X889.net.timkennedy.tokenometer
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: net.timkennedy.Tokenometer.Widget
+        SKIP_INSTALL: YES
+schemes:
+  Tokenometer:
+    build:
+      targets:
+        Tokenometer: all
+        TokenometerWidget: all
+    run:
+      config: Debug
+    archive:
+      config: Release

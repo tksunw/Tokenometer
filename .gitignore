@@ -1,0 +1,28 @@
+# Xcode
+build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+*.xcscmblueprint
+*.xccheckout
+.swiftpm/xcode/
+
+# SwiftPM
+.build/
+Packages/
+
+# macOS
+.DS_Store
+
+# Release artifacts
+dist/
+*.dmg
+*.zip
+
+# Sparkle private key must never land here
+*.private.pem
+
+# Agent skills are installed per user, not per project
+.agents/
+.claude/skills/
+skills-lock.json

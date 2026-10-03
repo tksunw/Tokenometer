@@ -1,0 +1,7 @@
+{"sessionId":"abcd1234-0000-4000-8000-000000000001","projectHash":"0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef","startTime":"2026-10-01T13:15:00.000Z","lastUpdated":"2026-10-01T13:16:30.000Z","kind":"main"}
+{"id":"m1","timestamp":"2026-10-01T13:15:01.000Z","type":"user","content":"xxxxxxxx"}
+{"id":"m2","timestamp":"2026-10-01T13:15:04.000Z","type":"gemini","content":"xxxxxxxx","model":"gemini-3.8-flash","tokens":{"input":3200,"output":150,"cached":2000,"thoughts":40,"tool":0,"total":3350}}
+{"id":"m3","timestamp":"2026-10-01T13:16:00.000Z","type":"user","content":"xxxxxxxx"}
+{"id":"m4","timestamp":"2026-10-01T13:16:10.000Z","type":"gemini","content":"xxxx","model":"gemini-3.8-pro","tokens":{"input":5000,"output":20,"cached":0,"thoughts":0,"tool":0,"total":5020}}
+{"$patch":{"updates":[{"id":"m4","timestamp":"2026-10-01T13:16:10.000Z","type":"gemini","content":"xxxxxxxx","model":"gemini-3.8-pro","tokens":{"input":5000,"output":400,"cached":0,"thoughts":120,"tool":0,"total":5400}}],"removeIds":[],"orderIds":["m1","m2","m3","m4"]}}
+{"$set":{"lastUpdated":"2026-10-01T13:16:30.000Z"}}

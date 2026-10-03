@@ -1,0 +1,574 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1E218091BDEF53B17A66CE6D /* StatusItemMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D197A89F48F095E60A56C60 /* StatusItemMenu.swift */; };
+		1FDF2F8DCC8CFEC19EAC4ED4 /* MenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE194863ED053B4B2DA4DE59 /* MenuView.swift */; };
+		2134A4D4482031D0AA352873 /* Notifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F10257D357A53CC988759AD /* Notifier.swift */; };
+		2EACC623135B40648DE5B586 /* LogWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D075C29C1A970E97E3C6E39 /* LogWatcher.swift */; };
+		31EB3093464CF2CD3DD854E9 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CD8D9D552E87DC3E67CA7C5 /* AppSettings.swift */; };
+		4F40FA01ACC46B23959B4C79 /* TokenometerCore in Frameworks */ = {isa = PBXBuildFile; productRef = 6A9022192144C464CD2CE758 /* TokenometerCore */; };
+		5F580DB5EB863395A2AF7D07 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EB17CC2B057D227EDD72AA2 /* SettingsView.swift */; };
+		6484479620080D776D60730B /* MenuBarLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8237D9BE03B189F4331DC96F /* MenuBarLabel.swift */; };
+		669503DCDC3F8A28C8AFAE52 /* TokenometerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 328A5040CA977FCEB52D0698 /* TokenometerApp.swift */; };
+		7381407DF371E9E9DA57593C /* TokenometerWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946E1A6150F6757EBB179EFE /* TokenometerWidget.swift */; };
+		877BEF6F3444CC25030808AF /* TokenometerUI in Frameworks */ = {isa = PBXBuildFile; productRef = 5ABC697477904A8A70D03036 /* TokenometerUI */; };
+		99CA775590EAB98E25BD9C84 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A49944CBA8B7D859BAB07A1 /* AppModel.swift */; };
+		99EED23EDA67A23BCC5D0291 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 456FFFE4214384EB51BC6081 /* Assets.xcassets */; };
+		B34E2C547289A3E7F92B2082 /* TokenometerUI in Frameworks */ = {isa = PBXBuildFile; productRef = 6F3B61E96D9FD31B6237B3A9 /* TokenometerUI */; };
+		BE8B842AA5BF9F1FCB39EA0C /* TokenometerWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = EA797C6CFE2B313AE7F51BFB /* TokenometerWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		D27BCA25E23BEB9D8B21C4BA /* Updater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50BA939625B78AAB1A15A526 /* Updater.swift */; };
+		EEA0F199FD2484541C712C81 /* TokenometerCore in Frameworks */ = {isa = PBXBuildFile; productRef = E64B04C5344466336E3CD2BE /* TokenometerCore */; };
+		EF6ECDAA357E86A79046881F /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = BC612E895BF4F1351E46242F /* Sparkle */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		F936D1B9FF02ADC217240387 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4252FD08D18489D3280B4AAF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 322CDBFF32191C4782288CF7;
+			remoteInfo = TokenometerWidget;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		CA7B7600BD5A13F2B6D29E0F /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				BE8B842AA5BF9F1FCB39EA0C /* TokenometerWidget.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		064BC4221722D7784F7A0241 /* Tokenometer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tokenometer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1A49944CBA8B7D859BAB07A1 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		2D075C29C1A970E97E3C6E39 /* LogWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogWatcher.swift; sourceTree = "<group>"; };
+		2D197A89F48F095E60A56C60 /* StatusItemMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusItemMenu.swift; sourceTree = "<group>"; };
+		328A5040CA977FCEB52D0698 /* TokenometerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenometerApp.swift; sourceTree = "<group>"; };
+		4116E3721412A265D5C04F0A /* Tokenometer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Tokenometer.entitlements; sourceTree = "<group>"; };
+		456FFFE4214384EB51BC6081 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4F10257D357A53CC988759AD /* Notifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifier.swift; sourceTree = "<group>"; };
+		50BA939625B78AAB1A15A526 /* Updater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Updater.swift; sourceTree = "<group>"; };
+		50E73927FC96F698FB2A60FC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		518D0E46DC700DB032CA597A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		7CD8D9D552E87DC3E67CA7C5 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
+		8237D9BE03B189F4331DC96F /* MenuBarLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarLabel.swift; sourceTree = "<group>"; };
+		8EB17CC2B057D227EDD72AA2 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		946E1A6150F6757EBB179EFE /* TokenometerWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenometerWidget.swift; sourceTree = "<group>"; };
+		A159171A019EC9DDF88C2442 /* TokenometerCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = TokenometerCore; path = TokenometerCore; sourceTree = SOURCE_ROOT; };
+		B1AB11ABB6ABAFB710761823 /* TokenometerWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TokenometerWidget.entitlements; sourceTree = "<group>"; };
+		CE194863ED053B4B2DA4DE59 /* MenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuView.swift; sourceTree = "<group>"; };
+		EA797C6CFE2B313AE7F51BFB /* TokenometerWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TokenometerWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		37D34CC34E7503B6E7856593 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4F40FA01ACC46B23959B4C79 /* TokenometerCore in Frameworks */,
+				B34E2C547289A3E7F92B2082 /* TokenometerUI in Frameworks */,
+				EF6ECDAA357E86A79046881F /* Sparkle in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6B2219B79BCEE3498C120A39 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EEA0F199FD2484541C712C81 /* TokenometerCore in Frameworks */,
+				877BEF6F3444CC25030808AF /* TokenometerUI in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		12C6CD1CCB916F7A4822CB0D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				064BC4221722D7784F7A0241 /* Tokenometer.app */,
+				EA797C6CFE2B313AE7F51BFB /* TokenometerWidget.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5CFAB8FDD6DBBC29A9D61656 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				A159171A019EC9DDF88C2442 /* TokenometerCore */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+		63FFE61A124810861ADC0102 = {
+			isa = PBXGroup;
+			children = (
+				5CFAB8FDD6DBBC29A9D61656 /* Packages */,
+				730A2C0ED23B90744E8A26D1 /* Tokenometer */,
+				A1C812286F242B44249F4B20 /* TokenometerWidget */,
+				12C6CD1CCB916F7A4822CB0D /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		730A2C0ED23B90744E8A26D1 /* Tokenometer */ = {
+			isa = PBXGroup;
+			children = (
+				1A49944CBA8B7D859BAB07A1 /* AppModel.swift */,
+				7CD8D9D552E87DC3E67CA7C5 /* AppSettings.swift */,
+				456FFFE4214384EB51BC6081 /* Assets.xcassets */,
+				50E73927FC96F698FB2A60FC /* Info.plist */,
+				2D075C29C1A970E97E3C6E39 /* LogWatcher.swift */,
+				8237D9BE03B189F4331DC96F /* MenuBarLabel.swift */,
+				CE194863ED053B4B2DA4DE59 /* MenuView.swift */,
+				4F10257D357A53CC988759AD /* Notifier.swift */,
+				8EB17CC2B057D227EDD72AA2 /* SettingsView.swift */,
+				2D197A89F48F095E60A56C60 /* StatusItemMenu.swift */,
+				4116E3721412A265D5C04F0A /* Tokenometer.entitlements */,
+				328A5040CA977FCEB52D0698 /* TokenometerApp.swift */,
+				50BA939625B78AAB1A15A526 /* Updater.swift */,
+			);
+			path = Tokenometer;
+			sourceTree = "<group>";
+		};
+		A1C812286F242B44249F4B20 /* TokenometerWidget */ = {
+			isa = PBXGroup;
+			children = (
+				518D0E46DC700DB032CA597A /* Info.plist */,
+				B1AB11ABB6ABAFB710761823 /* TokenometerWidget.entitlements */,
+				946E1A6150F6757EBB179EFE /* TokenometerWidget.swift */,
+			);
+			path = TokenometerWidget;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		322CDBFF32191C4782288CF7 /* TokenometerWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 05CD937267541E8582CB190F /* Build configuration list for PBXNativeTarget "TokenometerWidget" */;
+			buildPhases = (
+				2680532FFB1836BD45240FEE /* Sources */,
+				6B2219B79BCEE3498C120A39 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TokenometerWidget;
+			packageProductDependencies = (
+				E64B04C5344466336E3CD2BE /* TokenometerCore */,
+				5ABC697477904A8A70D03036 /* TokenometerUI */,
+			);
+			productName = TokenometerWidget;
+			productReference = EA797C6CFE2B313AE7F51BFB /* TokenometerWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		AF9D44205CDE77AC7A943FB0 /* Tokenometer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B4A4DA34CA13D681C03F840D /* Build configuration list for PBXNativeTarget "Tokenometer" */;
+			buildPhases = (
+				1BCEBD6C5DC4ED9FD46D0F96 /* Sources */,
+				F7A99C3546020DE6363A69FA /* Resources */,
+				37D34CC34E7503B6E7856593 /* Frameworks */,
+				CA7B7600BD5A13F2B6D29E0F /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				97F48F80F44E142CD3E5D1BF /* PBXTargetDependency */,
+			);
+			name = Tokenometer;
+			packageProductDependencies = (
+				6A9022192144C464CD2CE758 /* TokenometerCore */,
+				6F3B61E96D9FD31B6237B3A9 /* TokenometerUI */,
+				BC612E895BF4F1351E46242F /* Sparkle */,
+			);
+			productName = Tokenometer;
+			productReference = 064BC4221722D7784F7A0241 /* Tokenometer.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		4252FD08D18489D3280B4AAF /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					322CDBFF32191C4782288CF7 = {
+						DevelopmentTeam = F5ED28X889;
+						ProvisioningStyle = Manual;
+					};
+					AF9D44205CDE77AC7A943FB0 = {
+						DevelopmentTeam = F5ED28X889;
+						ProvisioningStyle = Manual;
+					};
+				};
+			};
+			buildConfigurationList = AF80BA412DDF68BF58848B23 /* Build configuration list for PBXProject "Tokenometer" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 63FFE61A124810861ADC0102;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				D63E46359A3FDEDC1D773110 /* XCRemoteSwiftPackageReference "Sparkle" */,
+				B27F585FCB2E3DFB6EA1E064 /* XCLocalSwiftPackageReference "TokenometerCore" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 12C6CD1CCB916F7A4822CB0D /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AF9D44205CDE77AC7A943FB0 /* Tokenometer */,
+				322CDBFF32191C4782288CF7 /* TokenometerWidget */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F7A99C3546020DE6363A69FA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				99EED23EDA67A23BCC5D0291 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1BCEBD6C5DC4ED9FD46D0F96 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				99CA775590EAB98E25BD9C84 /* AppModel.swift in Sources */,
+				31EB3093464CF2CD3DD854E9 /* AppSettings.swift in Sources */,
+				2EACC623135B40648DE5B586 /* LogWatcher.swift in Sources */,
+				6484479620080D776D60730B /* MenuBarLabel.swift in Sources */,
+				1FDF2F8DCC8CFEC19EAC4ED4 /* MenuView.swift in Sources */,
+				2134A4D4482031D0AA352873 /* Notifier.swift in Sources */,
+				5F580DB5EB863395A2AF7D07 /* SettingsView.swift in Sources */,
+				1E218091BDEF53B17A66CE6D /* StatusItemMenu.swift in Sources */,
+				669503DCDC3F8A28C8AFAE52 /* TokenometerApp.swift in Sources */,
+				D27BCA25E23BEB9D8B21C4BA /* Updater.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2680532FFB1836BD45240FEE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7381407DF371E9E9DA57593C /* TokenometerWidget.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		97F48F80F44E142CD3E5D1BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 322CDBFF32191C4782288CF7 /* TokenometerWidget */;
+			targetProxy = F936D1B9FF02ADC217240387 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		60F720F4C9B2E928C4E3A0DF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 14;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = F5ED28X889;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 27.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		724B6A009AAFAFB95EAB5C6E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = TokenometerWidget/TokenometerWidget.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = TokenometerWidget/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = net.timkennedy.Tokenometer.Widget;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		9909EB09AAACF4EDC9400CB3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = TokenometerWidget/TokenometerWidget.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = TokenometerWidget/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = net.timkennedy.Tokenometer.Widget;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		EEBA599801AA4DF5C04AE227 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Tokenometer/Tokenometer.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Tokenometer/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = net.timkennedy.Tokenometer;
+				PRODUCT_NAME = Tokenometer;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		FA0E44FCF1FB72B2190DEC60 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Tokenometer/Tokenometer.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Tokenometer/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = net.timkennedy.Tokenometer;
+				PRODUCT_NAME = Tokenometer;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		FC4AFF2CEE64EA38AF7DC2FE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 14;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = F5ED28X889;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 27.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		05CD937267541E8582CB190F /* Build configuration list for PBXNativeTarget "TokenometerWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9909EB09AAACF4EDC9400CB3 /* Debug */,
+				724B6A009AAFAFB95EAB5C6E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		AF80BA412DDF68BF58848B23 /* Build configuration list for PBXProject "Tokenometer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				60F720F4C9B2E928C4E3A0DF /* Debug */,
+				FC4AFF2CEE64EA38AF7DC2FE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		B4A4DA34CA13D681C03F840D /* Build configuration list for PBXNativeTarget "Tokenometer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EEBA599801AA4DF5C04AE227 /* Debug */,
+				FA0E44FCF1FB72B2190DEC60 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		B27F585FCB2E3DFB6EA1E064 /* XCLocalSwiftPackageReference "TokenometerCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = TokenometerCore;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		D63E46359A3FDEDC1D773110 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.7.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		5ABC697477904A8A70D03036 /* TokenometerUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TokenometerUI;
+		};
+		6A9022192144C464CD2CE758 /* TokenometerCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TokenometerCore;
+		};
+		6F3B61E96D9FD31B6237B3A9 /* TokenometerUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TokenometerUI;
+		};
+		BC612E895BF4F1351E46242F /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D63E46359A3FDEDC1D773110 /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
+		};
+		E64B04C5344466336E3CD2BE /* TokenometerCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TokenometerCore;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 4252FD08D18489D3280B4AAF /* Project object */;
+}
