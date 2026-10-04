@@ -5,7 +5,7 @@ import WidgetKit
 import TokenometerCore
 
 /// Owns the latest snapshot and drives refreshes: FSEvents on log change, a 60 s timer as backstop,
-/// usage endpoint calls at a 2 min floor while logs are active and every 5 min when idle.
+/// the Antigravity localhost call at a 2 min floor while logs are active and every 5 min when idle.
 @MainActor
 @Observable
 final class AppModel {

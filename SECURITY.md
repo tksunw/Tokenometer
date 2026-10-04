@@ -45,8 +45,10 @@ All read-only, all under your home directory:
 - `~/.claude/projects/**/*.jsonl`, `~/.claude.json` (for the `oauthAccount` block that says whether a login exists and which plan), `~/.claude/usage-reporter/usage.json` (written by the usage-reporter mod)
 - `~/Library/Application Support/Claude/local-agent-mode-sessions/**/*.jsonl`
 - `~/.codex/sessions/**/*.jsonl`
-- `~/.gemini/tmp/**/chats/session-*.jsonl` and `.json`, `~/.gemini/settings.json` (auth type)
+- `~/.gemini/tmp/**/chats/session-*.jsonl` and `.json`, and the same under `~/.cache/.gemini/tmp/`, where Gemini CLI writes when it runs under its seatbelt sandbox; `~/.gemini/settings.json` (auth type)
 - `~/.gemini/antigravity/conversations/*.db` with their `-wal` and `-shm`. These are copied to a temporary directory before opening, so the live database is never opened for writing.
+
+One environment variable: `ANTHROPIC_API_KEY`, checked only for whether it is set, which marks the Claude account as metered. Its value is not kept or used. Source: `AccountDetector.swift`.
 
 Transcripts contain your prompts and the model's replies. Tokenometer parses only the usage fields (token counts, model, timestamp, session id, working directory name) and discards the rest in memory. No transcript content is stored or displayed.
 

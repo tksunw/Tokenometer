@@ -17,7 +17,6 @@ Nothing goes to any AI provider. Tokenometer does not contact Anthropic, OpenAI,
 
 - Claude: if you install the usage-reporter mod, Claude Code itself asks Anthropic for your usage with its own login and the mod saves the answer to a file on your Mac. Tokenometer reads that file and never sees the login.
 - Google: the quota lookup is a localhost call to the Antigravity process already running on your Mac and does not leave it.
-
 - OpenAI: Codex writes its limits into its own logs, which Tokenometer reads like any other log.
 
 The only traffic that leaves your Mac is the update check described under Third parties.
