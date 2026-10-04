@@ -25,6 +25,7 @@
 		D27BCA25E23BEB9D8B21C4BA /* Updater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50BA939625B78AAB1A15A526 /* Updater.swift */; };
 		EEA0F199FD2484541C712C81 /* TokenometerCore in Frameworks */ = {isa = PBXBuildFile; productRef = E64B04C5344466336E3CD2BE /* TokenometerCore */; };
 		EF6ECDAA357E86A79046881F /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = BC612E895BF4F1351E46242F /* Sparkle */; };
+		F98824B5A385412E5F85FA6E /* WidgetRepair.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FE3CC39AA9E915E6EE1ED11 /* WidgetRepair.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -66,6 +67,7 @@
 		7CD8D9D552E87DC3E67CA7C5 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		8237D9BE03B189F4331DC96F /* MenuBarLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarLabel.swift; sourceTree = "<group>"; };
 		8EB17CC2B057D227EDD72AA2 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		8FE3CC39AA9E915E6EE1ED11 /* WidgetRepair.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetRepair.swift; sourceTree = "<group>"; };
 		946E1A6150F6757EBB179EFE /* TokenometerWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenometerWidget.swift; sourceTree = "<group>"; };
 		A159171A019EC9DDF88C2442 /* TokenometerCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = TokenometerCore; path = TokenometerCore; sourceTree = SOURCE_ROOT; };
 		B1AB11ABB6ABAFB710761823 /* TokenometerWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TokenometerWidget.entitlements; sourceTree = "<group>"; };
@@ -139,6 +141,7 @@
 				4116E3721412A265D5C04F0A /* Tokenometer.entitlements */,
 				328A5040CA977FCEB52D0698 /* TokenometerApp.swift */,
 				50BA939625B78AAB1A15A526 /* Updater.swift */,
+				8FE3CC39AA9E915E6EE1ED11 /* WidgetRepair.swift */,
 			);
 			path = Tokenometer;
 			sourceTree = "<group>";
@@ -269,6 +272,7 @@
 				1E218091BDEF53B17A66CE6D /* StatusItemMenu.swift in Sources */,
 				669503DCDC3F8A28C8AFAE52 /* TokenometerApp.swift in Sources */,
 				D27BCA25E23BEB9D8B21C4BA /* Updater.swift in Sources */,
+				F98824B5A385412E5F85FA6E /* WidgetRepair.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -327,7 +331,7 @@
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 19;
+				CURRENT_PROJECT_VERSION = 20;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = F5ED28X889;
@@ -349,7 +353,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 27.0;
-				MARKETING_VERSION = 1.1.4;
+				MARKETING_VERSION = 1.1.5;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -467,7 +471,7 @@
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 19;
+				CURRENT_PROJECT_VERSION = 20;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = F5ED28X889;
@@ -483,7 +487,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 27.0;
-				MARKETING_VERSION = 1.1.4;
+				MARKETING_VERSION = 1.1.5;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
