@@ -64,13 +64,13 @@ Every outbound request, with purpose:
 |---|---|---|---|
 | `127.0.0.1:<port>` (Antigravity language server) | at most every 2 min active, 5 min idle, only while Antigravity runs | CSRF token | quota groups, plan name |
 
-| `github.com/tksunw/Tokenometer/releases/…` (Sparkle) | once a day when "Check for updates automatically" is on (the default), or when you choose Check for Updates | nothing beyond a plain HTTPS GET; Sparkle's system profiling is disabled in `Info.plist` (`SUEnableSystemProfiling = false`) | `appcast.xml`, then the release zip if you accept an update |
+| `github.com/tksunw/Tokenometer/releases/…` (Sparkle) | once a day when "Check for updates automatically" is on (the default), or when you choose Check for Updates | nothing beyond a plain HTTPS GET; Sparkle's system profiling is disabled in `Info.plist` (`SUEnableSystemProfiling = false`) | `appcast.xml`, then the release disk image if you accept an update |
 
 That is the complete list for Tokenometer. The usage-reporter mod's one request, to `api.anthropic.com/api/oauth/usage`, is made by Claude Code, not by Tokenometer. Updates are verified two ways before Sparkle installs them: an EdDSA signature in the appcast against the public key baked into the app (`SUPublicEDKey`), and Apple's code signature on the downloaded app. `Scripts/release.sh` produces the appcast with Sparkle's `generate_appcast`, which signs with the private key held in the author's login keychain; the private key is not in the repository.
 
 ## Build integrity
 
-Releases are built with `Scripts/release.sh`: Xcode archive, Developer ID export, Apple notarization, stapling. The signing team is `F5ED28X889`. You can verify a download with `spctl -a -vv -t exec Tokenometer.app` and `codesign -dv --verbose=2 Tokenometer.app`.
+Releases are built with `Scripts/release.sh`: Xcode archive, Developer ID export, Apple notarization, stapling, then a signed and notarized disk image. The signing team is `F5ED28X889`. You can verify a download with `spctl -a -vv -t exec Tokenometer.app` and `codesign -dv --verbose=2 Tokenometer.app`.
 
 ## Reporting
 

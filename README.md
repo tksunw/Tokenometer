@@ -33,8 +33,8 @@ Screenshots are rendered from the app's own views with sample data (`swift run m
 
 Requires macOS 27.
 
-1. Download `Tokenometer-<version>.zip` from the [latest release](https://github.com/tksunw/Tokenometer/releases/latest).
-2. Unzip, drag `Tokenometer.app` to Applications, open it. The app is Developer ID signed and notarized.
+1. Download `Tokenometer-<version>.dmg` from the [latest release](https://github.com/tksunw/Tokenometer/releases/latest) and open it.
+2. Drag Tokenometer onto the Applications folder in the installer window, then open it from Applications. The app and the disk image are Developer ID signed and notarized. A plain zip of the app is on the release page too.
 3. It lives in the menu bar only; there is no Dock icon. Click the bars for the menu, the gear for Settings.
 4. For the widget: right-click the desktop, Edit Widgets, search Tokenometer.
 5. For Claude's usage bars, install the usage-reporter mod (below). Spend works without it.

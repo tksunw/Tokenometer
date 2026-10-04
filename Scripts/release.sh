@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Build, sign, notarize, and zip a release. Run from the repo root.
+# Build, sign, notarize, and package a release as a zip and a drag-to-Applications DMG. Run from the repo root.
 # Prereqs (one time): xcrun notarytool store-credentials tksunw-notary --apple-id <id> --team-id F5ED28X889
+#                     pipx install dmgbuild
 # Usage: Scripts/release.sh [version]   (version defaults to MARKETING_VERSION in project.yml)
 set -euo pipefail
 
@@ -31,11 +32,17 @@ xcrun notarytool submit "$ZIP" --keychain-profile tksunw-notary --wait
 xcrun stapler staple "$APP"
 rm -f "$ZIP" && ditto -c -k --keepParent "$APP" "$ZIP"
 
-# Sparkle appcast: signs the zip with the EdDSA key in the login keychain and writes dist/<ver>/appcast.xml
+# Drag-to-Applications installer from the stapled app, notarized and stapled itself.
+DMG="$DIST/Tokenometer-$VERSION.dmg"
+Scripts/make-dmg.sh "$APP" "$DMG"
+xcrun notarytool submit "$DMG" --keychain-profile tksunw-notary --wait
+xcrun stapler staple "$DMG"
+
+# Sparkle appcast: signs the DMG with the EdDSA key in the login keychain and writes dist/<ver>/appcast.xml
 # with enclosure URLs pointing at this version's GitHub release assets.
 SPARKLE_BIN=$(ls -d "$HOME"/Library/Developer/Xcode/DerivedData/Tokenometer-*/SourcePackages/artifacts/sparkle/Sparkle/bin 2>/dev/null | head -1)
 if [ -n "$SPARKLE_BIN" ]; then
-  mkdir -p "$DIST/appcast" && cp "$ZIP" "$DIST/appcast/"
+  rm -rf "$DIST/appcast" && mkdir -p "$DIST/appcast" && cp "$DMG" "$DIST/appcast/"
   "$SPARKLE_BIN/generate_appcast" --download-url-prefix "https://github.com/tksunw/Tokenometer/releases/download/v$VERSION/" \
     --maximum-versions 1 -o "$DIST/appcast.xml" "$DIST/appcast" >/dev/null
   echo "Appcast: $DIST/appcast.xml"
@@ -43,4 +50,5 @@ else
   echo "Sparkle tools not found in DerivedData; build once in Xcode to fetch the package. No appcast generated." >&2
 fi
 echo "Release zip: $ZIP"
-echo "Next: gh release create v$VERSION $ZIP $DIST/appcast.xml --title v$VERSION --notes '...'"
+echo "Release dmg: $DMG"
+echo "Next: gh release create v$VERSION $DMG $ZIP $DIST/appcast.xml --title v$VERSION --notes '...'"
