@@ -1,0 +1,44 @@
+name: App build
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "Tokenometer/**"
+      - "TokenometerWidget/**"
+      - "TokenometerCore/**"
+      - "Tokenometer.xcodeproj/**"
+      - "project.yml"
+      - ".github/workflows/app-build.yml"
+  pull_request:
+    paths:
+      - "Tokenometer/**"
+      - "TokenometerWidget/**"
+      - "TokenometerCore/**"
+      - "Tokenometer.xcodeproj/**"
+      - "project.yml"
+      - ".github/workflows/app-build.yml"
+
+jobs:
+  build:
+    runs-on: macos-27
+    steps:
+      - uses: actions/checkout@v5
+      - name: Select Xcode 27
+        run: |
+          xcode=$(ls -d /Applications/Xcode_27*.app 2>/dev/null | sort -V | tail -n 1)
+          if [ -z "$xcode" ]; then
+            echo "::error::No Xcode 27 on this runner. Installed:"
+            ls -d /Applications/Xcode*.app
+            exit 1
+          fi
+          sudo xcode-select -s "$xcode"
+          xcodebuild -version
+      # Unsigned: CI has no Developer ID identity. Builds the app and, as its
+      # dependency, the widget extension.
+      - name: Build app and widget
+        run: |
+          xcodebuild -project Tokenometer.xcodeproj -scheme Tokenometer \
+            -configuration Debug -destination 'platform=macOS' \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            build
