@@ -59,8 +59,10 @@ public struct WireMessage: Sendable, Equatable {
                 index += 4
                 fields.append(WireField(number: number, value: .fixed32(UInt32(littleEndian: raw))))
             case 2:
-                let length = Int(try readVarint())
-                guard length >= 0, index + length <= end else { throw WireError.truncated }
+                // Compared as UInt64 first: a corrupt length above Int.max would trap in Int(_:).
+                let declared = try readVarint()
+                guard declared <= UInt64(end - index) else { throw WireError.truncated }
+                let length = Int(declared)
                 fields.append(WireField(number: number, value: .bytes(Data(data[index..<index + length]))))
                 index += length
             default:
@@ -83,8 +85,10 @@ public struct WireMessage: Sendable, Equatable {
         return nil
     }
 
+    /// The varint as a signed 64-bit integer, the protobuf `int64` reading. Negative values arrive as
+    /// ten-byte varints above `Int.max`, which `Int(_:)` would trap on.
     public func int(_ number: Int) -> Int? {
-        varint(number).map(Int.init)
+        varint(number).map { Int(truncatingIfNeeded: $0) }
     }
 
     public func string(_ number: Int) -> String? {

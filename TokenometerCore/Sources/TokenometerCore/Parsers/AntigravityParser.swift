@@ -49,11 +49,13 @@ public enum AntigravityParser {
                   let usage = meta.message(9),
                   let seconds = meta.message(1)?.int(1)
             else { continue }
+            // A negative count is corrupt data, not usage.
+            let count = { (field: Int) in max(0, usage.int(field) ?? 0) }
             let counts = TokenCounts(
-                input: usage.int(2) ?? 0,
-                output: usage.int(3) ?? 0,
-                cacheRead: usage.int(5) ?? 0,
-                thinking: usage.int(9) ?? 0
+                input: count(2),
+                output: count(3),
+                cacheRead: count(5),
+                thinking: count(9)
             )
             guard counts.total > 0 else { continue }
             let modelEnum = usage.int(1) ?? meta.int(11) ?? 0

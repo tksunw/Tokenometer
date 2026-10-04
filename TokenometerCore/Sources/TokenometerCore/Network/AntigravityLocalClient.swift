@@ -14,7 +14,7 @@ public struct AntigravityLocalClient: UsageWindowSource {
     let transport: any HTTPTransport
     let processes: @Sendable () throws -> [LanguageServer]
 
-    public init(transport: any HTTPTransport = URLSessionTransport(), processes: @escaping @Sendable () throws -> [LanguageServer] = LanguageServer.running) {
+    public init(transport: any HTTPTransport = URLSessionTransport.loopback, processes: @escaping @Sendable () throws -> [LanguageServer] = LanguageServer.running) {
         self.transport = transport
         self.processes = processes
     }
@@ -109,16 +109,22 @@ public struct LanguageServer: Sendable, Equatable {
     /// Finds language servers via `ps` and their listening ports via `lsof`. The hub app's server
     /// is preferred because it stays up while the IDE and CLI come and go.
     @Sendable public static func running() throws -> [LanguageServer] {
-        let listing = try run("/bin/ps", ["-axo", "pid=,command="])
+        let listing = try run("/bin/ps", ["-axo", "pid=,uid=,command="])
+        return parse(listing: listing, uid: getuid()) { (try? listeningPorts(pid: $0)) ?? [] }
+    }
+
+    /// Language servers in a `ps -o pid=,uid=,command=` listing. `ps -ax` lists every account's
+    /// processes, so only those running as `uid` count: another user on this Mac could otherwise
+    /// start a look-alike and have its numbers shown here.
+    static func parse(listing: String, uid: uid_t, ports: (Int32) -> [Int]) -> [LanguageServer] {
         var servers: [LanguageServer] = []
         for line in listing.split(separator: "\n") {
             guard line.contains("language_server"), line.contains("--csrf_token") else { continue }
             let parts = line.trimmingCharacters(in: .whitespaces).split(separator: " ", omittingEmptySubsequences: true).map(String.init)
-            guard let first = parts.first, let pid = Int32(first) else { continue }
+            guard parts.count > 2, let pid = Int32(parts[0]), uid_t(parts[1]) == uid else { continue }
             guard let token = flagValue("--csrf_token", in: parts) else { continue }
             let isHub = flagValue("--subclient_type", in: parts) == "hub"
-            let ports = (try? listeningPorts(pid: pid)) ?? []
-            servers.append(LanguageServer(pid: pid, csrfToken: token, ports: ports, isHub: isHub))
+            servers.append(LanguageServer(pid: pid, csrfToken: token, ports: ports(pid), isHub: isHub))
         }
         return servers.sorted { $0.isHub && !$1.isHub }
     }
@@ -139,16 +145,23 @@ public struct LanguageServer: Sendable, Equatable {
         }
     }
 
-    private static func run(_ path: String, _ arguments: [String]) throws -> String {
+    /// Runs a tool and returns its stdout. Stderr is discarded rather than piped, since a full pipe
+    /// nobody reads would block the child, and the child is terminated after `timeout` so a stuck
+    /// `lsof` cannot hold up the refresh.
+    private static func run(_ path: String, _ arguments: [String], timeout: TimeInterval = 10) throws -> String {
         let process = Process()
         process.executableURL = URL(fileURLWithPath: path)
         process.arguments = arguments
         let pipe = Pipe()
         process.standardOutput = pipe
-        process.standardError = Pipe()
+        process.standardError = FileHandle.nullDevice
         try process.run()
+        let pid = process.processIdentifier
+        let deadline = DispatchWorkItem { kill(pid, SIGTERM) }
+        DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + timeout, execute: deadline)
         let data = pipe.fileHandleForReading.readDataToEndOfFile()
         process.waitUntilExit()
+        deadline.cancel()
         return String(decoding: data, as: UTF8.self)
     }
 }
