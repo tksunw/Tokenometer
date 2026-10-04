@@ -9,7 +9,7 @@ It reads the logs that Claude Code, Claude Desktop, Codex, Gemini CLI, and Antig
 ## Requirements
 
 - macOS 27.
-- For Claude's usage bars: Claude Code 2.1.288 or later with the [usage-reporter](https://github.com/tksunw/usage-reporter) mod. The mod is required, not optional: Tokenometer does not read your Claude login, so without it there is no source for Claude's percentages and you get spend only. Use 0.3.0 or later; an older version drives the bars but not the by-surface rows. See [Install](#install).
+- For Claude's usage bars: Claude Code 2.1.287 or later (the first release Anthropic supports mods on; the mod is known to run on 2.1.251) with the [usage-reporter](https://github.com/tksunw/usage-reporter) mod. The mod is required, not optional: Tokenometer does not read your Claude login, so without it there is no source for Claude's percentages and you get spend only. Use 0.3.0 or later; an older version drives the bars but not the by-surface rows. See [Install](#install).
 - Codex and Antigravity need nothing extra.
 
 ## What it shows
@@ -53,7 +53,7 @@ git clone https://github.com/tksunw/usage-reporter ~/.claude/skills/usage-report
 
 A Claude Code session that was already open when you installed the mod does not load it; start a new one. Until the mod reports, the Anthropic bars are missing or marked stale with a warning triangle.
 
-The bars update while a Claude Code session is running: session and weekly after each turn, the model-scoped bar at most every five minutes. Needs a Claude Code version with mods (2.1.288 or later).
+The bars update while a Claude Code session is running: session and weekly after each turn, the model-scoped bar at most every five minutes. Needs a Claude Code version with mods (2.1.287 or later).
 
 Tokenometer updates itself, but the mod does not. To update it, pull and start a new Claude Code session:
 
@@ -87,7 +87,7 @@ Launch at login. Menu bar style: gauge (one hand per provider, long to short in 
 
 Menu background: a slider from translucent to solid, for how much of the desktop shows through the menu; mostly solid by default, since the bare translucent panel is hard to read over a dark desktop.
 
-Per provider: enabled or not (so a leftover `~/.gemini` from a cancelled plan can be ignored), show even when no logs are found, plan or metered override, session and weekly budgets. Notifications when a window crosses 90% while ahead of pace, off by default.
+Per provider: enabled or not (so a leftover `~/.gemini` from a cancelled plan can be ignored), show even when no logs are found, plan or metered override, session and weekly budgets. Notifications when a session or weekly window crosses 90% while ahead of pace, and again when it resets, off by default.
 
 ## Build from source
 

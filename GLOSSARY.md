@@ -1,6 +1,6 @@
 # Tokenometer
 
-Real-time view of how much of each AI provider's usage allowance a person has consumed, read from the logs the agents already write on the Mac plus each provider's own usage endpoint.
+Real-time view of how much of each AI provider's usage allowance a person has consumed, read from the logs the agents already write on the Mac. Usage percent comes from what each provider's own tool exposes locally (Codex logs, the usage-reporter mod's file, Antigravity's local server); Tokenometer makes no request to a provider.
 
 ## Language
 
@@ -9,7 +9,7 @@ The company whose account and limits usage counts against: Anthropic, OpenAI, Go
 _Avoid_: Agent, vendor, service
 
 **Tool**:
-A program that talks to a provider and writes logs: Claude Code, Claude Desktop, Codex. Several tools can share one provider account.
+A program that talks to a provider and writes logs: Claude Code, Claude Desktop, Codex, Antigravity, Gemini CLI. Several tools can share one provider account.
 _Avoid_: Agent, client, app
 
 **Usage window**:
@@ -17,11 +17,11 @@ A rolling period over which a provider caps usage. Every plan account has a shor
 _Avoid_: Period, bucket, quota
 
 **Session window**:
-The provider's short usage window. Claude: 5 hours. Codex: the primary window.
+The provider's short usage window. Claude: 5 hours. Codex: the primary window. Google: the 5-hour bucket of the first model group.
 _Avoid_: Session, 5-hour limit
 
 **Weekly window**:
-The provider's long usage window. Claude: 7 days. Codex: the secondary window.
+The provider's long usage window. Claude: 7 days. Codex: the secondary window. Google: the weekly bucket of the first model group.
 _Avoid_: Week, weekly limit
 
 **Usage percent**:
