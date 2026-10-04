@@ -9,7 +9,7 @@ It reads the logs that Claude Code, Claude Desktop, Codex, Gemini CLI, and Antig
 ## Requirements
 
 - macOS 27.
-- For Claude's usage bars: Claude Code 2.1.288 or later with the [usage-reporter](https://github.com/tksunw/usage-reporter) mod, version 0.3.0 or later. This is required, not optional. Tokenometer does not read your Claude login, so without the mod it has no source for Claude's percentages and shows spend only. See [Install](#install).
+- For Claude's usage bars: Claude Code 2.1.288 or later with the [usage-reporter](https://github.com/tksunw/usage-reporter) mod. The mod is required, not optional: Tokenometer does not read your Claude login, so without it there is no source for Claude's percentages and you get spend only. Use 0.3.0 or later; an older version drives the bars but not the by-surface rows. See [Install](#install).
 - Codex and Antigravity need nothing extra.
 
 ## What it shows
