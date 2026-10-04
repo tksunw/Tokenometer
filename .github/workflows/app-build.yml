@@ -19,6 +19,9 @@ on:
       - "project.yml"
       - ".github/workflows/app-build.yml"
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: xcode-27

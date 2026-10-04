@@ -89,6 +89,20 @@ private struct StubTransport: HTTPTransport {
         await #expect(throws: UsageClientError.noCredentials("Antigravity is not running")) { try await client.fetchWindows() }
     }
 
+    @Test func onlyThisUsersLanguageServersCount() {
+        let listing = """
+          411 501 /Applications/Antigravity.app/Contents/Resources/bin/language_server --csrf_token mine --subclient_type hub
+          412 502 /Users/other/language_server --csrf_token theirs
+          413 501 /usr/bin/some_tool --csrf_token unrelated
+          414 501 /Applications/Antigravity.app/Contents/Resources/bin/language_server --csrf_token=ide
+        """
+        let servers = LanguageServer.parse(listing: listing, uid: 501) { [Int($0) + 60000] }
+        #expect(servers == [
+            LanguageServer(pid: 411, csrfToken: "mine", ports: [60411], isHub: true),
+            LanguageServer(pid: 414, csrfToken: "ide", ports: [60414], isHub: false),
+        ])
+    }
+
     @Test func flagParsingHandlesBothForms() {
         #expect(LanguageServer.flagValue("--csrf_token", in: ["x", "--csrf_token", "abc"]) == "abc")
         #expect(LanguageServer.flagValue("--csrf_token", in: ["x", "--csrf_token=abc"]) == "abc")

@@ -106,4 +106,16 @@ private func fixture(_ path: String) -> URL {
     @Test func rejectsTruncatedInput() {
         #expect(throws: WireError.truncated) { try WireMessage(parsing: Data([0x0A, 0x05, 0x01])) }
     }
+
+    @Test func readsNegativeInt64InsteadOfTrapping() throws {
+        // field 2: varint -1, encoded as ten bytes (0xFF x9, 0x01), above Int.max as a UInt64
+        let message = try WireMessage(parsing: Data([0x10] + [UInt8](repeating: 0xFF, count: 9) + [0x01]))
+        #expect(message.int(2) == -1)
+    }
+
+    @Test func rejectsALengthAboveIntMax() {
+        // field 1, length-delimited, length 2^64 - 1
+        let data = Data([0x0A] + [UInt8](repeating: 0xFF, count: 9) + [0x01])
+        #expect(throws: WireError.truncated) { try WireMessage(parsing: data) }
+    }
 }
