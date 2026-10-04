@@ -75,6 +75,7 @@ public enum UsageEngine {
             var session: UsageWindow?
             var weekly: UsageWindow?
             var scoped: [UsageWindow] = []
+            var surfaces: [SurfaceShare]?
             var windowsStale: StaleInfo?
             if provider == .openAI, let limits = inputs.codexRateLimits {
                 session = limits.session
@@ -86,6 +87,7 @@ public enum UsageEngine {
                     session = fetched.session
                     weekly = fetched.weekly
                     scoped = fetched.scoped
+                    surfaces = fetched.surfaces.isEmpty ? nil : fetched.surfaces
                     if let plan = fetched.planName { account.planName = plan }
                     // A source that reports from a file can fall behind the logs: say so rather than
                     // show an old number as current.
@@ -97,11 +99,13 @@ public enum UsageEngine {
                     session = old?.session
                     weekly = old?.weekly
                     scoped = old?.scoped ?? []
+                    surfaces = old?.surfaces
                     windowsStale = StaleInfo(since: old?.windowsStale?.since ?? inputs.now, reason: describe(error))
                 case nil:
                     session = old?.session
                     weekly = old?.weekly
                     scoped = old?.scoped ?? []
+                    surfaces = old?.surfaces
                     windowsStale = old?.windowsStale
                 }
             }
@@ -110,6 +114,7 @@ public enum UsageEngine {
                 session = nil
                 weekly = nil
                 scoped = []
+                surfaces = nil
             }
 
             // A window whose reset time has passed rolled over; the provider will report the new one
@@ -147,7 +152,8 @@ public enum UsageEngine {
                 tools: usage.tools,
                 models: usage.models,
                 windowsStale: windowsStale,
-                spendStale: spendStale
+                spendStale: spendStale,
+                surfaces: surfaces
             ))
         }
 

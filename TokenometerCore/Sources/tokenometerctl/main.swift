@@ -52,6 +52,7 @@ if json {
         print("  spend session \(p.sessionSpend.tokens.total) tok $\(String(format: "%.2f", p.sessionSpend.costUSD)) | week \(p.weeklySpend.tokens.total) tok $\(String(format: "%.2f", p.weeklySpend.costUSD))\(p.weeklySpend.hasUnknownCost ? " (+unpriced)" : "")")
         for t in p.tools { print("  \(t.tool.displayName): week \(t.weekly.tokens.total) tok, \(t.weekly.calls) calls") }
         for m in p.models.prefix(6) { print("    \(m.model): \(m.weekly.tokens.total) tok") }
+        if let surfaces = p.surfaces { print("  by surface, whole account: " + surfaces.map { "\($0.label) \(Int($0.percent.rounded()))%" }.joined(separator: ", ")) }
         if let s = p.windowsStale { print("  windows stale: \(s.reason)") }
         if let s = p.spendStale { print("  spend stale: \(s.reason)") }
     }

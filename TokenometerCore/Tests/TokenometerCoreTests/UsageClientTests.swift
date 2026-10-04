@@ -33,6 +33,18 @@ private struct StubTransport: HTTPTransport {
         #expect(windows.fetchedAt == Date(timeIntervalSince1970: 1_791_003_600))
     }
 
+    @Test func readsTheWeeklyBreakdownBySurface() async throws {
+        let json = #"{"version":1,"at":"2026-10-04T15:45:30.428Z","windows":[{"kind":"weekly","percent":43}],"credits":{"enabled":false,"used":0},"weeklyBreakdown":{"windowStartedAt":"2026-09-27T23:00:00.751Z","rows":[{"key":"claude_code","label":"Claude Code","percent":100},{"key":"chat","label":"Chats","percent":0},{"key":"voice","percent":3},{"label":"No key","percent":9}],"at":"2026-10-04T15:45:04.521Z"}}"#
+        let windows = try await report(json).fetchWindows()
+        #expect(windows.weekly?.usedPercent == 43)
+        // An unknown surface is kept and falls back to its key for a label; a row with no key is dropped.
+        #expect(windows.surfaces == [SurfaceShare(key: "claude_code", label: "Claude Code", percent: 100),
+                                     SurfaceShare(key: "chat", label: "Chats", percent: 0),
+                                     SurfaceShare(key: "voice", label: "voice", percent: 3)])
+        let without = try await report(#"{"version":1,"at":"2026-10-04T15:45:30.428Z","windows":[]}"#).fetchWindows()
+        #expect(without.surfaces.isEmpty)
+    }
+
     @Test func newerFormatSaysSoInsteadOfGuessing() async throws {
         let client = try report(#"{"version":2,"at":"2026-10-03T05:00:00.000Z","windows":[]}"#)
         await #expect(throws: UsageClientError.noReport("usage-reporter wrote format 2; this Tokenometer reads format 1")) { try await client.fetchWindows() }

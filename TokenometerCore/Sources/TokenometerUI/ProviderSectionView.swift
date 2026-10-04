@@ -64,6 +64,21 @@ public struct ProviderSectionView: View {
                                 DetailRow(name: model.model, spend: model.weekly)
                             }
                         }
+                        if let surfaces = snapshot.surfaces, !surfaces.isEmpty {
+                            // The rows above are this Mac's logs. These are the provider's own figures
+                            // for the whole account, so chat and other devices are in them.
+                            Divider().padding(.vertical, 2)
+                            Text("Whole account, by surface").font(.caption2).foregroundStyle(.tertiary)
+                                .help("As the provider reports it for this week: each surface's share of the week's usage, on every device.")
+                            ForEach(surfaces, id: \.key) { surface in
+                                HStack {
+                                    Text(surface.label).font(.caption2).lineLimit(1)
+                                    Spacer()
+                                    Text(Format.percent(surface.percent)).font(.caption2.monospacedDigit())
+                                }
+                                .foregroundStyle(.secondary)
+                            }
+                        }
                     }
                     .padding(.top, 2)
                 } label: {
@@ -224,6 +239,12 @@ public enum SampleData {
             models: [
                 ModelSpend(model: "claude-fable-5-1", weekly: spend(300_000, 150_000, 17_000_000, cost: 31.60, calls: 210)),
                 ModelSpend(model: "claude-opus-5-5", weekly: spend(110_000, 40_000, 4_400_000, cost: 6.50, calls: 102)),
+            ],
+            surfaces: [
+                SurfaceShare(key: "claude_code", label: "Claude Code", percent: 82),
+                SurfaceShare(key: "chat", label: "Chats", percent: 13),
+                SurfaceShare(key: "cowork", label: "Cowork", percent: 5),
+                SurfaceShare(key: "other", label: "Other", percent: 0),
             ]
         )
         let openAI = ProviderSnapshot(

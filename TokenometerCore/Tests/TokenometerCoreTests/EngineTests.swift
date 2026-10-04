@@ -48,7 +48,8 @@ import Testing
 
     @Test func failedWindowFetchKeepsPreviousValueAsStale() {
         struct Boom: Error {}
-        let fetched = ProviderWindows(session: UsageWindow(kind: .session, usedPercent: 50), weekly: UsageWindow(kind: .weekly, usedPercent: 20), planName: "max", fetchedAt: now)
+        var fetched = ProviderWindows(session: UsageWindow(kind: .session, usedPercent: 50), weekly: UsageWindow(kind: .weekly, usedPercent: 20), planName: "max", fetchedAt: now)
+        fetched.surfaces = [SurfaceShare(key: "chat", label: "Chats", percent: 12)]
         let first = UsageEngine.snapshot(
             from: RefreshInputs(records: [], presentTools: [.claudeCode], windows: [.anthropic: .success(fetched)], accounts: [.anthropic: AccountInfo(kind: .plan)], now: now),
             settings: EngineSettings(), previous: nil)
@@ -61,6 +62,7 @@ import Testing
             settings: EngineSettings(), previous: first)
         let anthropic = second.provider(.anthropic)!
         #expect(anthropic.session?.usedPercent == 50)
+        #expect(anthropic.surfaces == fetched.surfaces)
         #expect(anthropic.windowsStale?.since == later)
         #expect(anthropic.windowsStale?.reason.contains("Boom") == true)
     }

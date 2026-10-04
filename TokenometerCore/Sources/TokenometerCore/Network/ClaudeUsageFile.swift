@@ -4,8 +4,10 @@ import Foundation
 /// Claude Code makes the usage call itself with its own login; Tokenometer reads no credential and
 /// contacts no Anthropic host.
 ///
-/// Format version 1: `{version: 1, at, windows: [{kind: session | weekly, label?, percent, resetsAt?, at}], raw?}`.
-/// A weekly window with a `label` is scoped to that model family. Knowledge of Anthropic's response
+/// Format version 1: `{version: 1, at, windows: [{kind: session | weekly, label?, percent, resetsAt?, at}],
+/// weeklyBreakdown?: {rows: [{key, label?, percent}]}, raw?}`. A weekly window with a `label` is scoped to
+/// that model family; `weeklyBreakdown` is the weekly usage split by surface, account-wide. Other fields
+/// the mod writes (`credits`, `cloudSessionCredits`) are not read. Knowledge of Anthropic's response
 /// shape lives in the mod, not here.
 public struct ClaudeUsageFile: UsageWindowSource {
     public let provider: Provider = .anthropic
@@ -48,6 +50,11 @@ public struct ClaudeUsageFile: UsageWindowSource {
             default:
                 continue
             }
+        }
+        // Every row is kept, unknown surfaces included: Anthropic can add one without a new release here.
+        for row in root.dict("weeklyBreakdown")?["rows"] as? [[String: Any]] ?? [] {
+            guard let key = row.string("key"), let percent = (row["percent"] as? NSNumber)?.doubleValue else { continue }
+            windows.surfaces.append(SurfaceShare(key: key, label: row.string("label") ?? key, percent: percent))
         }
         return windows
     }
