@@ -51,7 +51,10 @@ public enum MenuBarImage {
     /// are white with a dark edge and read on either, and the provider's color is in the fill only.
     public static func horizontal(_ provider: ProviderSnapshot, darkMenuBar: Bool) -> NSImage {
         let barWidth: CGFloat = 40
-        let barHeight: CGFloat = 7
+        // The size and shape of the system battery indicator beside it: a rounded rectangle with
+        // the fill inset from the outline.
+        let barHeight: CGFloat = 11
+        let radius: CGFloat = 3.5
         let textWidth: CGFloat = 26
         let width = barWidth + 4 + textWidth
         let percent = min(max(provider.session?.usedPercent ?? 0, 0), 100)
@@ -60,16 +63,18 @@ public enum MenuBarImage {
             let y = (height - barHeight) / 2
             let track = NSRect(x: 0, y: y, width: barWidth, height: barHeight)
             NSColor(white: 0, alpha: 0.25).setFill()
-            NSBezierPath(roundedRect: track, xRadius: barHeight / 2, yRadius: barHeight / 2).fill()
+            NSBezierPath(roundedRect: track, xRadius: radius, yRadius: radius).fill()
+            // A sliver stays at 0% so the provider's color is still there to tell whose bar it is.
+            let inner = track.insetBy(dx: 2, dy: 2)
             fill.setFill()
-            NSBezierPath(roundedRect: NSRect(x: 0, y: y, width: max(barHeight, barWidth * percent / 100), height: barHeight), xRadius: barHeight / 2, yRadius: barHeight / 2).fill()
+            NSBezierPath(roundedRect: NSRect(x: inner.minX, y: inner.minY, width: max(4, inner.width * percent / 100), height: inner.height), xRadius: radius - 2, yRadius: radius - 2).fill()
             // Two-tone outline: a dark edge outside a white core, so the empty end of the track still
             // reads as bar on any background.
-            let edge = NSBezierPath(roundedRect: track.insetBy(dx: -0.5, dy: -0.5), xRadius: barHeight / 2 + 0.5, yRadius: barHeight / 2 + 0.5)
+            let edge = NSBezierPath(roundedRect: track.insetBy(dx: -0.5, dy: -0.5), xRadius: radius + 0.5, yRadius: radius + 0.5)
             edge.lineWidth = 1
             NSColor(white: 0, alpha: 0.55).setStroke()
             edge.stroke()
-            let outline = NSBezierPath(roundedRect: track.insetBy(dx: 0.5, dy: 0.5), xRadius: barHeight / 2 - 0.5, yRadius: barHeight / 2 - 0.5)
+            let outline = NSBezierPath(roundedRect: track.insetBy(dx: 0.5, dy: 0.5), xRadius: radius - 0.5, yRadius: radius - 0.5)
             outline.lineWidth = 1
             NSColor.white.setStroke()
             outline.stroke()
@@ -143,21 +148,32 @@ public enum MenuBarImage {
 
     // MARK: Bars
 
-    static let barWidth: CGFloat = 5
-    static let gap: CGFloat = 3
+    static let barWidth: CGFloat = 6
+    static let gap: CGFloat = 4
 
+    /// One vertical session bar per provider. Like the horizontal style, each track has a white
+    /// outline with a dark edge so it reads on any wallpaper, and the provider's color is the fill.
     public static func bars(_ providers: [ProviderSnapshot]) -> NSImage {
-        let width = CGFloat(providers.count) * barWidth + CGFloat(max(0, providers.count - 1)) * gap
+        // One point of margin each side for the outline's dark edge.
+        let width = CGFloat(providers.count) * barWidth + CGFloat(max(0, providers.count - 1)) * gap + 2
         let image = NSImage(size: NSSize(width: max(width, 1), height: height), flipped: false) { _ in
-            var x: CGFloat = 0
+            var x: CGFloat = 1
             for provider in providers {
                 let percent = min(max(provider.session?.usedPercent ?? 0, 0), 100)
-                let base = NSColor(provider.provider.color)
                 let fill = NSColor(UsageLevel.tint(for: percent, base: provider.provider.color, pace: provider.session?.elapsedFraction()))
-                base.withAlphaComponent(0.3).setFill()
-                NSBezierPath(roundedRect: NSRect(x: x, y: 1, width: barWidth, height: height - 2), xRadius: 1.5, yRadius: 1.5).fill()
+                let track = NSRect(x: x, y: 1, width: barWidth, height: height - 2)
+                NSColor(white: 0, alpha: 0.25).setFill()
+                NSBezierPath(roundedRect: track, xRadius: 2, yRadius: 2).fill()
                 fill.setFill()
-                NSBezierPath(roundedRect: NSRect(x: x, y: 1, width: barWidth, height: max(2, (height - 2) * percent / 100)), xRadius: 1.5, yRadius: 1.5).fill()
+                NSBezierPath(roundedRect: NSRect(x: x, y: 1, width: barWidth, height: max(2, (height - 2) * percent / 100)), xRadius: 2, yRadius: 2).fill()
+                let edge = NSBezierPath(roundedRect: track.insetBy(dx: -0.5, dy: -0.5), xRadius: 2.5, yRadius: 2.5)
+                edge.lineWidth = 1
+                NSColor(white: 0, alpha: 0.55).setStroke()
+                edge.stroke()
+                let outline = NSBezierPath(roundedRect: track.insetBy(dx: 0.5, dy: 0.5), xRadius: 1.5, yRadius: 1.5)
+                outline.lineWidth = 1
+                NSColor.white.setStroke()
+                outline.stroke()
                 x += barWidth + gap
             }
             return true
