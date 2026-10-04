@@ -6,6 +6,12 @@ A macOS menu bar app and desktop widget that shows how much of your AI coding as
 
 It reads the logs that Claude Code, Claude Desktop, Codex, Gemini CLI, and Antigravity already write on your Mac, and gets each provider's percent-of-limit from that provider's own tool: Codex's logs, Antigravity's local server, and for Claude a separate Claude Code mod, usage-reporter, that has Claude Code ask on its own login. It never wraps or proxies an agent session, it never touches your Claude login, and nothing about your usage leaves the machine. See [PRIVACY.md](PRIVACY.md) and [SECURITY.md](SECURITY.md) for exactly what is read and what is sent.
 
+## Requirements
+
+- macOS 27.
+- For Claude's usage bars: Claude Code 2.1.288 or later with the [usage-reporter](https://github.com/tksunw/usage-reporter) mod, version 0.3.0 or later. This is required, not optional. Tokenometer does not read your Claude login, so without the mod it has no source for Claude's percentages and shows spend only. See [Install](#install).
+- Codex and Antigravity need nothing extra.
+
 ## What it shows
 
 <p align="center"><img src="docs/images/menu-dark.png" alt="The menu, dark mode" width="320"> <img src="docs/images/menu-light.png" alt="The menu, light mode" width="320"></p>
@@ -31,13 +37,11 @@ Screenshots are rendered from the app's own views with sample data (`swift run m
 
 ## Install
 
-Requires macOS 27.
-
 1. Download `Tokenometer-<version>.dmg` from the [latest release](https://github.com/tksunw/Tokenometer/releases/latest) and open it.
 2. Drag Tokenometer onto the Applications folder in the installer window, then open it from Applications. The app and the disk image are Developer ID signed and notarized. A plain zip of the app is on the release page too.
 3. It lives in the menu bar only; there is no Dock icon. Click the bars for the menu, the gear for Settings.
 4. For the widget: right-click the desktop, Edit Widgets, search Tokenometer.
-5. For Claude's usage bars, install the usage-reporter mod (below). Spend works without it.
+5. If you use Claude, install the usage-reporter mod (below). Claude's usage bars do not work without it; only spend does.
 
 ### usage-reporter
 
@@ -47,7 +51,17 @@ Tokenometer does not read your Claude login. Claude's percent comes from [usage-
 git clone https://github.com/tksunw/usage-reporter ~/.claude/skills/usage-reporter
 ```
 
-The bars update while a Claude Code session is running: session and weekly after each turn, the model-scoped bar at most every five minutes. To remove it, delete `~/.claude/skills/usage-reporter`. Needs a Claude Code version with mods (2.1.288 or later).
+A Claude Code session that was already open when you installed the mod does not load it; start a new one. Until the mod reports, the Anthropic bars are missing or marked stale with a warning triangle.
+
+The bars update while a Claude Code session is running: session and weekly after each turn, the model-scoped bar at most every five minutes. Needs a Claude Code version with mods (2.1.288 or later).
+
+Tokenometer updates itself, but the mod does not. To update it, pull and start a new Claude Code session:
+
+```bash
+git -C ~/.claude/skills/usage-reporter pull
+```
+
+Tokenometer needs usage-reporter 0.3.0 or later for the by-surface rows in the menu; with an older mod those rows are absent and everything else works. To remove the mod, delete `~/.claude/skills/usage-reporter`.
 
 Updates: the app checks GitHub Releases once a day (Sparkle) and offers new versions; turn that off in Settings or check manually from the menu. The first time a new version launches it restarts the system's widget service once, so the widget picks up the new version; all your widgets redraw for a moment.
 
