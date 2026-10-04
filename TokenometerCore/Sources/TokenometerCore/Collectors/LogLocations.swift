@@ -27,17 +27,44 @@ public struct LogLocations: Sendable, Equatable {
     public static let standard = LogLocations()
 }
 
+/// A log file as the walk saw it. `stamp` is what the parse caches compare to decide whether to read it again.
+struct LogFile: Sendable {
+    var url: URL
+    var stamp: FileStamp
+}
+
+/// Size and modification time of a file at one moment.
+struct FileStamp: Sendable, Equatable {
+    var size: Int
+    var modified: Date
+
+    init(size: Int, modified: Date) {
+        self.size = size
+        self.modified = modified
+    }
+
+    /// Nil when the file is missing or unreadable.
+    init?(of url: URL) {
+        guard let values = try? url.resourceValues(forKeys: [.fileSizeKey, .contentModificationDateKey]),
+              let size = values.fileSize, let modified = values.contentModificationDate
+        else { return nil }
+        self.init(size: size, modified: modified)
+    }
+}
+
 enum FileWalker {
     /// Regular files under `root` matching `predicate`, modified after `since` when given. Hidden
     /// directories are descended because Claude Desktop nests `.claude/projects` inside each session.
-    static func files(under root: URL, modifiedAfter since: Date?, where predicate: (URL) -> Bool) -> [URL] {
-        let keys: [URLResourceKey] = [.isRegularFileKey, .contentModificationDateKey]
+    static func files(under root: URL, modifiedAfter since: Date?, where predicate: (URL) -> Bool) -> [LogFile] {
+        let keys: [URLResourceKey] = [.isRegularFileKey, .contentModificationDateKey, .fileSizeKey]
         guard let enumerator = FileManager.default.enumerator(at: root, includingPropertiesForKeys: keys, options: []) else { return [] }
-        var result: [URL] = []
+        var result: [LogFile] = []
         for case let url as URL in enumerator {
-            guard let values = try? url.resourceValues(forKeys: Set(keys)), values.isRegularFile == true else { continue }
-            if let since, let modified = values.contentModificationDate, modified < since { continue }
-            if predicate(url) { result.append(url) }
+            guard let values = try? url.resourceValues(forKeys: Set(keys)), values.isRegularFile == true,
+                  let modified = values.contentModificationDate
+            else { continue }
+            if let since, modified < since { continue }
+            if predicate(url) { result.append(LogFile(url: url, stamp: FileStamp(size: values.fileSize ?? 0, modified: modified))) }
         }
         return result
     }

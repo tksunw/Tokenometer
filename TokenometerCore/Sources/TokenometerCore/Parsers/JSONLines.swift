@@ -21,6 +21,37 @@ enum JSONLines {
         let data = try Data(contentsOf: url)
         return try JSONSerialization.jsonObject(with: data) as? [String: Any]
     }
+
+    /// Feeds each complete line to `consumer`, deserializing only the lines it `wants`, and returns the
+    /// number of bytes consumed: through the last newline, plus an unterminated last line that is wanted
+    /// and already parses. Anything after that is a line still being written; the next read starts there.
+    static func feed<Consumer: JSONLineConsumer>(_ data: Data, to consumer: inout Consumer) -> Int {
+        let newline = UInt8(ascii: "\n")
+        var start = data.startIndex
+        while let end = data[start...].firstIndex(of: newline) {
+            let line = data[start..<end]
+            if !line.isEmpty, consumer.wants(line),
+               let object = try? JSONSerialization.jsonObject(with: Data(line)) as? [String: Any] {
+                consumer.consume(object)
+            }
+            start = end + 1
+        }
+        let tail = data[start...]
+        if !tail.isEmpty, consumer.wants(tail),
+           let object = try? JSONSerialization.jsonObject(with: Data(tail)) as? [String: Any] {
+            consumer.consume(object)
+            start = data.endIndex
+        }
+        return start - data.startIndex
+    }
+}
+
+/// A JSONL parser that takes one object at a time, so it can resume where the last read stopped.
+protocol JSONLineConsumer {
+    /// A cheap byte test run before deserializing; a line it rejects is skipped unparsed. It may pass
+    /// lines the parser then ignores, never the reverse.
+    func wants(_ line: Data) -> Bool
+    mutating func consume(_ object: [String: Any])
 }
 
 enum Timestamps {
