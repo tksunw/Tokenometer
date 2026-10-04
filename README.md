@@ -45,11 +45,24 @@ Screenshots are rendered from the app's own views with sample data (`swift run m
 
 ### usage-reporter
 
-Tokenometer does not read your Claude login. Claude's percent comes from [usage-reporter](https://github.com/tksunw/usage-reporter), a separate Claude Code mod that asks Claude Code for your usage and writes it to `~/.claude/usage-reporter/usage.json`, where any tool can read it. Install it once per Mac, then start a new Claude Code session:
+Tokenometer does not read your Claude login. Claude's percent comes from [usage-reporter](https://github.com/tksunw/usage-reporter), a separate Claude Code mod that asks Claude Code for your usage and writes it to `~/.claude/usage-reporter/usage.json`, where any tool can read it. Install it once per Mac. Clone it into a folder for mods:
 
 ```bash
-git clone https://github.com/tksunw/usage-reporter ~/.claude/skills/usage-reporter
+mkdir -p ~/.claude/mods
+git clone https://github.com/tksunw/usage-reporter ~/.claude/mods/usage-reporter
 ```
+
+Then tell Claude Code to load that folder, by adding one line to the `env` block of `~/.claude/settings.json` (create the block if there is none):
+
+```json
+{
+  "env": {
+    "CLAUDE_CODE_PLUGIN_DIRS": "~/.claude/mods"
+  }
+}
+```
+
+Start a new Claude Code session. This route works in the terminal and in the Claude desktop app's Code sessions alike. Cloning into `~/.claude/skills/usage-reporter` needs no settings line, but only terminal sessions load mods from there, so usage from the desktop app would never be reported.
 
 A Claude Code session that was already open when you installed the mod does not load it; start a new one. Until the mod reports, the Anthropic bars are missing or marked stale with a warning triangle.
 
@@ -58,10 +71,10 @@ The bars update while a Claude Code session is running: session and weekly after
 Tokenometer updates itself, but the mod does not. To update it, pull and start a new Claude Code session:
 
 ```bash
-git -C ~/.claude/skills/usage-reporter pull
+git -C ~/.claude/mods/usage-reporter pull
 ```
 
-Tokenometer needs usage-reporter 0.3.0 or later for the by-surface rows in the menu; with an older mod those rows are absent and everything else works. To remove the mod, delete `~/.claude/skills/usage-reporter`.
+Tokenometer needs usage-reporter 0.3.0 or later for the by-surface rows in the menu; with an older mod those rows are absent and everything else works. To remove the mod, delete `~/.claude/mods/usage-reporter`.
 
 Updates: the app checks GitHub Releases once a day (Sparkle) and offers new versions; turn that off in Settings or check manually from the menu. The first time a new version launches it restarts the system's widget service once, so the widget picks up the new version; all your widgets redraw for a moment.
 
