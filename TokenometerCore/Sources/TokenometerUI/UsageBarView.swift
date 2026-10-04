@@ -71,9 +71,12 @@ public struct UsageBarView: View {
     private var bar: some View {
         GeometryReader { geo in
             ZStack(alignment: .leading) {
-                Capsule().fill(base.opacity(0.18))
+                // The track and its outline are the label color, so the empty part reads in light and
+                // dark whatever the provider's color; the color is the fill only.
+                Capsule().fill(Color.primary.opacity(0.12))
                 Capsule().fill(fill)
                     .frame(width: geo.size.width * min(max(window.usedPercent, 0), 100) / 100)
+                Capsule().strokeBorder(Color.primary.opacity(0.4), lineWidth: 0.5)
                 if let pace {
                     // Label color (black in light, white in dark) once the fill has passed the tick; provider color while ahead.
                     RoundedRectangle(cornerRadius: 1)

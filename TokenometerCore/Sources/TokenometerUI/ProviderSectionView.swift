@@ -186,9 +186,10 @@ public struct MiniHorizontalBar: View {
     public var body: some View {
         GeometryReader { geo in
             ZStack(alignment: .leading) {
-                Capsule().fill(base.opacity(0.18))
+                Capsule().fill(Color.primary.opacity(0.12))
                 Capsule().fill(UsageLevel.tint(for: percent, base: base, pace: pace))
                     .frame(width: geo.size.width * min(max(percent, 0), 100) / 100)
+                Capsule().strokeBorder(Color.primary.opacity(0.4), lineWidth: 0.5)
                 if let pace {
                     RoundedRectangle(cornerRadius: 0.5).fill(percent / 100 >= pace ? Color.primary : base)
                         .frame(width: 1.5, height: geo.size.height + 3)
