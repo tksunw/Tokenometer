@@ -92,12 +92,11 @@ final class AppModel {
         let result = await refresher.refresh(settings: settings.engineSettings, fetchWindows: fetchWindows, now: now)
         if fetchWindows { lastWindowFetch = now }
         snapshot = result
+        // Saved every time so the widget's "as of" stays current when its timeline next ends (15 min).
         // Most refreshes change nothing visible; a reload for each one wakes the widget extension
-        // and spends WidgetKit's reload budget, after which the widget stops updating for a while.
-        if !result.hasSameContent(as: previous) {
-            try? store.save(result)
-            WidgetCenter.shared.reloadAllTimelines()
-        }
+        // and spends WidgetKit's reload budget, so only a real change reloads.
+        try? store.save(result)
+        if !result.hasSameContent(as: previous) { WidgetCenter.shared.reloadAllTimelines() }
         if settings.notifyAtCritical { Notifier.notifyCrossings(from: previous, to: result) }
         restartWatcher()
     }

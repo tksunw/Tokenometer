@@ -80,8 +80,8 @@ public struct Snapshot: Codable, Sendable, Equatable {
         providers.first { $0.provider == provider }
     }
 
-    /// Equal apart from `generatedAt`: nothing the menu or widget draws differs, so the snapshot need
-    /// not be written or the widget reloaded.
+    /// Equal apart from `generatedAt`: nothing the menu or widget draws differs except the "as of"
+    /// time, so the widget need not be reloaded.
     public func hasSameContent(as other: Snapshot?) -> Bool {
         guard let other else { return false }
         return version == other.version && providers == other.providers
