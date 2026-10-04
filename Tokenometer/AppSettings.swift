@@ -15,6 +15,8 @@ final class AppSettings {
     var budgets: [Provider: Budget] { didSet { save(budgets, key: "budgets") } }
     var menuBarStyle: MenuBarStyle { didSet { defaults.set(menuBarStyle.rawValue, forKey: "menuBarStyle") } }
     var menuBarProvider: MenuBarProviderChoice { didSet { defaults.set(menuBarProvider.rawValue, forKey: "menuBarProvider") } }
+    /// How solid the menu's background is, 0 (the system's translucent panel alone) to 1 (opaque).
+    var menuBackgroundOpacity: Double { didSet { defaults.set(menuBackgroundOpacity, forKey: "menuBackgroundOpacity") } }
     var notifyAtCritical: Bool {
         didSet {
             defaults.set(notifyAtCritical, forKey: "notifyAtCritical")
@@ -37,6 +39,8 @@ final class AppSettings {
         budgets = Self.load(key: "budgets") ?? [:]
         menuBarStyle = MenuBarStyle(rawValue: UserDefaults.standard.string(forKey: "menuBarStyle") ?? "") ?? .gauge
         menuBarProvider = MenuBarProviderChoice(rawValue: UserDefaults.standard.string(forKey: "menuBarProvider") ?? "") ?? .cycle
+        // Mostly solid by default: the bare translucent panel is hard to read over a dark desktop.
+        menuBackgroundOpacity = UserDefaults.standard.object(forKey: "menuBackgroundOpacity") as? Double ?? 0.6
         notifyAtCritical = UserDefaults.standard.bool(forKey: "notifyAtCritical")
         launchAtLogin = SMAppService.mainApp.status == .enabled
     }

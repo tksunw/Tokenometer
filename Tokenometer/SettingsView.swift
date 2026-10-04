@@ -26,6 +26,13 @@ struct SettingsView: View {
                         }
                     }
                 }
+                Slider(value: $settings.menuBackgroundOpacity, in: 0...1) {
+                    Text("Menu background")
+                } minimumValueLabel: {
+                    Text("Translucent").font(.caption).foregroundStyle(.secondary)
+                } maximumValueLabel: {
+                    Text("Solid").font(.caption).foregroundStyle(.secondary)
+                }
                 Toggle("Notify when a window passes 90%", isOn: $settings.notifyAtCritical)
             }
             ForEach(Provider.allCases) { provider in
