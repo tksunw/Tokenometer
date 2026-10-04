@@ -190,14 +190,17 @@ public struct MiniHorizontalBar: View {
                 Capsule().fill(UsageLevel.tint(for: percent, base: base, pace: pace))
                     .frame(width: geo.size.width * min(max(percent, 0), 100) / 100)
                 Capsule().strokeBorder(Color.primary.opacity(0.4), lineWidth: 0.5)
+            }
+            // An overlay, so a bar with no tick is the same height as one with.
+            .overlay(alignment: .leading) {
                 if let pace {
                     RoundedRectangle(cornerRadius: 0.5).fill(percent / 100 >= pace ? Color.primary : base)
                         .frame(width: 1.5, height: geo.size.height + 3)
-                        .offset(x: geo.size.width * pace - 0.75, y: -1.5)
+                        .offset(x: geo.size.width * pace - 0.75)
                 }
             }
         }
-        .frame(height: 4 * scale)
+        .frame(height: 4 * scale + 3)
     }
 }
 

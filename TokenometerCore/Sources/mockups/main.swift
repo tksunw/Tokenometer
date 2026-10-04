@@ -10,6 +10,12 @@ try FileManager.default.createDirectory(at: outDir, withIntermediateDirectories:
 let now = Date(timeIntervalSince1970: 1_790_000_000)
 var sample = SampleData.snapshot(now: now)
 // `--two` keeps only the first two providers, to see the roomier widget variants with reset times.
+// `--idle` gives the second provider a session window that has not started (0%, no reset time, so
+// no pace tick), to check that its bar is the same height as the others.
+if CommandLine.arguments.contains("--idle"), sample.providers.count > 1 {
+    sample.providers[1].session?.usedPercent = 0
+    sample.providers[1].session?.resetsAt = nil
+}
 if CommandLine.arguments.contains("--two") { sample = Snapshot(generatedAt: sample.generatedAt, providers: Array(sample.providers.prefix(2))) }
 
 @MainActor

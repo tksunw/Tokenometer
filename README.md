@@ -71,7 +71,9 @@ Launch at login. Menu bar style: gauge (one hand per provider, long to short in 
 
 <p align="center"><img src="docs/images/menubar-bars.png" alt="Menu bar bars style" width="390"> <img src="docs/images/menubar-horizontal.png" alt="Menu bar horizontal style" width="390"></p>
 
- Per provider: enabled or not (so a leftover `~/.gemini` from a cancelled plan can be ignored), show even when no logs are found, plan or metered override, session and weekly budgets. Notifications when a window crosses 90% while ahead of pace, off by default.
+Menu background: a slider from translucent to solid, for how much of the desktop shows through the menu; mostly solid by default, since the bare translucent panel is hard to read over a dark desktop.
+
+Per provider: enabled or not (so a leftover `~/.gemini` from a cancelled plan can be ignored), show even when no logs are found, plan or metered override, session and weekly budgets. Notifications when a window crosses 90% while ahead of pace, off by default.
 
 ## Build from source
 

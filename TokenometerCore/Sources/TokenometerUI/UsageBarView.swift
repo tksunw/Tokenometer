@@ -38,7 +38,7 @@ public struct UsageBarView: View {
                 Text(compactLabel).font(.widget(scale)).lineLimit(1).frame(width: 86 * scale, alignment: .leading)
                 // The minimum keeps a larger type size from squeezing the bar to nothing; a scale
                 // that cannot afford it does not fit, and the widget steps down.
-                bar.frame(minWidth: 64, idealWidth: 64).frame(height: 5 * scale)
+                bar.frame(minWidth: 64, idealWidth: 64).frame(height: 5 * scale + 4)
                 Text(Format.percent(window.usedPercent)).font(.widget(scale).monospacedDigit().bold())
                     .foregroundStyle(fill).frame(width: 34 * scale, alignment: .trailing)
                 if showsReset {
@@ -59,7 +59,7 @@ public struct UsageBarView: View {
                     Spacer()
                     Text(Format.percent(window.usedPercent)).font(.caption.monospacedDigit().bold()).foregroundStyle(fill)
                 }
-                bar.frame(height: 6).padding(.vertical, 2)
+                bar.frame(height: 10).padding(.vertical, 2)
                     .opacity(stale == nil ? 1 : 0.6)
                 if let resets = Format.resets(window.resetsAt, now: now) {
                     Text(resets).font(.caption2).foregroundStyle(.secondary)
@@ -77,12 +77,16 @@ public struct UsageBarView: View {
                 Capsule().fill(fill)
                     .frame(width: geo.size.width * min(max(window.usedPercent, 0), 100) / 100)
                 Capsule().strokeBorder(Color.primary.opacity(0.4), lineWidth: 0.5)
+            }
+            // The tick overhangs the bar. As an overlay it cannot stretch it, so a window with no
+            // reset time, and so no tick, is the same height as its neighbors.
+            .overlay(alignment: .leading) {
                 if let pace {
                     // Label color (black in light, white in dark) once the fill has passed the tick; provider color while ahead.
                     RoundedRectangle(cornerRadius: 1)
                         .fill(window.usedPercent / 100 >= pace ? Color.primary : base)
                         .frame(width: 2, height: geo.size.height + 4)
-                        .offset(x: geo.size.width * pace - 1, y: -2)
+                        .offset(x: geo.size.width * pace - 1)
                         .help("\(Int((pace * 100).rounded()))% of the window has elapsed")
                 }
             }
