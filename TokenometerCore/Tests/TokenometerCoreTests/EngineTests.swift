@@ -153,3 +153,53 @@ private struct TrippingSource: UsageWindowSource {
         throw UsageClientError.badResponse
     }
 }
+
+@Suite struct ClaudeAccountCacheTests {
+    private func home(config: String, modified: Date) throws -> URL {
+        let home = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: home, withIntermediateDirectories: true)
+        let url = home.appendingPathComponent(".claude.json")
+        try config.write(to: url, atomically: false, encoding: .utf8)
+        try FileManager.default.setAttributes([.modificationDate: modified], ofItemAtPath: url.path)
+        return home
+    }
+
+    private let max5x = #"{"oauthAccount":{"organizationType":"claude_max","organizationRateLimitTier":"default_claude_max_5x"}}"#
+
+    @Test(.enabled(if: ProcessInfo.processInfo.environment["ANTHROPIC_API_KEY"]?.isEmpty != false))
+    func unchangedConfigIsNotParsedAgain() async throws {
+        let modified = Date(timeIntervalSince1970: 1_790_000_000)
+        let home = try home(config: max5x, modified: modified)
+        defer { try? FileManager.default.removeItem(at: home) }
+        let refresher = UsageRefresher(collectors: [PresentCollector(tool: .claudeCode)], windowSources: [], locations: LogLocations(home: home))
+        #expect(await refresher.refresh(settings: EngineSettings(), fetchWindows: false).provider(.anthropic)?.planName == "Max 5x")
+
+        // Same size and mtime, different bytes: only a cache hit still reports the plan.
+        let url = home.appendingPathComponent(".claude.json")
+        try String(repeating: " ", count: max5x.utf8.count).write(to: url, atomically: false, encoding: .utf8)
+        try FileManager.default.setAttributes([.modificationDate: modified], ofItemAtPath: url.path)
+        #expect(await refresher.refresh(settings: EngineSettings(), fetchWindows: false).provider(.anthropic)?.planName == "Max 5x")
+
+        // A real change is picked up.
+        try #"{"oauthAccount":{"organizationType":"claude_enterprise"}}"#.write(to: url, atomically: false, encoding: .utf8)
+        let after = await refresher.refresh(settings: EngineSettings(), fetchWindows: false).provider(.anthropic)
+        #expect(after?.accountKind == .metered)
+        #expect(after?.planName == "Enterprise")
+    }
+}
+
+@Suite struct SnapshotContentTests {
+    @Test func generatedAtAloneIsNotAChange() {
+        let provider = ProviderSnapshot(provider: .anthropic, accountKind: .plan, planName: "Max",
+                                        session: UsageWindow(kind: .session, usedPercent: 10), weekly: nil, scoped: [],
+                                        sessionSpend: Spend(), weeklySpend: Spend(), tools: [], models: [])
+        let first = Snapshot(generatedAt: Date(timeIntervalSince1970: 1_790_000_000), providers: [provider])
+        var later = first
+        later.generatedAt = first.generatedAt.addingTimeInterval(60)
+        #expect(later.hasSameContent(as: first))
+        #expect(!later.hasSameContent(as: nil))
+
+        later.providers[0].session?.usedPercent = 11
+        #expect(!later.hasSameContent(as: first))
+    }
+}

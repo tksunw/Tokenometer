@@ -25,9 +25,12 @@ struct SnapshotProvider: TimelineProvider {
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<SnapshotEntry>) -> Void) {
-        let entry = SnapshotEntry(date: .now, snapshot: SnapshotStore().load())
-        // The app reloads timelines after every refresh; this is only the backstop.
-        completion(Timeline(entries: [entry], policy: .after(.now.addingTimeInterval(15 * 60))))
+        let snapshot = SnapshotStore().load()
+        let now = Date.now
+        // The app reloads timelines only when the snapshot changes, so entries every 5 minutes keep
+        // the pace markers moving in between without spending the reload budget. 15 min is the backstop.
+        let entries = stride(from: 0.0, to: 15 * 60, by: 5 * 60).map { SnapshotEntry(date: now.addingTimeInterval($0), snapshot: snapshot) }
+        completion(Timeline(entries: entries, policy: .after(now.addingTimeInterval(15 * 60))))
     }
 }
 

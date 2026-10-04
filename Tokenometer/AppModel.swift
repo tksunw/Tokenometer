@@ -92,8 +92,12 @@ final class AppModel {
         let result = await refresher.refresh(settings: settings.engineSettings, fetchWindows: fetchWindows, now: now)
         if fetchWindows { lastWindowFetch = now }
         snapshot = result
-        try? store.save(result)
-        WidgetCenter.shared.reloadAllTimelines()
+        // Most refreshes change nothing visible; a reload for each one wakes the widget extension
+        // and spends WidgetKit's reload budget, after which the widget stops updating for a while.
+        if !result.hasSameContent(as: previous) {
+            try? store.save(result)
+            WidgetCenter.shared.reloadAllTimelines()
+        }
         if settings.notifyAtCritical { Notifier.notifyCrossings(from: previous, to: result) }
         restartWatcher()
     }
