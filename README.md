@@ -99,3 +99,5 @@ Layout: `TokenometerCore/` is a Swift package with the model, log parsers, colle
 ## License
 
 MIT. See [LICENSE](LICENSE).
+
+The agent skills under `.agents/skills/` come from [mattpocock/skills](https://github.com/mattpocock/skills), MIT, copyright Matt Pocock. Their license is in [.agents/skills/LICENSE](.agents/skills/LICENSE).

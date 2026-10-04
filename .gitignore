@@ -22,7 +22,3 @@ dist/
 # Sparkle private key must never land here
 *.private.pem
 
-# Agent skills are installed per user, not per project
-.agents/
-.claude/skills/
-skills-lock.json
