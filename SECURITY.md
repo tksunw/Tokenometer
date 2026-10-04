@@ -56,6 +56,13 @@ Transcripts contain your prompts and the model's replies. Tokenometer parses onl
 - `UserDefaults` for the app: settings only.
 - A temporary copy of each Antigravity database during parsing, deleted immediately after.
 
+## Commands run
+
+Tokenometer runs four system tools, all as you, none with elevated privileges:
+
+- `ps` and `lsof`, to find the Antigravity language server and its localhost ports (above).
+- `pluginkit -a` on its own widget extension and `killall chronod`, once, the first time a new version of the app launches. Replacing the app makes macOS drop the old widget extension, and without this the widget stays on its old drawing or goes blank. `chronod` is the system's widget service and restarts by itself; every app's widgets redraw for a moment. Source: `Tokenometer/WidgetRepair.swift`.
+
 ## Network
 
 Every outbound request, with purpose:

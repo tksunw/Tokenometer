@@ -29,7 +29,7 @@ Scripts/release.sh 1.2.3                              # archive, Developer ID ex
 
 The built app writes its snapshot to `~/Library/Group Containers/F5ED28X889.net.timkennedy.tokenometer/snapshot.json`. That directory is TCC-protected from a shell, so use `tokenometerctl` to see what the app sees.
 
-Never run a DerivedData build while a copy sits in /Applications: WidgetKit validates the widget against the registered app bundle and fails every reload with "Bundle version did not match". Test through `Scripts/install-debug.sh`. If widgets stop updating after any install, `pluginkit -a <appex> && killall chronod` clears chronod's "bad extension" state.
+Never run a DerivedData build while a copy sits in /Applications: WidgetKit validates the widget against the registered app bundle and fails every reload with "Bundle version did not match". Test through `Scripts/install-debug.sh`. If widgets stop updating or go blank after any install, `pluginkit -a <appex> && killall chronod` clears it. The app does this itself the first time a new build number launches (`Tokenometer/WidgetRepair.swift`, keyed on `lastLaunchedBuild` in UserDefaults), because a Sparkle update or a drag from the DMG replaces the bundle and chronod drops the extension ("LS doesn't have a containing bundle, removing existing version as a safeguard").
 
 `project.yml` is the source of truth for targets, entitlements, Info.plist keys, and the Sparkle dependency. Edit it and regenerate; do not hand-edit the pbxproj. The generated project is committed so clones build without xcodegen.
 

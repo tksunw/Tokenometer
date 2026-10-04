@@ -44,6 +44,7 @@ final class AppModel {
 
     func start(windowSources: [any UsageWindowSource]) {
         self.windowSources = windowSources
+        WidgetRepair.runIfBuildChanged()
         statusItemMenu = StatusItemMenu(model: self)
         statusItemMenu?.install()
         refresher = UsageRefresher(collectors: Collectors.all(), windowSources: windowSources, locations: locations, previous: snapshot)

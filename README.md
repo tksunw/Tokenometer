@@ -49,7 +49,7 @@ git clone https://github.com/tksunw/usage-reporter ~/.claude/skills/usage-report
 
 The bars update while a Claude Code session is running: session and weekly after each turn, the model-scoped bar at most every five minutes. To remove it, delete `~/.claude/skills/usage-reporter`. Needs a Claude Code version with mods (2.1.288 or later).
 
-Updates: the app checks GitHub Releases once a day (Sparkle) and offers new versions; turn that off in Settings or check manually from the menu.
+Updates: the app checks GitHub Releases once a day (Sparkle) and offers new versions; turn that off in Settings or check manually from the menu. The first time a new version launches it restarts the system's widget service once, so the widget picks up the new version; all your widgets redraw for a moment.
 
 ## Where the numbers come from
 
