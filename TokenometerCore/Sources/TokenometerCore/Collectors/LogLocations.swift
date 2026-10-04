@@ -45,6 +45,9 @@ struct FileStamp: Sendable, Equatable {
 
     /// Nil when the file is missing or unreadable.
     init?(of url: URL) {
+        // URL caches resource values, and a stored URL (LogLocations) would report its first stamp forever.
+        var url = url
+        url.removeAllCachedResourceValues()
         guard let values = try? url.resourceValues(forKeys: [.fileSizeKey, .contentModificationDateKey]),
               let size = values.fileSize, let modified = values.contentModificationDate
         else { return nil }

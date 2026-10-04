@@ -188,6 +188,9 @@ public actor UsageRefresher {
     private let windowSources: [Provider: any UsageWindowSource]
     private let locations: LogLocations
     private var previous: Snapshot?
+    /// `~/.claude.json` runs to megabytes and is rewritten often; it is parsed again only when its
+    /// size or mtime changes.
+    private var claudeAccount: (stamp: FileStamp?, info: AccountInfo)?
 
     public init(collectors: [any UsageCollector], windowSources: [any UsageWindowSource], locations: LogLocations = .standard, previous: Snapshot? = nil) {
         self.collectors = collectors
@@ -226,7 +229,7 @@ public actor UsageRefresher {
         }
 
         let accounts: [Provider: AccountInfo] = [
-            .anthropic: AccountDetector.claude(configURL: locations.claudeConfig),
+            .anthropic: claudeAccountInfo(),
             .openAI: AccountDetector.codex(rateLimits: codexLimits),
             .google: AccountDetector.gemini(geminiHome: locations.geminiHome),
         ]
@@ -236,5 +239,13 @@ public actor UsageRefresher {
         let snapshot = UsageEngine.snapshot(from: inputs, settings: settings, previous: previous)
         previous = snapshot
         return snapshot
+    }
+
+    private func claudeAccountInfo() -> AccountInfo {
+        let stamp = FileStamp(of: locations.claudeConfig)
+        if let cached = claudeAccount, cached.stamp == stamp { return cached.info }
+        let info = AccountDetector.claude(configURL: locations.claudeConfig)
+        claudeAccount = (stamp, info)
+        return info
     }
 }
