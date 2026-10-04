@@ -21,19 +21,21 @@ on:
 
 jobs:
   build:
-    runs-on: macos-27
+    runs-on: xcode-27
     steps:
       - uses: actions/checkout@v5
       - name: Select Xcode 27
         run: |
           xcode=$(ls -d /Applications/Xcode_27*.app 2>/dev/null | sort -V | tail -n 1)
-          if [ -z "$xcode" ]; then
-            echo "::error::No Xcode 27 on this runner. Installed:"
-            ls -d /Applications/Xcode*.app
-            exit 1
-          fi
-          sudo xcode-select -s "$xcode"
-          xcodebuild -version
+          [ -n "$xcode" ] && sudo xcode-select -s "$xcode"
+          version=$(xcodebuild -version | head -n 1)
+          case "$version" in
+            "Xcode 27"*) echo "$version at $(xcode-select -p)" ;;
+            *)
+              echo "::error::Need Xcode 27, runner has ${version:-no Xcode}. Installed:"
+              ls -d /Applications/Xcode*.app
+              exit 1 ;;
+          esac
       # Unsigned: CI has no Developer ID identity. Builds the app and, as its
       # dependency, the widget extension.
       - name: Build app and widget
