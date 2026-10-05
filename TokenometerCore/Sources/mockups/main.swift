@@ -63,7 +63,7 @@ struct MenuBarStrip: View {
         HStack(spacing: 14) {
             Image(systemName: "wifi")
             Image(systemName: "battery.75percent")
-            Image(nsImage: MenuBarImage.render(sample.providers, style: style, darkMenuBar: true))
+            Image(nsImage: MenuBarImage.render(sample.providers, style: style))
             Text("Fri 9:41 AM").font(.system(size: 13))
         }
         .padding(.horizontal, 12)
@@ -97,7 +97,7 @@ Task { @MainActor in
     render(MenuBarStrip(style: .gauge), name: "menubar.png")
     render(MenuBarStrip(style: .bars), name: "menubar-bars.png")
     render(MenuBarStrip(style: .horizontal), name: "menubar-horizontal.png")
-    render(Image(nsImage: MenuBarImage.gauge(sample.providers, darkMenuBar: true)).interpolation(.none).resizable().frame(width: 24 * 6, height: 18 * 6).background(Color.black), name: "menubar-gauge-zoom.png")
+    render(Image(nsImage: MenuBarImage.gauge(sample.providers)).interpolation(.none).resizable().frame(width: 24 * 6, height: 18 * 6).background(Color.black), name: "menubar-gauge-zoom.png")
     render(WidgetMock(size: .small), name: "widget-small.png")
     render(WidgetMock(size: .medium), name: "widget-medium.png")
     render(WidgetMock(size: .large), name: "widget-large.png")

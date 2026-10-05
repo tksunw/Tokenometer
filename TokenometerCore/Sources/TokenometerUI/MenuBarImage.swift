@@ -36,11 +36,11 @@ public enum MenuBarImage {
     public static let height: CGFloat = 18
 
     /// `focus` is the provider the horizontal style shows; ignored by the other styles.
-    public static func render(_ providers: [ProviderSnapshot], style: MenuBarStyle, darkMenuBar: Bool, focus: ProviderSnapshot? = nil) -> NSImage {
+    public static func render(_ providers: [ProviderSnapshot], style: MenuBarStyle, focus: ProviderSnapshot? = nil) -> NSImage {
         switch style {
-        case .gauge: gauge(providers, darkMenuBar: darkMenuBar)
+        case .gauge: gauge(providers)
         case .bars: bars(providers)
-        case .horizontal: horizontal(focus ?? providers[0], darkMenuBar: darkMenuBar)
+        case .horizontal: horizontal(focus ?? providers[0])
         }
     }
 
@@ -49,7 +49,7 @@ public enum MenuBarImage {
     /// A 40pt bar with pace tick and the percent beside it. The menu bar is transparent over the
     /// wallpaper, so the background can be anything from white to black: the outline and the digits
     /// are white with a dark edge and read on either, and the provider's color is in the fill only.
-    public static func horizontal(_ provider: ProviderSnapshot, darkMenuBar: Bool) -> NSImage {
+    public static func horizontal(_ provider: ProviderSnapshot) -> NSImage {
         let barWidth: CGFloat = 40
         // The size and shape of the system battery indicator beside it: a rounded rectangle with
         // the fill inset from the outline.
@@ -101,23 +101,26 @@ public enum MenuBarImage {
 
     // MARK: Gauge
 
-    public static func gauge(_ providers: [ProviderSnapshot], darkMenuBar: Bool) -> NSImage {
+    /// Like the other styles, the rim and hub are white with a dark edge, so they read on any
+    /// wallpaper whatever the app's appearance; the menu bar's own look follows the wallpaper.
+    public static func gauge(_ providers: [ProviderSnapshot]) -> NSImage {
         let width: CGFloat = 24
         let image = NSImage(size: NSSize(width: width, height: height), flipped: false) { _ in
-            let rim = NSColor(white: darkMenuBar ? 1 : 0, alpha: 0.85)
+            let edge = NSColor(white: 0, alpha: 0.55)
             let center = NSPoint(x: width / 2, y: 3.5)
             let radius: CGFloat = 9.5
 
             // Rim: provider-neutral up to 75%, amber to 90%, red to 100%. Angles run 180° (0%) to 0° (100%).
-            func arc(from startPercent: Double, to endPercent: Double, color: NSColor) {
+            func arc(from startPercent: Double, to endPercent: Double, color: NSColor, width: CGFloat = 2) {
                 let path = NSBezierPath()
                 path.appendArc(withCenter: center, radius: radius, startAngle: 180 - 180 * startPercent / 100, endAngle: 180 - 180 * endPercent / 100, clockwise: true)
-                path.lineWidth = 2
+                path.lineWidth = width
                 path.lineCapStyle = .round
                 color.setStroke()
                 path.stroke()
             }
-            arc(from: 0, to: UsageLevel.warning, color: rim)
+            arc(from: 0, to: 100, color: edge, width: 3.5)
+            arc(from: 0, to: UsageLevel.warning, color: .white)
             arc(from: UsageLevel.warning, to: UsageLevel.critical, color: .systemOrange)
             arc(from: UsageLevel.critical, to: 100, color: .systemRed)
 
@@ -138,7 +141,9 @@ public enum MenuBarImage {
             }
 
             // Hub.
-            rim.setFill()
+            edge.setFill()
+            NSBezierPath(ovalIn: NSRect(x: center.x - 2.5, y: center.y - 2.5, width: 5, height: 5)).fill()
+            NSColor.white.setFill()
             NSBezierPath(ovalIn: NSRect(x: center.x - 1.75, y: center.y - 1.75, width: 3.5, height: 3.5)).fill()
             return true
         }

@@ -11,13 +11,9 @@ struct MenuBarLabel: View {
 
     var body: some View {
         if let providers = snapshot?.providers, !providers.isEmpty {
-            Image(nsImage: MenuBarImage.render(providers, style: style, darkMenuBar: menuBarIsDark, focus: focus))
+            Image(nsImage: MenuBarImage.render(providers, style: style, focus: focus))
         } else {
             Image(systemName: "gauge.with.dots.needle.33percent")
         }
-    }
-
-    private var menuBarIsDark: Bool {
-        NSApplication.shared.effectiveAppearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
     }
 }
