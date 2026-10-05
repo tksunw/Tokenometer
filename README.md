@@ -9,7 +9,7 @@ It reads the logs that Claude Code, Claude Desktop, Codex, Gemini CLI, and Antig
 ## Requirements
 
 - macOS 27.
-- For Claude's usage bars: Claude Code 2.1.287 or later (the first release Anthropic supports mods on; the mod is known to run on 2.1.251) with the [usage-reporter](https://github.com/tksunw/usage-reporter) mod. The mod is required, not optional: Tokenometer does not read your Claude login, so without it there is no source for Claude's percentages and you get spend only. Use 0.3.0 or later; an older version drives the bars but not the by-surface rows. See [Install](#install).
+- For Claude's usage bars: Claude Code 2.1.287 or later (the first release Anthropic supports mods on; the mod is known to run on 2.1.251) with the [usage-reporter](https://github.com/tksunw/usage-reporter) mod. The mod is required, not optional: Tokenometer does not read your Claude login, so without it there is no source for Claude's percentages and you get spend only. Use 0.5.0 or later; an older version drives the bars but not the by-surface rows (0.3.0) or the Credits section (0.5.0). See [Install](#install).
 - Codex and Antigravity need nothing extra.
 
 ## What it shows
@@ -23,6 +23,7 @@ For each provider:
 - A **pace tick** on every bar marking how far through the window the clock is. The fill stays in the provider's color while usage is at or behind the tick. Ahead of it, amber from 75% and red from 90%.
 - **Spend**: tokens and dollars for the session and the week. On a subscription the dollar figure is what the same tokens would have cost at API rates, labeled as such; the subscription is the real bill.
 - **Tools and models** this week, under a disclosure. Those rows are summed from this Mac's logs. For Claude the disclosure also shows the week split by surface (Claude Code, Chats, Cowork, Other) for the whole account, as Anthropic reports it, which covers your other devices and claude.ai chat too.
+- **Credits**, under a second disclosure, for Claude: every dollar credit on the account (extra usage, cloud sessions, the Projects setup credit, and any Anthropic adds later), each with dollars used of its limit, a bar, and when it resets or expires. A credit past its expiry drops off.
 
 Providers appear only when their logs exist on the Mac. If a source cannot be refreshed, the bar keeps its last value, dims, and shows why on hover.
 
@@ -87,7 +88,7 @@ rm -rf ~/.claude/mods/usage-reporter
 
 This setup works in the terminal and in the Claude desktop app's Code sessions alike. Cloning into `~/.claude/skills/usage-reporter` needs no settings line, but only terminal sessions load mods from there, so usage from the desktop app would never be reported.
 
-The bars update while a Claude Code session is running: session and weekly after each turn, the model-scoped bar at most every five minutes. Needs a Claude Code version with mods (2.1.287 or later). Tokenometer needs usage-reporter 0.3.0 or later for the by-surface rows in the menu; with an older mod those rows are absent and everything else works.
+The bars update while a Claude Code session is running: session and weekly after each turn, the model-scoped bar at most every five minutes. Needs a Claude Code version with mods (2.1.287 or later). Tokenometer needs usage-reporter 0.3.0 or later for the by-surface rows in the menu and 0.5.0 or later for the Credits section; with an older mod those are absent and everything else works.
 
 Updates: the app checks GitHub Releases once a day (Sparkle) and offers new versions; turn that off in Settings or check manually from the menu. The first time a new version launches it restarts the system's widget service once, so the widget picks up the new version; all your widgets redraw for a moment.
 

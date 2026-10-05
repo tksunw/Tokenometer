@@ -7,11 +7,18 @@ public struct ProviderSectionView: View {
     let snapshot: ProviderSnapshot
     let now: Date
     @State private var showDetail: Bool
+    @State private var showCredits: Bool
 
     public init(snapshot: ProviderSnapshot, now: Date = .now, expanded: Bool = false) {
         self.snapshot = snapshot
         self.now = now
         _showDetail = State(initialValue: expanded)
+        _showCredits = State(initialValue: expanded)
+    }
+
+    /// A grant past its expiry is gone; one past a reset is shown until the next report replaces it.
+    private var grants: [CreditGrant] {
+        (snapshot.grants ?? []).filter { !($0.ends == .expiry && ($0.endsAt ?? .distantFuture) <= now) }
     }
 
     private var color: Color { snapshot.provider.color }
@@ -90,7 +97,49 @@ public struct ProviderSectionView: View {
                 }
                 .font(.caption)
             }
+            if !grants.isEmpty {
+                DisclosureGroup(isExpanded: $showCredits) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        ForEach(grants, id: \.id) { CreditRow(grant: $0, color: color) }
+                    }
+                    .padding(.top, 2)
+                } label: {
+                    Text("Credits").font(.caption)
+                }
+                .font(.caption)
+            }
         }
+    }
+}
+
+/// One credit in the Credits disclosure: name, dollars used of the limit, a bar when there is a
+/// limit, and when it resets or expires.
+struct CreditRow: View {
+    let grant: CreditGrant
+    let color: Color
+
+    private func money(_ value: Double) -> String {
+        value.formatted(.currency(code: grant.currency).precision(.fractionLength(value == value.rounded() ? 0 : 2)))
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            HStack {
+                Text(grant.label).font(.caption2).lineLimit(1)
+                Spacer()
+                Text(grant.limit.map { "\(money(grant.used)) of \(money($0))" } ?? "\(money(grant.used)) used")
+                    .font(.caption2.monospacedDigit())
+            }
+            if let limit = grant.limit, limit > 0 {
+                MiniHorizontalBar(percent: grant.used / limit * 100, base: color)
+            }
+            if let endsAt = grant.endsAt {
+                let when = endsAt.formatted(.dateTime.month(.abbreviated).day().hour().minute())
+                Text(grant.ends == .expiry ? "Expires \(when)" : grant.ends == .reset ? "Resets \(when)" : "Ends \(when)")
+                    .font(.caption2).foregroundStyle(.tertiary)
+            }
+        }
+        .foregroundStyle(.secondary)
     }
 }
 
@@ -249,6 +298,11 @@ public enum SampleData {
                 SurfaceShare(key: "chat", label: "Chats", percent: 13),
                 SurfaceShare(key: "cowork", label: "Cowork", percent: 5),
                 SurfaceShare(key: "other", label: "Other", percent: 0),
+            ],
+            grants: [
+                CreditGrant(id: "extra_usage", label: "Extra usage", used: 0, limit: 100),
+                CreditGrant(id: "iguana_necktie", label: "Cloud sessions", used: 1.86, limit: 250, endsAt: now.addingTimeInterval(32 * 86400)),
+                CreditGrant(id: "harbor_lantern", label: "Project setup", used: 19.81, limit: 100, endsAt: now.addingTimeInterval(22 * 3600), ends: .expiry),
             ]
         )
         let openAI = ProviderSnapshot(

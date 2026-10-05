@@ -50,6 +50,7 @@ import Testing
         struct Boom: Error {}
         var fetched = ProviderWindows(session: UsageWindow(kind: .session, usedPercent: 50), weekly: UsageWindow(kind: .weekly, usedPercent: 20), planName: "max", fetchedAt: now)
         fetched.surfaces = [SurfaceShare(key: "chat", label: "Chats", percent: 12)]
+        fetched.grants = [CreditGrant(id: "extra_usage", label: "Extra usage", used: 4, limit: 100)]
         let first = UsageEngine.snapshot(
             from: RefreshInputs(records: [], presentTools: [.claudeCode], windows: [.anthropic: .success(fetched)], accounts: [.anthropic: AccountInfo(kind: .plan)], now: now),
             settings: EngineSettings(), previous: nil)
@@ -63,6 +64,7 @@ import Testing
         let anthropic = second.provider(.anthropic)!
         #expect(anthropic.session?.usedPercent == 50)
         #expect(anthropic.surfaces == fetched.surfaces)
+        #expect(anthropic.grants == fetched.grants)
         #expect(anthropic.windowsStale?.since == later)
         #expect(anthropic.windowsStale?.reason.contains("Boom") == true)
     }

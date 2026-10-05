@@ -10,6 +10,8 @@ public struct ProviderWindows: Sendable, Equatable {
     public var fetchedAt: Date
     /// The weekly window split by surface, when the provider reports one.
     public var surfaces: [SurfaceShare] = []
+    /// Dollar credits and grants on the account, when the provider reports them.
+    public var grants: [CreditGrant] = []
 
     public init(session: UsageWindow? = nil, weekly: UsageWindow? = nil, scoped: [UsageWindow] = [], planName: String? = nil, fetchedAt: Date) {
         self.session = session

@@ -5,9 +5,11 @@ import Foundation
 /// contacts no Anthropic host.
 ///
 /// Format version 1: `{version: 1, at, windows: [{kind: session | weekly, label?, percent, resetsAt?, at}],
-/// weeklyBreakdown?: {rows: [{key, label?, percent}]}, raw?}`. A weekly window with a `label` is scoped to
-/// that model family; `weeklyBreakdown` is the weekly usage split by surface, account-wide. Other fields
-/// the mod writes (`credits`, `cloudSessionCredits`) are not read. Knowledge of Anthropic's response
+/// weeklyBreakdown?: {rows: [{key, label?, percent}]}, grants?: [{id, label, used, limit?, currency, endsAt?,
+/// ends?}], raw?}`. A weekly window with a `label` is scoped to that model family; `weeklyBreakdown` is the
+/// weekly usage split by surface, account-wide; `grants` is every dollar credit, unknown kinds included.
+/// The single-credit fields the mod also writes (`credits`, `cloudSessionCredits`, `projectSetupCredit`)
+/// are not read; `grants` covers them. Knowledge of Anthropic's response
 /// shape lives in the mod, not here.
 public struct ClaudeUsageFile: UsageWindowSource {
     public let provider: Provider = .anthropic
@@ -55,6 +57,13 @@ public struct ClaudeUsageFile: UsageWindowSource {
         for row in root.dict("weeklyBreakdown")?["rows"] as? [[String: Any]] ?? [] {
             guard let key = row.string("key"), let percent = (row["percent"] as? NSNumber)?.doubleValue else { continue }
             windows.surfaces.append(SurfaceShare(key: key, label: row.string("label") ?? key, percent: percent))
+        }
+        // Every grant is kept, unknown kinds included, for the same reason.
+        for grant in root["grants"] as? [[String: Any]] ?? [] {
+            guard let id = grant.string("id"), let used = (grant["used"] as? NSNumber)?.doubleValue else { continue }
+            windows.grants.append(CreditGrant(id: id, label: grant.string("label") ?? id, used: used,
+                                              limit: (grant["limit"] as? NSNumber)?.doubleValue, currency: grant.string("currency") ?? "USD",
+                                              endsAt: Timestamps.parse(grant["endsAt"]), ends: grant.string("ends").flatMap(CreditGrant.Ends.init)))
         }
         return windows
     }

@@ -26,6 +26,34 @@ public struct SurfaceShare: Codable, Sendable, Equatable {
     }
 }
 
+/// One dollar credit or grant on the account, as the provider reports it (for Claude: extra usage,
+/// cloud sessions, the Projects setup credit, and any grant added later). The list is passed through
+/// whole, so a new kind appears without a release here.
+public struct CreditGrant: Codable, Sendable, Equatable {
+    public enum Ends: String, Codable, Sendable { case reset, expiry }
+
+    /// Stable source key, for example `extra_usage` or a provider codename.
+    public var id: String
+    public var label: String
+    public var used: Double
+    /// Nil when there is no limit, or none was reported.
+    public var limit: Double?
+    public var currency: String
+    public var endsAt: Date?
+    /// Whether `endsAt` is a reset or an expiry; nil when the provider's meaning is not known.
+    public var ends: Ends?
+
+    public init(id: String, label: String, used: Double, limit: Double? = nil, currency: String = "USD", endsAt: Date? = nil, ends: Ends? = nil) {
+        self.id = id
+        self.label = label
+        self.used = used
+        self.limit = limit
+        self.currency = currency
+        self.endsAt = endsAt
+        self.ends = ends
+    }
+}
+
 /// Everything the menu bar, menu, and widget show for one provider.
 public struct ProviderSnapshot: Codable, Sendable, Equatable, Identifiable {
     public var provider: Provider
@@ -42,10 +70,12 @@ public struct ProviderSnapshot: Codable, Sendable, Equatable, Identifiable {
     public var spendStale: StaleInfo?
     /// Optional so a snapshot written before this field existed still decodes.
     public var surfaces: [SurfaceShare]?
+    /// Optional for the same reason.
+    public var grants: [CreditGrant]?
 
     public var id: Provider { provider }
 
-    public init(provider: Provider, accountKind: AccountKind, planName: String? = nil, session: UsageWindow? = nil, weekly: UsageWindow? = nil, scoped: [UsageWindow] = [], sessionSpend: Spend = .zero, weeklySpend: Spend = .zero, tools: [ToolSpend] = [], models: [ModelSpend] = [], windowsStale: StaleInfo? = nil, spendStale: StaleInfo? = nil, surfaces: [SurfaceShare]? = nil) {
+    public init(provider: Provider, accountKind: AccountKind, planName: String? = nil, session: UsageWindow? = nil, weekly: UsageWindow? = nil, scoped: [UsageWindow] = [], sessionSpend: Spend = .zero, weeklySpend: Spend = .zero, tools: [ToolSpend] = [], models: [ModelSpend] = [], windowsStale: StaleInfo? = nil, spendStale: StaleInfo? = nil, surfaces: [SurfaceShare]? = nil, grants: [CreditGrant]? = nil) {
         self.provider = provider
         self.accountKind = accountKind
         self.planName = planName
@@ -59,6 +89,7 @@ public struct ProviderSnapshot: Codable, Sendable, Equatable, Identifiable {
         self.windowsStale = windowsStale
         self.spendStale = spendStale
         self.surfaces = surfaces
+        self.grants = grants
     }
 }
 

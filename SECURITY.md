@@ -21,7 +21,7 @@ Usage percent comes from [usage-reporter](https://github.com/tksunw/usage-report
 - **What it does**: on session start and when Claude Code reports that a rate-limit window moved, it asks Claude Code to `GET https://api.anthropic.com/api/oauth/usage`, the call behind `claude /usage`, and writes the windows to `~/.claude/usage-reporter/usage.json`. At most one call per five minutes across all sessions, ten minutes after a 429.
 - **The credential**: the mod calls `$.session.authorize()`, which gives it an opaque handle, and passes the handle to `$.http.fetch`. Claude Code attaches the credential on its side; the token never reaches the mod, the file, or Tokenometer.
 - **Between calls, and if a call fails**: the mod writes the 5-hour and 7-day percentages Claude Code already holds for its status line, over the last full response. No request is made for those.
-- **What the file holds**: percentages, reset times, credit figures, Anthropic's per-surface breakdown, and `raw`, Anthropic's last response as given. No token, no prompts. Tokenometer reads only the percentages, reset times, and breakdown.
+- **What the file holds**: percentages, reset times, credit figures, Anthropic's per-surface breakdown, and `raw`, Anthropic's last response as given. No token, no prompts. Tokenometer reads only the percentages, reset times, breakdown, and the `grants` list of credit figures.
 - **Source**: `hooks/register.ts` in the usage-reporter repository; the file is read by `TokenometerCore/Sources/TokenometerCore/Network/ClaudeUsageFile.swift`.
 
 ### Gemini CLI login (Google)

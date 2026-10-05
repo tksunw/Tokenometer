@@ -45,6 +45,15 @@ private struct StubTransport: HTTPTransport {
         #expect(without.surfaces.isEmpty)
     }
 
+    @Test func readsEveryGrantUnknownKindsIncluded() async throws {
+        let json = #"{"version":1,"at":"2026-10-04T18:42:36.233Z","windows":[],"grants":[{"id":"extra_usage","label":"Extra usage","used":0,"limit":100,"currency":"USD","at":"x"},{"id":"harbor_lantern","label":"Project setup","used":19.8,"limit":100,"currency":"USD","endsAt":"2026-10-05T17:16:23.346Z","ends":"expiry"},{"id":"nimbus_quill","used":3,"limit":null,"ends":"someday"},{"label":"No id","used":1}]}"#
+        let windows = try await report(json).fetchWindows()
+        // An unknown grant keeps its id as a label and an unknown `ends` reads as not known; a grant with no id is dropped.
+        #expect(windows.grants == [CreditGrant(id: "extra_usage", label: "Extra usage", used: 0, limit: 100),
+                                   CreditGrant(id: "harbor_lantern", label: "Project setup", used: 19.8, limit: 100, endsAt: Timestamps.parse("2026-10-05T17:16:23.346Z"), ends: .expiry),
+                                   CreditGrant(id: "nimbus_quill", label: "nimbus_quill", used: 3)])
+    }
+
     @Test func newerFormatSaysSoInsteadOfGuessing() async throws {
         let client = try report(#"{"version":2,"at":"2026-10-03T05:00:00.000Z","windows":[]}"#)
         await #expect(throws: UsageClientError.noReport("usage-reporter wrote format 2; this Tokenometer reads format 1")) { try await client.fetchWindows() }
