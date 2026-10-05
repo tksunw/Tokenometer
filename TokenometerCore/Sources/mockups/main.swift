@@ -16,6 +16,10 @@ if CommandLine.arguments.contains("--idle"), sample.providers.count > 1 {
     sample.providers[1].session?.usedPercent = 0
     sample.providers[1].session?.resetsAt = nil
 }
+// `--stale` marks the first provider's windows stale, to check the reason line under its bars.
+if CommandLine.arguments.contains("--stale"), !sample.providers.isEmpty {
+    sample.providers[0].windowsStale = StaleInfo(since: now.addingTimeInterval(-20 * 60), reason: "Logs are newer than the last usage report; check the usage-reporter mod is loaded in Claude Code")
+}
 if CommandLine.arguments.contains("--two") { sample = Snapshot(generatedAt: sample.generatedAt, providers: Array(sample.providers.prefix(2))) }
 
 @MainActor

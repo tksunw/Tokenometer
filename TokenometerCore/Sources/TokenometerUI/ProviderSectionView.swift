@@ -43,6 +43,10 @@ public struct ProviderSectionView: View {
             ForEach(Array(snapshot.scoped.enumerated()), id: \.offset) { _, window in
                 UsageBarView(label: window.label ?? "Scoped", window: window, base: color, stale: snapshot.windowsStale, now: now)
             }
+            if let stale = snapshot.windowsStale, snapshot.session != nil || snapshot.weekly != nil {
+                Label("Stale since \(Format.age(stale.since, now: now)): \(stale.reason)", systemImage: "exclamationmark.triangle")
+                    .font(.caption2).foregroundStyle(.secondary)
+            }
             if snapshot.session == nil && snapshot.weekly == nil {
                 Text(snapshot.accountKind == .metered ? "Set a budget in Settings to see a bar" : (snapshot.windowsStale?.reason ?? "Usage limits unavailable"))
                     .font(.caption).foregroundStyle(.secondary)
