@@ -45,36 +45,49 @@ Screenshots are rendered from the app's own views with sample data (`swift run m
 
 ### usage-reporter
 
-Tokenometer does not read your Claude login. Claude's percent comes from [usage-reporter](https://github.com/tksunw/usage-reporter), a separate Claude Code mod that asks Claude Code for your usage and writes it to `~/.claude/usage-reporter/usage.json`, where any tool can read it. Install it once per Mac. Clone it into a folder for mods:
+Tokenometer does not read your Claude login. Claude's percent comes from [usage-reporter](https://github.com/tksunw/usage-reporter), a separate Claude Code mod that asks Claude Code for your usage and writes it to `~/.claude/usage-reporter/usage.json`, where any tool can read it. Set it up once per Mac. Each block below can be pasted into Terminal as is.
+
+**1. Install the mod.**
 
 ```bash
 mkdir -p ~/.claude/mods
 git clone https://github.com/tksunw/usage-reporter ~/.claude/mods/usage-reporter
 ```
 
-Then tell Claude Code to load that folder, by adding one line to the `env` block of `~/.claude/settings.json` (create the block if there is none):
+**2. Tell Claude Code to load that folder.** This adds one line to `~/.claude/settings.json`, creating the file if there is none and leaving everything else in it alone:
 
-```json
-{
-  "env": {
-    "CLAUDE_CODE_PLUGIN_DIRS": "~/.claude/mods"
-  }
-}
+```bash
+f=~/.claude/settings.json
+[ -f "$f" ] || echo '{}' > "$f"
+jq '.env.CLAUDE_CODE_PLUGIN_DIRS = "~/.claude/mods"' "$f" > "$f.new" && mv "$f.new" "$f" || rm -f "$f.new"
 ```
 
-Start a new Claude Code session. This route works in the terminal and in the Claude desktop app's Code sessions alike. Cloning into `~/.claude/skills/usage-reporter` needs no settings line, but only terminal sessions load mods from there, so usage from the desktop app would never be reported.
+To do it by hand instead, add `"CLAUDE_CODE_PLUGIN_DIRS": "~/.claude/mods"` to the `env` block of that file. If you already set that variable to another folder, add `~/.claude/mods` to it after a colon rather than running the command, which would replace it.
 
-A Claude Code session that was already open when you installed the mod does not load it; start a new one. Until the mod reports, the Anthropic bars are missing or marked stale with a warning triangle.
+**3. Start a new Claude Code session.** A session that was already open does not load the mod. Until the mod reports, the Anthropic bars are missing or marked stale with a warning triangle.
 
-The bars update while a Claude Code session is running: session and weekly after each turn, the model-scoped bar at most every five minutes. Needs a Claude Code version with mods (2.1.287 or later).
+**Check that it works.** The first command should show the mod as loaded; the second prints when it last reported and the percentages:
 
-Tokenometer updates itself, but the mod does not. To update it, pull and start a new Claude Code session:
+```bash
+claude plugin list | grep -A3 usage-reporter
+jq -r '.at, (.windows[] | "\(.kind) \(.label // "all") \(.percent)%")' ~/.claude/usage-reporter/usage.json
+```
+
+**Update the mod.** Tokenometer updates itself, but the mod does not. Pull, then start a new Claude Code session:
 
 ```bash
 git -C ~/.claude/mods/usage-reporter pull
 ```
 
-Tokenometer needs usage-reporter 0.3.0 or later for the by-surface rows in the menu; with an older mod those rows are absent and everything else works. To remove the mod, delete `~/.claude/mods/usage-reporter`.
+**Remove the mod.**
+
+```bash
+rm -rf ~/.claude/mods/usage-reporter
+```
+
+This setup works in the terminal and in the Claude desktop app's Code sessions alike. Cloning into `~/.claude/skills/usage-reporter` needs no settings line, but only terminal sessions load mods from there, so usage from the desktop app would never be reported.
+
+The bars update while a Claude Code session is running: session and weekly after each turn, the model-scoped bar at most every five minutes. Needs a Claude Code version with mods (2.1.287 or later). Tokenometer needs usage-reporter 0.3.0 or later for the by-surface rows in the menu; with an older mod those rows are absent and everything else works.
 
 Updates: the app checks GitHub Releases once a day (Sparkle) and offers new versions; turn that off in Settings or check manually from the menu. The first time a new version launches it restarts the system's widget service once, so the widget picks up the new version; all your widgets redraw for a moment.
 
