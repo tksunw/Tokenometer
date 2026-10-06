@@ -104,7 +104,7 @@ Refresh happens when a log file changes (FSEvents) and every 60 seconds as a bac
 
 ### Plan versus metered accounts
 
-A subscription (Pro, Max, Team, ChatGPT Team, Google AI Pro) has usage windows, so you get percent bars. An API key or Enterprise account is billed per token and has none; for those Tokenometer shows spend, and a bar only if you set a dollar budget per window in Settings. Detection is automatic with an override per provider.
+A subscription (Pro, Max, Team, ChatGPT Team, Google AI Pro) has usage windows, so you get percent bars. An API key or Enterprise account is billed per token and has none; for those Tokenometer shows spend, and a bar only if you set a dollar budget per window in Settings. A Claude Enterprise account is the exception: its admin sets a monthly spend limit, so with usage-reporter 0.5.2 or later Tokenometer shows that as the main bar, "Monthly budget", with the dollars under Credits. It follows Anthropic's figures for the whole account, so a limit the admin raises shows on the next report, and it takes the place of a session budget set in Settings. Detection is automatic with an override per provider.
 
 ## Settings
 

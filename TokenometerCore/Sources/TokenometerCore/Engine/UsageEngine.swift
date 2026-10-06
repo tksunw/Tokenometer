@@ -119,7 +119,6 @@ public enum UsageEngine {
                 weekly = nil
                 scoped = []
                 surfaces = nil
-                grants = nil
             }
 
             // A window whose reset time has passed rolled over; the provider will report the new one
@@ -137,6 +136,13 @@ public enum UsageEngine {
                 session = budgetWindow(.session, spendUSD: usage.sessionSpend.costUSD, budget: budget?.sessionUSD, now: inputs.now, length: UsageAggregator.defaultSessionLength)
                 weekly = budgetWindow(.weekly, spendUSD: usage.weeklySpend.costUSD, budget: budget?.weeklyUSD, now: inputs.now, length: UsageAggregator.defaultWeeklyLength)
                 windowsStale = nil
+                // An Enterprise login's spend limit is the budget: its admin sets it and can raise it, and the
+                // provider reports spend against it for the whole account. It takes the main bar over a session
+                // budget typed into Settings. No reset date comes with it, so the bar has no pace tick.
+                if let monthly = grants?.first(where: { $0.id == "extra_usage" }), let limit = monthly.limit, limit > 0 {
+                    session = UsageWindow(kind: .session, usedPercent: min(100, monthly.used / limit * 100), label: "Monthly budget")
+                    grants = grants?.map { $0.id == "extra_usage" ? CreditGrant(id: $0.id, label: "Monthly budget", used: $0.used, limit: $0.limit, currency: $0.currency) : $0 }
+                }
             }
 
             var spendStale: StaleInfo?

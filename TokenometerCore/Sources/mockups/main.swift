@@ -20,6 +20,16 @@ if CommandLine.arguments.contains("--idle"), sample.providers.count > 1 {
 if CommandLine.arguments.contains("--stale"), !sample.providers.isEmpty {
     sample.providers[0].windowsStale = StaleInfo(since: now.addingTimeInterval(-20 * 60), reason: "Logs are newer than the last usage report; check the usage-reporter mod is loaded in Claude Code")
 }
+// `--enterprise` makes the first provider an Enterprise login: no windows, its monthly spend limit as the bar.
+if CommandLine.arguments.contains("--enterprise"), !sample.providers.isEmpty {
+    sample.providers[0].accountKind = .metered
+    sample.providers[0].planName = "Enterprise"
+    sample.providers[0].session = UsageWindow(kind: .session, usedPercent: 81, label: "Monthly budget")
+    sample.providers[0].weekly = nil
+    sample.providers[0].scoped = []
+    sample.providers[0].surfaces = nil
+    sample.providers[0].grants = [CreditGrant(id: "extra_usage", label: "Monthly budget", used: 648.20, limit: 800)]
+}
 if CommandLine.arguments.contains("--two") { sample = Snapshot(generatedAt: sample.generatedAt, providers: Array(sample.providers.prefix(2))) }
 
 @MainActor

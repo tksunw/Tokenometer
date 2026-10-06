@@ -41,7 +41,7 @@ An API key or Enterprise account billed on consumption with no usage windows. Re
 _Avoid_: API account, pay-as-you-go, enterprise
 
 **Budget**:
-A dollar amount a person sets for a usage window on a metered account, so spend can be shown as a percent of something.
+A dollar amount a person sets for a usage window on a metered account, so spend can be shown as a percent of something. On Claude Enterprise the admin-set monthly spend limit, as Anthropic reports it, is the budget instead.
 _Avoid_: Limit, cap, allowance
 
 **Reset time**:

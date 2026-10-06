@@ -69,6 +69,26 @@ import Testing
         #expect(anthropic.windowsStale?.reason.contains("Boom") == true)
     }
 
+    @Test func enterpriseSpendLimitIsTheBudget() {
+        // usage-reporter 0.5.2 on an Enterprise login: no windows, a monthly spend limit as the extra usage grant.
+        var fetched = ProviderWindows(fetchedAt: now)
+        fetched.grants = [CreditGrant(id: "extra_usage", label: "Extra usage", used: 200, limit: 800)]
+        func snapshot(budget: Double?) -> ProviderSnapshot? {
+            var settings = EngineSettings()
+            settings.budgets[.anthropic] = Budget(sessionUSD: budget)
+            return UsageEngine.snapshot(
+                from: RefreshInputs(records: [record(.claudeCode, minutesAgo: 1)], presentTools: [.claudeCode], windows: [.anthropic: .success(fetched)],
+                                    accounts: [.anthropic: AccountInfo(kind: .metered, planName: "Enterprise")], now: now),
+                settings: settings, previous: nil).provider(.anthropic)
+        }
+        // The provider's limit wins over a budget typed into Settings, and the grant stays for its dollars.
+        for anthropic in [snapshot(budget: nil), snapshot(budget: 0.5)] {
+            #expect(anthropic?.session?.usedPercent == 25)
+            #expect(anthropic?.session?.label == "Monthly budget")
+            #expect(anthropic?.grants == [CreditGrant(id: "extra_usage", label: "Monthly budget", used: 200, limit: 800)])
+        }
+    }
+
     @Test func meteredAccountsShowBudgetPercentOrNothing() {
         // 1M input tokens of Haiku 4.5 = $1.00
         let inputs = RefreshInputs(records: [record(.claudeCode, minutesAgo: 1)], presentTools: [.claudeCode],
