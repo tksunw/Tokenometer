@@ -23,26 +23,30 @@ public enum Format {
         "\(Int(min(max(value, 0), 100).rounded()))%"
     }
 
-    /// Menu: "⟳ today 11:49 PM", "⟳ tomorrow 6:59 AM", "⟳ Oct 6, 6:59 AM".
+    /// Menu: "⟳ today 11:49 PM", "⟳ Sun 6:59 AM" within the week, "⟳ Oct 16, 6:59 AM" beyond.
     public static func resets(_ date: Date?, now: Date = .now) -> String? {
         guard let date else { return nil }
         if date <= now { return "⟳ now" }
-        let calendar = Calendar.current
         let time = date.formatted(.dateTime.hour().minute())
-        if calendar.isDate(date, inSameDayAs: now) { return "⟳ today \(time)" }
-        if let tomorrow = calendar.date(byAdding: .day, value: 1, to: now), calendar.isDate(date, inSameDayAs: tomorrow) {
-            return "⟳ tomorrow \(time)"
-        }
-        return "⟳ \(date.formatted(.dateTime.month(.abbreviated).day())), \(time)"
+        if Calendar.current.isDate(date, inSameDayAs: now) { return "⟳ today \(time)" }
+        return "⟳ \(day(date, now: now)) \(time)"
     }
 
-    /// Small and medium widgets: "⟳ 3:49 PM" today, else "⟳ Oct 4, 3:49 PM".
+    /// Widgets: "⟳ 3:49 PM" today, "⟳ Sun 3:49 PM" within the week, "⟳ Oct 16, 3:49 PM" beyond.
     public static func resetsShort(_ date: Date?, now: Date = .now) -> String? {
         guard let date else { return nil }
         if date <= now { return "⟳ now" }
         let time = date.formatted(.dateTime.hour().minute())
         if Calendar.current.isDate(date, inSameDayAs: now) { return "⟳ \(time)" }
-        return "⟳ \(date.formatted(.dateTime.month(.abbreviated).day())), \(time)"
+        return "⟳ \(day(date, now: now)) \(time)"
+    }
+
+    /// A weekly window resets within seven days, so its weekday names the day without ambiguity;
+    /// anything further out gets the date. "Sun" or "Oct 16,".
+    private static func day(_ date: Date, now: Date) -> String {
+        let calendar = Calendar.current
+        let days = calendar.dateComponents([.day], from: calendar.startOfDay(for: now), to: calendar.startOfDay(for: date)).day ?? 7
+        return days < 7 ? date.formatted(.dateTime.weekday(.abbreviated)) : date.formatted(.dateTime.month(.abbreviated).day()) + ","
     }
 
     /// Large widget's narrow column: the time today, else the date, no symbol.

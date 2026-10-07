@@ -32,8 +32,9 @@ public struct UsageBarView: View {
 
     public var body: some View {
         if compact {
-            // One row per window: label, bar, percent, and optionally the reset time. Widgets have
-            // no room for stacked rows, so the reset costs width rather than height.
+            // One row per window: label, bar, percent, and optionally the reset time. The large
+            // widget has nine of these and no height for a reset line under each bar (it would
+            // need about 430pt of its 312), so the reset costs width rather than height.
             HStack(spacing: 6) {
                 Text(compactLabel).font(.widget(scale)).lineLimit(1).frame(width: 86 * scale, alignment: .leading)
                 // The minimum keeps a larger type size from squeezing the bar to nothing; a scale
@@ -42,9 +43,10 @@ public struct UsageBarView: View {
                 Text(Format.percent(window.usedPercent)).font(.widget(scale).monospacedDigit().bold())
                     .foregroundStyle(fill).frame(width: 34 * scale, alignment: .trailing)
                 if showsReset {
-                    Text(Format.resetsCompact(window.resetsAt, now: now) ?? "")
+                    Text(Format.resetsShort(window.resetsAt, now: now) ?? "")
                         .font(.widget(scale)).foregroundStyle(.secondary).lineLimit(1)
-                        .frame(width: 52 * scale, alignment: .trailing)
+                        // Wide enough for "⟳ Sep 28, 12:37 PM", so the bars line up across rows.
+                        .frame(width: 92 * scale, alignment: .trailing)
                 }
             }
             .opacity(stale == nil ? 1 : 0.6)
@@ -63,6 +65,7 @@ public struct UsageBarView: View {
                     .opacity(stale == nil ? 1 : 0.6)
                 if let resets = Format.resets(window.resetsAt, now: now) {
                     Text(resets).font(.caption2).foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
                 }
             }
         }

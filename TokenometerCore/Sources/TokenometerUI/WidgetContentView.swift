@@ -69,6 +69,7 @@ public struct WidgetContentView: View {
                         MiniHorizontalBar(percent: session.usedPercent, base: provider.provider.color, pace: session.elapsedFraction(now: now))
                         if resets, let text = Format.resetsShort(session.resetsAt, now: now) {
                             Text(text).font(.widget(scale)).foregroundStyle(.secondary).lineLimit(1)
+                                .frame(maxWidth: .infinity, alignment: .trailing)
                         }
                     }
                 }
@@ -116,14 +117,14 @@ public struct WidgetContentView: View {
     }
 
     private func resetLine(_ window: UsageWindow?, beside other: UsageWindow?, scale: CGFloat) -> some View {
-        ZStack(alignment: .leading) {
+        ZStack(alignment: .trailing) {
             // The two columns split the width equally, so each must hold the wider of the two texts.
             // A hidden copy of the other one lets the fit test see that and step the scale down.
             Text(Format.resetsShort(other?.resetsAt, now: now) ?? " ").hidden()
             Text(Format.resetsShort(window?.resetsAt, now: now) ?? " ")
         }
         .font(.widget(scale)).foregroundStyle(.secondary).lineLimit(1)
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(maxWidth: .infinity, alignment: .trailing)
     }
 
     private func cell(_ window: UsageWindow?, provider: ProviderSnapshot, resets: Bool, scale: CGFloat) -> some View {
