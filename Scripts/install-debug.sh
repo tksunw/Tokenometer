@@ -13,7 +13,13 @@ sleep 1
 rm -rf /Applications/Tokenometer.app
 ditto "$APP" /Applications/Tokenometer.app
 "$LSREG" -f /Applications/Tokenometer.app >/dev/null 2>&1 || true
-pluginkit -a /Applications/Tokenometer.app/Contents/PlugIns/TokenometerWidget.appex
+# Same sequence as WidgetRepair.swift: chronod refetches the widget list only for an extension it
+# has not seen, so unregister, restart it, kill the old extension process, register again.
+APPEX=/Applications/Tokenometer.app/Contents/PlugIns/TokenometerWidget.appex
+pluginkit -r "$APPEX" || true
 killall chronod || true
+sleep 4
+killall TokenometerWidget 2>/dev/null || true
+pluginkit -a "$APPEX"
 open /Applications/Tokenometer.app
 echo "Debug build installed to /Applications and running"
