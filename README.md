@@ -1,6 +1,6 @@
 # Tokenometer
 
-A macOS menu bar app and desktop widget that shows how much of your AI coding assistants' usage limits you have used. A tiny gauge in the menu bar with one hand per provider (or one bar per provider, your choice); session and weekly bars, spend, and a per-tool breakdown in the menu; the same on a widget.
+A macOS menu bar app and desktop widgets that show how much of your AI coding assistants' usage limits you have used. A tiny gauge in the menu bar with one hand per provider (or one bar per provider, your choice); session and weekly bars, spend, and a per-tool breakdown in the menu; the same on a widget, as bars or as rings.
 
 <p align="center"><img src="docs/images/menubar.png" alt="Menu bar gauge with one hand per provider" width="390"></p>
 
@@ -29,7 +29,7 @@ Providers appear only when their logs exist on the Mac. If a source cannot be re
 
 ### Widget
 
-Two widgets. Tokenometer, in bars: small shows the session bar per provider, medium session and weekly side by side, large every window and spend, each with its reset time.
+Two widgets, both listed under Tokenometer in the widget gallery. Tokenometer, in bars: small shows the session bar per provider, medium session and weekly side by side, large every window and spend, each with its reset time. A reset within the week reads as the weekday ("Sun 7:00 PM"); further out, the date.
 
 <p align="center"><img src="docs/images/widget-small.png" alt="Small widget" width="170"> <img src="docs/images/widget-medium.png" alt="Medium widget" width="364"></p>
 <p align="center"><img src="docs/images/widget-large.png" alt="Large widget" width="364"></p>
@@ -40,6 +40,10 @@ Session Rings, in the style of the battery widget: a ring per provider with the 
 <p align="center"><img src="docs/images/rings-small-one.png" alt="Small rings widget, one provider" width="170"> <img src="docs/images/rings-medium-one.png" alt="Medium rings widget, one provider" width="364"></p>
 <p align="center"><img src="docs/images/rings-large.png" alt="Large rings widget" width="364"></p>
 
+The gauge shape, a 240° arc open at the bottom, from the same Edit Widget sheet:
+
+<p align="center"><img src="docs/images/rings-medium-gauge.png" alt="Medium rings widget, gauge shape" width="364"></p>
+
 Screenshots are rendered from the app's own views with sample data (`swift run mockups`), so they match the real thing pixel for pixel but not your numbers.
 
 ## Install
@@ -47,7 +51,7 @@ Screenshots are rendered from the app's own views with sample data (`swift run m
 1. Download `Tokenometer-<version>.dmg` from the [latest release](https://github.com/tksunw/Tokenometer/releases/latest) and open it.
 2. Drag Tokenometer onto the Applications folder in the installer window, then open it from Applications. The app and the disk image are Developer ID signed and notarized. A plain zip of the app is on the release page too.
 3. It lives in the menu bar only; there is no Dock icon. Click the bars for the menu, the gear for Settings.
-4. For the widget: right-click the desktop, Edit Widgets, search Tokenometer.
+4. For the widgets: right-click the desktop, Edit Widgets, search Tokenometer. Both widgets are there in every size. To change what a placed Session Rings widget shows, right-click it and choose Edit Widget.
 5. If you use Claude, install the usage-reporter mod (below). Claude's usage bars do not work without it; only spend does.
 
 ### usage-reporter
@@ -96,7 +100,7 @@ This setup works in the terminal and in the Claude desktop app's Code sessions a
 
 The bars update while a Claude Code session is running: session and weekly after each turn, the model-scoped bar at most every five minutes. Needs a Claude Code version with mods (2.1.287 or later). Tokenometer needs usage-reporter 0.3.0 or later for the by-surface rows in the menu and 0.5.0 or later for the Credits section; with an older mod those are absent and everything else works.
 
-Updates: the app checks GitHub Releases once a day (Sparkle) and offers new versions; turn that off in Settings or check manually from the menu. The first time a new version launches it restarts the system's widget service once, so the widget picks up the new version; all your widgets redraw for a moment.
+Updates: the app checks GitHub Releases once a day (Sparkle) and offers new versions; turn that off in Settings or check manually from the menu. The first time a new version launches it restarts the system's widget service once, so the widgets pick up the new version; all your widgets redraw for a moment.
 
 ## Where the numbers come from
 
@@ -135,7 +139,7 @@ swift run tokenometerctl                  # prints what the app would show on th
 
 Signing is set to a Developer ID identity for team `F5ED28X889`; change `DEVELOPMENT_TEAM` and the App Group prefix in `project.yml` (and `SnapshotStore.appGroup`) to build under your own team.
 
-Layout: `TokenometerCore/` is a Swift package with the model, log parsers, collectors, pricing table, aggregation, and the usage clients, tested against scrubbed fixture logs. `Tokenometer/` is the menu bar app, `TokenometerWidget/` the WidgetKit extension. `docs/adr/` records the design decisions; `GLOSSARY.md` the vocabulary.
+Layout: `TokenometerCore/` is a Swift package with the model, log parsers, collectors, pricing table, aggregation, and the usage clients, tested against scrubbed fixture logs. `Tokenometer/` is the menu bar app, `TokenometerWidget/` the WidgetKit extension with both widgets; the views they share, including the rings, are in `TokenometerCore/Sources/TokenometerUI/`. `docs/adr/` records the design decisions; `GLOSSARY.md` the vocabulary.
 
 ## Limitations
 
