@@ -12,6 +12,7 @@
 		2134A4D4482031D0AA352873 /* Notifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F10257D357A53CC988759AD /* Notifier.swift */; };
 		2EACC623135B40648DE5B586 /* LogWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D075C29C1A970E97E3C6E39 /* LogWatcher.swift */; };
 		31EB3093464CF2CD3DD854E9 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CD8D9D552E87DC3E67CA7C5 /* AppSettings.swift */; };
+		4AEDCCC6F9C973A049DD9CF3 /* RingsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 827A0CE3D6965B1EEEDF807A /* RingsWidget.swift */; };
 		4F40FA01ACC46B23959B4C79 /* TokenometerCore in Frameworks */ = {isa = PBXBuildFile; productRef = 6A9022192144C464CD2CE758 /* TokenometerCore */; };
 		5F580DB5EB863395A2AF7D07 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EB17CC2B057D227EDD72AA2 /* SettingsView.swift */; };
 		6484479620080D776D60730B /* MenuBarLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8237D9BE03B189F4331DC96F /* MenuBarLabel.swift */; };
@@ -66,6 +67,7 @@
 		518D0E46DC700DB032CA597A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		7CD8D9D552E87DC3E67CA7C5 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		8237D9BE03B189F4331DC96F /* MenuBarLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarLabel.swift; sourceTree = "<group>"; };
+		827A0CE3D6965B1EEEDF807A /* RingsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RingsWidget.swift; sourceTree = "<group>"; };
 		8EB17CC2B057D227EDD72AA2 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		8FE3CC39AA9E915E6EE1ED11 /* WidgetRepair.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetRepair.swift; sourceTree = "<group>"; };
 		946E1A6150F6757EBB179EFE /* TokenometerWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenometerWidget.swift; sourceTree = "<group>"; };
@@ -150,6 +152,7 @@
 			isa = PBXGroup;
 			children = (
 				518D0E46DC700DB032CA597A /* Info.plist */,
+				827A0CE3D6965B1EEEDF807A /* RingsWidget.swift */,
 				B1AB11ABB6ABAFB710761823 /* TokenometerWidget.entitlements */,
 				946E1A6150F6757EBB179EFE /* TokenometerWidget.swift */,
 			);
@@ -280,6 +283,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4AEDCCC6F9C973A049DD9CF3 /* RingsWidget.swift in Sources */,
 				7381407DF371E9E9DA57593C /* TokenometerWidget.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

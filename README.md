@@ -29,10 +29,16 @@ Providers appear only when their logs exist on the Mac. If a source cannot be re
 
 ### Widget
 
-Small shows the session bar per provider. Medium shows session and weekly side by side. Large shows every window and spend. Reset times sit beside each bar on all three sizes.
+Two widgets. Tokenometer, in bars: small shows the session bar per provider, medium session and weekly side by side, large every window and spend, each with its reset time.
 
 <p align="center"><img src="docs/images/widget-small.png" alt="Small widget" width="170"> <img src="docs/images/widget-medium.png" alt="Medium widget" width="364"></p>
 <p align="center"><img src="docs/images/widget-large.png" alt="Large widget" width="364"></p>
+
+Session Rings, in the style of the battery widget: a ring per provider with the session percent inside and the reset time under it; the large adds a row of weekly rings. Right-click it and choose Edit Widget to pick which providers it shows (one alone draws large, with its weekly ring beside it on the medium and large) or a gauge arc instead of a full ring. Place several and give each a different provider.
+
+<p align="center"><img src="docs/images/rings-small.png" alt="Small rings widget" width="170"> <img src="docs/images/rings-medium.png" alt="Medium rings widget" width="364"></p>
+<p align="center"><img src="docs/images/rings-small-one.png" alt="Small rings widget, one provider" width="170"> <img src="docs/images/rings-medium-one.png" alt="Medium rings widget, one provider" width="364"></p>
+<p align="center"><img src="docs/images/rings-large.png" alt="Large rings widget" width="364"></p>
 
 Screenshots are rendered from the app's own views with sample data (`swift run mockups`), so they match the real thing pixel for pixel but not your numbers.
 

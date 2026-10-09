@@ -101,6 +101,20 @@ struct WidgetMock: View {
     }
 }
 
+/// The rings widget at a size, for a provider choice (nil is all of them) and ring shape.
+struct RingMock: View {
+    let size: RingWidgetView.Size
+    var providers: Set<Provider> = []
+    var style: SessionRingStyle = .ring
+    var body: some View {
+        RingWidgetView(snapshot: sample, size: size, providers: providers, style: style, now: now)
+            .padding(16)
+            .frame(width: size == .small ? 164 : 344, height: size == .large ? 344 : 164)
+            .background(Color(nsColor: .windowBackgroundColor))
+            .clipShape(RoundedRectangle(cornerRadius: 20))
+    }
+}
+
 Task { @MainActor in
     render(MenuMock(), name: "menu-dark.png")
     render(MenuMock(), name: "menu-light.png", scheme: .light)
@@ -111,6 +125,14 @@ Task { @MainActor in
     render(WidgetMock(size: .small), name: "widget-small.png")
     render(WidgetMock(size: .medium), name: "widget-medium.png")
     render(WidgetMock(size: .large), name: "widget-large.png")
+    render(RingMock(size: .small), name: "rings-small.png")
+    render(RingMock(size: .medium), name: "rings-medium.png")
+    render(RingMock(size: .small, providers: [.anthropic]), name: "rings-small-one.png")
+    render(RingMock(size: .medium, providers: [.anthropic]), name: "rings-medium-one.png")
+    render(RingMock(size: .medium, style: .gauge), name: "rings-medium-gauge.png")
+    render(RingMock(size: .large), name: "rings-large.png")
+    render(RingMock(size: .large, providers: [.anthropic]), name: "rings-large-one.png")
+    render(RingMock(size: .small, providers: [.anthropic, .openAI]), name: "rings-small-two.png")
     exit(0)
 }
 RunLoop.main.run()

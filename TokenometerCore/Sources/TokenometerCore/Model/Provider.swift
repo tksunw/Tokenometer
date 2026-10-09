@@ -15,6 +15,15 @@ public enum Provider: String, Codable, Sendable, CaseIterable, Identifiable {
         case .google: "Google"
         }
     }
+
+    /// The product name, for where the company name does not fit: "Claude", "Codex", "Gemini".
+    public var shortName: String {
+        switch self {
+        case .anthropic: "Claude"
+        case .openAI: "Codex"
+        case .google: "Gemini"
+        }
+    }
 }
 
 /// A program that talks to a provider and writes logs. Several tools share one provider account.

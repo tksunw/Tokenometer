@@ -7,6 +7,7 @@ import TokenometerUI
 struct TokenometerWidgetBundle: WidgetBundle {
     var body: some Widget {
         TokenometerWidget()
+        RingsWidget()
     }
 }
 
