@@ -133,6 +133,7 @@ Task { @MainActor in
     render(RingMock(size: .large), name: "rings-large.png")
     render(RingMock(size: .large, providers: [.anthropic]), name: "rings-large-one.png")
     render(RingMock(size: .small, providers: [.anthropic, .openAI]), name: "rings-small-two.png")
+    render(RingMock(size: .medium, providers: [.anthropic, .openAI]), name: "rings-medium-two.png")
     exit(0)
 }
 RunLoop.main.run()
