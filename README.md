@@ -139,7 +139,7 @@ swift run tokenometerctl                  # prints what the app would show on th
 
 Signing is set to a Developer ID identity for team `F5ED28X889`; change `DEVELOPMENT_TEAM` and the App Group prefix in `project.yml` (and `SnapshotStore.appGroup`) to build under your own team.
 
-Layout: `TokenometerCore/` is a Swift package with the model, log parsers, collectors, pricing table, aggregation, and the usage clients, tested against scrubbed fixture logs. `Tokenometer/` is the menu bar app, `TokenometerWidget/` the WidgetKit extension with both widgets; the views they share, including the rings, are in `TokenometerCore/Sources/TokenometerUI/`. `docs/adr/` records the design decisions; `GLOSSARY.md` the vocabulary.
+Layout: `TokenometerCore/` is a Swift package with the model, log parsers, collectors, pricing table, aggregation, and the usage clients, tested against scrubbed fixture logs. `Tokenometer/` is the menu bar app, `TokenometerWidget/` the WidgetKit extension with both widgets; the views they share, including the rings, are in `TokenometerCore/Sources/TokenometerUI/`. `docs/adr/` records the design decisions, `docs/widgets.md` the widgets' layout rules and the chronod lesson, `GLOSSARY.md` the vocabulary.
 
 ## Limitations
 
