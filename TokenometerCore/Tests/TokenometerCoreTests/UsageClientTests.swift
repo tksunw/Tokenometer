@@ -75,7 +75,7 @@ private struct StubTransport: HTTPTransport {
         #expect(abs((windows.weekly?.usedPercent ?? 0) - 2.58) < 1e-6)
         #expect(windows.session?.label == "Gemini session")
         #expect(windows.weekly?.length == 604800.0)
-        #expect(windows.scoped.map(\.label) == ["Claude & GPT weekly", "Claude & GPT session"])
+        #expect(windows.scoped.map(\.label) == ["Claude & GPT session", "Claude & GPT weekly"])
         #expect(windows.scoped.first?.usedPercent == 0)
     }
 

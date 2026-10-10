@@ -44,30 +44,29 @@ public struct RingWidgetView: View {
     }
 
     /// One provider: its session ring, large; the medium and large pair it with the weekly ring.
-    /// The medium's "as of" shares the title line, since the rings take the rest of the height.
+    /// Title at the left like every other provider name, "as of" at the bottom right like every
+    /// other footer; the medium's rings are 72pt so both fit.
     private func single(_ provider: ProviderSnapshot) -> some View {
         let small = size == .small
-        let ring: CGFloat = switch size { case .small: 88; case .medium: 76; case .large: 120 }
+        let ring: CGFloat = switch size { case .small: 88; case .medium: 72; case .large: 120 }
         return VStack(spacing: 4) {
             HStack(spacing: 4) {
-                if !small { Spacer(minLength: 0) }
                 Circle().fill(provider.provider.color).frame(width: 7, height: 7)
                 Text(provider.provider.displayName).font(.system(size: 12, weight: .semibold))
                 if !small, let plan = provider.planName {
                     Text(plan).font(.system(size: 11)).foregroundStyle(.secondary)
                 }
                 Spacer(minLength: 0)
-                if size == .medium { asOf }
             }
             Spacer(minLength: 0)
-            HStack(alignment: .top, spacing: 32) {
-                column(provider.session, label: small ? nil : "Session", provider: provider, ring: ring, percent: ring > 100 ? 28 : 20, caption: 11, resets: true)
+            HStack(alignment: .top, spacing: small ? 0 : 48) {
+                column(provider.session, label: small ? nil : "Session", provider: provider, ring: ring, percent: ring > 100 ? 28 : ring > 80 ? 20 : 17, caption: ring > 80 ? 11 : 10, resets: true)
                 if !small {
-                    column(provider.weekly, label: "Weekly", provider: provider, ring: ring, percent: ring > 100 ? 28 : 20, caption: 11, resets: true)
+                    column(provider.weekly, label: "Weekly", provider: provider, ring: ring, percent: ring > 100 ? 28 : 17, caption: 10, resets: true)
                 }
             }
             Spacer(minLength: 0)
-            if size == .large { HStack { Spacer(); asOf } }
+            if !small { HStack { Spacer(); asOf } }
         }
     }
 

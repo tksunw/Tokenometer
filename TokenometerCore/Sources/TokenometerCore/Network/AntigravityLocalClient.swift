@@ -48,7 +48,9 @@ public struct AntigravityLocalClient: UsageWindowSource {
         var windows = ProviderWindows(fetchedAt: now)
         for (index, group) in groups.enumerated() {
             let groupName = Self.shortName(group.string("displayName") ?? "Group \(index + 1)")
-            for bucket in group["buckets"] as? [[String: Any]] ?? [] {
+            // Session before weekly within a group, whatever order the server lists its buckets.
+            let buckets = (group["buckets"] as? [[String: Any]] ?? []).sorted { ($0.string("window") == "weekly" ? 1 : 0) < ($1.string("window") == "weekly" ? 1 : 0) }
+            for bucket in buckets {
                 guard let remaining = bucket["remainingFraction"] as? NSNumber else { continue }
                 let isWeekly = bucket.string("window") == "weekly"
                 let window = UsageWindow(

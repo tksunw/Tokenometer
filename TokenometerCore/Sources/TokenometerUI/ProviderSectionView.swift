@@ -231,7 +231,7 @@ public struct WidgetProviderView: View {
                 HStack {
                     Text("Session \(Format.tokens(snapshot.sessionSpend.tokens.total)) · \(Format.usd(snapshot.sessionSpend))")
                     Spacer()
-                    Text("Week \(Format.tokens(snapshot.weeklySpend.tokens.total)) · \(Format.usd(snapshot.weeklySpend))")
+                    Text("Weekly \(Format.tokens(snapshot.weeklySpend.tokens.total)) · \(Format.usd(snapshot.weeklySpend))")
                 }
                 .font(.widget(scale).monospacedDigit()).foregroundStyle(.secondary).lineLimit(1)
             }
@@ -319,8 +319,8 @@ public enum SampleData {
             session: UsageWindow(kind: .session, usedPercent: 4, resetsAt: now.addingTimeInterval(4 * 3600 + 600), length: 5 * 3600, label: "Gemini session"),
             weekly: UsageWindow(kind: .weekly, usedPercent: 3, resetsAt: now.addingTimeInterval(6.9 * 86400), length: 7 * 86400, label: "Gemini weekly"),
             scoped: [
-                UsageWindow(kind: .weekly, usedPercent: 0, resetsAt: now.addingTimeInterval(6.9 * 86400), length: 7 * 86400, label: "Claude & GPT weekly"),
                 UsageWindow(kind: .session, usedPercent: 0, resetsAt: now.addingTimeInterval(4 * 3600 + 600), length: 5 * 3600, label: "Claude & GPT session"),
+                UsageWindow(kind: .weekly, usedPercent: 0, resetsAt: now.addingTimeInterval(6.9 * 86400), length: 7 * 86400, label: "Claude & GPT weekly"),
             ],
             sessionSpend: Spend(tokens: TokenCounts(input: 1_900_000, output: 60_000, thinking: 12_000), costUSD: 0, hasUnknownCost: true, calls: 88),
             weeklySpend: Spend(tokens: TokenCounts(input: 5_600_000, output: 210_000, thinking: 40_000), costUSD: 0, hasUnknownCost: true, calls: 240),

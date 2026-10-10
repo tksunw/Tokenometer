@@ -24,10 +24,6 @@ public struct UsageBarView: View {
     }
 
     private var pace: Double? { window.elapsedFraction(now: now) }
-    /// "Claude & GPT session" -> "Claude & GPT 5h", "Gemini weekly" -> "Gemini wk". Widget rows only.
-    private var compactLabel: String {
-        label.replacingOccurrences(of: " session", with: " 5h").replacingOccurrences(of: " weekly", with: " wk")
-    }
     private var fill: Color { UsageLevel.tint(for: window.usedPercent, base: base, pace: pace) }
 
     public var body: some View {
@@ -36,12 +32,13 @@ public struct UsageBarView: View {
             // widget has nine of these and no height for a reset line under each bar (it would
             // need about 430pt of its 312), so the reset costs width rather than height.
             HStack(spacing: 6) {
-                Text(compactLabel).font(.widget(scale)).lineLimit(1).frame(width: 86 * scale, alignment: .leading)
+                // Wide enough for "Claude & GPT session": the window words are never abbreviated.
+                Text(label).font(.widget(scale)).lineLimit(1).frame(width: 112 * scale, alignment: .leading)
                 // The minimum keeps a larger type size from squeezing the bar to nothing; a scale
                 // that cannot afford it does not fit, and the widget steps down.
-                bar.frame(minWidth: 64, idealWidth: 64).frame(height: 5 * scale + 4)
+                bar.frame(minWidth: 60, idealWidth: 60).frame(height: 5 * scale + 4)
                 Text(Format.percent(window.usedPercent)).font(.widget(scale).monospacedDigit().bold())
-                    .foregroundStyle(fill).frame(width: 34 * scale, alignment: .trailing)
+                    .foregroundStyle(fill).frame(width: 30 * scale, alignment: .trailing)
                 if showsReset {
                     Text(Format.resetsShort(window.resetsAt, now: now) ?? "")
                         .font(.widget(scale)).foregroundStyle(.secondary).lineLimit(1)
