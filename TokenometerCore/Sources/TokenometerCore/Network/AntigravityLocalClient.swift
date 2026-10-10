@@ -2,11 +2,13 @@ import Foundation
 
 /// Google usage windows from the Antigravity hub's local language server (ADR-0003).
 ///
-/// Antigravity (the hub app, the IDE, and the `agy` CLI) runs a `language_server` process on
-/// localhost that serves Connect-JSON RPCs. `RetrieveUserQuotaSummary` returns the same grouped
-/// quota the IDE and `agy` display: a "Gemini Models" group and a "Claude and GPT models" group,
-/// each with a weekly and a 5-hour bucket. The process is found by its command line, which also
-/// carries the CSRF token the server requires. Nothing here leaves the machine.
+/// The Antigravity desktop app (the hub, `--subclient_type hub`) and the Antigravity IDE each run a
+/// `language_server` process on localhost that serves Connect-JSON RPCs. `RetrieveUserQuotaSummary`
+/// returns the same grouped quota the IDE and `agy` display: a "Gemini Models" group and a "Claude
+/// and GPT models" group, each with a weekly and a 5-hour bucket. The process is found by its command
+/// line, which also carries the CSRF token the server requires. The `agy` CLI runs the same server
+/// inside its own process with no token on its command line, so it cannot be read here: with only
+/// `agy` open, the bars go stale (checked 2026-10-10). Nothing here leaves the machine.
 public struct AntigravityLocalClient: UsageWindowSource {
     public let provider: Provider = .google
     static let service = "exa.language_server_pb.LanguageServerService"

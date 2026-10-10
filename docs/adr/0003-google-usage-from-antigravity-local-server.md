@@ -14,6 +14,6 @@ Google's Cloud Code quota endpoints (`retrieveUserQuota`, `retrieveUserQuotaSumm
 
 ## Consequences
 
-- Google percent exists only while an Antigravity process is running. When none is, the bars go stale with "Antigravity is not running" and keep their last values. The hub app normally runs in the background, so this is rare in practice.
+- Google percent exists only while the Antigravity desktop app (the hub) or the Antigravity IDE is running. When neither is, the bars go stale with "Antigravity is not running" and keep their last values. The hub app normally runs in the background, so this is rare in practice. An `agy` session alone does not count: `agy` runs the language server inside its own process, and its CSRF token is not on its command line or in its environment, so its ports answer 401 "missing CSRF token" (checked 2026-10-10).
 - This is a process-local API with no stability promise; an Antigravity update can rename the RPC or change the CSRF header. The parser is isolated in `AntigravityLocalClient`; when it fails the bars go stale.
 - Discovery shells out to `ps` and `lsof`; neither needs privileges for the user's own processes.
