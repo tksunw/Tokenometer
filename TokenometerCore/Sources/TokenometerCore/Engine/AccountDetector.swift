@@ -22,7 +22,9 @@ public enum AccountDetector {
         // cache may have only subscriptionType ("max"), which names the same thing.
         let orgType = account.string("organizationType") ?? account.string("subscriptionType").map { "claude_" + $0 } ?? ""
         if orgType.contains("enterprise") { return AccountInfo(kind: .metered, planName: "Enterprise") }
-        let tier = account.string("organizationRateLimitTier") ?? account.string("userRateLimitTier")
+        // The seat's own tier first: a Team organization has its own tier ("default_raven" on a live
+        // Team Premium seat) while the seat's sits in userRateLimitTier. Max logins leave it null.
+        let tier = account.string("userRateLimitTier") ?? account.string("organizationRateLimitTier")
         return AccountInfo(kind: .plan, planName: claudePlanName(orgType: orgType, tier: tier))
     }
 

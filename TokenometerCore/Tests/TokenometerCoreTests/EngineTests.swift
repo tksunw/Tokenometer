@@ -133,8 +133,9 @@ import Testing
         #expect(AccountDetector.claudePlanName(orgType: "claude_team", tier: "default_claude_max_5x") == "Team Premium")
         #expect(AccountDetector.claudePlanName(orgType: "claude_team", tier: "default_claude_team") == "Team Standard")
         #expect(AccountDetector.claudePlanName(orgType: "", tier: nil) == "Free")
-        // The user tier stands in when the organization tier is absent; an old cache has only subscriptionType.
-        try #"{"oauthAccount":{"organizationType":"claude_team","userRateLimitTier":"default_claude_max_5x"}}"#.write(to: config, atomically: true, encoding: .utf8)
+        // A live Team Premium seat (2026-10-11): the organization has its own tier, the seat's is the user tier,
+        // and the seat's wins. An old cache has only subscriptionType.
+        try #"{"oauthAccount":{"organizationType":"claude_team","organizationRateLimitTier":"default_raven","userRateLimitTier":"default_claude_max_5x","seatTier":"team_tier_1"}}"#.write(to: config, atomically: true, encoding: .utf8)
         #expect(AccountDetector.claude(configURL: config, environment: [:]).planName == "Team Premium")
         try #"{"oauthAccount":{"subscriptionType":"pro"}}"#.write(to: config, atomically: true, encoding: .utf8)
         #expect(AccountDetector.claude(configURL: config, environment: [:]).planName == "Pro")
