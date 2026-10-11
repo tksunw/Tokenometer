@@ -108,7 +108,7 @@ Updates: the app checks GitHub Releases once a day (Sparkle) and offers new vers
 |---|---|---|---|
 | Anthropic | Claude Code (including subagents), Claude Desktop | `~/.claude/projects/**/*.jsonl` and Claude Desktop's local agent sessions | The file the usage-reporter mod writes: Claude Code calls the endpoint behind `claude /usage` itself, and the mod saves the answer |
 | OpenAI | Codex | `~/.codex/sessions/**/*.jsonl` | The same files: Codex writes its rate limits into every session log |
-| Google | Antigravity (IDE and `agy` CLI), Gemini CLI | Antigravity's conversation databases, Gemini CLI chat recordings | The Antigravity hub's local language server, the same source the IDE and `agy` show |
+| Google | Antigravity (IDE and `agy` CLI), Gemini CLI | Antigravity's conversation databases, Gemini CLI chat recordings | The Antigravity hub's local language server, the same source the IDE and `agy` show. Needs the Antigravity desktop app or the IDE running; an `agy` session on its own does not provide it |
 
 Refresh happens when a log file changes (FSEvents) and every 60 seconds as a backstop. Antigravity's local server is asked at most every two minutes while you are active and every five minutes when idle. Claude's numbers are as fresh as the mod's last report; if the logs run more than fifteen minutes ahead of it, the bars dim and say so.
 
