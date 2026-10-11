@@ -18,21 +18,23 @@ public enum AccountDetector {
         guard let config = try? JSONLines.object(in: configURL),
               let account = config.dict("oauthAccount")
         else { return AccountInfo(kind: .metered) }
-        // organizationType looks like "claude_max" / "claude_pro" / "claude_team" / "claude_enterprise".
-        let orgType = account.string("organizationType") ?? ""
+        // organizationType is "claude_max" / "claude_pro" / "claude_team" / "claude_enterprise". An older
+        // cache may have only subscriptionType ("max"), which names the same thing.
+        let orgType = account.string("organizationType") ?? account.string("subscriptionType").map { "claude_" + $0 } ?? ""
         if orgType.contains("enterprise") { return AccountInfo(kind: .metered, planName: "Enterprise") }
-        let plan = account.string("subscriptionType")
-            ?? (orgType.isEmpty ? nil : orgType.replacingOccurrences(of: "claude_", with: ""))
-        return AccountInfo(kind: .plan, planName: claudePlanName(subscription: plan, tier: account.string("organizationRateLimitTier")))
+        let tier = account.string("organizationRateLimitTier") ?? account.string("userRateLimitTier")
+        return AccountInfo(kind: .plan, planName: claudePlanName(orgType: orgType, tier: tier))
     }
 
-    /// "max" + "default_claude_max_20x" -> "Max 20x"; "pro" -> "Pro".
-    static func claudePlanName(subscription: String?, tier: String?) -> String? {
-        var name = subscription?.capitalized
-        if let tier, let multiplier = tier.split(separator: "_").last, multiplier.hasSuffix("x"), multiplier.first?.isNumber == true {
-            name = (name ?? "Max") + " \(multiplier)"
+    /// The seat behind the login. A Team Premium seat carries Max 5x's rate tier, so the tier tells the two
+    /// Team seats apart; Max is 5x unless its tier says 20x.
+    static func claudePlanName(orgType: String, tier: String?) -> String {
+        switch orgType {
+        case "claude_team": tier == "default_claude_max_5x" ? "Team Premium" : "Team Standard"
+        case "claude_max": tier == "default_claude_max_20x" ? "Max 20x" : "Max 5x"
+        case "claude_pro": "Pro"
+        default: "Free"
         }
-        return name
     }
 
     /// Codex: rollouts carry `plan_type` next to the rate limits when logged in with ChatGPT.

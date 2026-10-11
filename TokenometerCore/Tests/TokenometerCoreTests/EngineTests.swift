@@ -126,8 +126,19 @@ import Testing
         let config = dir.appendingPathComponent(".claude.json")
         try #"{"oauthAccount":{"emailAddress":"x","organizationType":"claude_max","organizationRateLimitTier":"default_claude_max_5x"}}"#.write(to: config, atomically: true, encoding: .utf8)
         #expect(AccountDetector.claude(configURL: config, environment: [:]) == AccountInfo(kind: .plan, planName: "Max 5x"))
-        #expect(AccountDetector.claudePlanName(subscription: "pro", tier: nil) == "Pro")
-        #expect(AccountDetector.claudePlanName(subscription: "max", tier: "default_claude_max") == "Max")
+        #expect(AccountDetector.claudePlanName(orgType: "claude_pro", tier: nil) == "Pro")
+        #expect(AccountDetector.claudePlanName(orgType: "claude_max", tier: "default_claude_max_20x") == "Max 20x")
+        #expect(AccountDetector.claudePlanName(orgType: "claude_max", tier: nil) == "Max 5x")
+        // A Team Premium seat carries Max 5x's tier; it must not read as "Team 5x".
+        #expect(AccountDetector.claudePlanName(orgType: "claude_team", tier: "default_claude_max_5x") == "Team Premium")
+        #expect(AccountDetector.claudePlanName(orgType: "claude_team", tier: "default_claude_team") == "Team Standard")
+        #expect(AccountDetector.claudePlanName(orgType: "", tier: nil) == "Free")
+        // The user tier stands in when the organization tier is absent; an old cache has only subscriptionType.
+        try #"{"oauthAccount":{"organizationType":"claude_team","userRateLimitTier":"default_claude_max_5x"}}"#.write(to: config, atomically: true, encoding: .utf8)
+        #expect(AccountDetector.claude(configURL: config, environment: [:]).planName == "Team Premium")
+        try #"{"oauthAccount":{"subscriptionType":"pro"}}"#.write(to: config, atomically: true, encoding: .utf8)
+        #expect(AccountDetector.claude(configURL: config, environment: [:]).planName == "Pro")
+        try #"{"oauthAccount":{"organizationType":"claude_max","organizationRateLimitTier":"default_claude_max_5x"}}"#.write(to: config, atomically: true, encoding: .utf8)
         #expect(AccountDetector.claude(configURL: config, environment: ["ANTHROPIC_API_KEY": "sk"]).kind == .metered)
         #expect(AccountDetector.claude(configURL: dir.appendingPathComponent("missing.json"), environment: [:]).kind == .metered)
     }
