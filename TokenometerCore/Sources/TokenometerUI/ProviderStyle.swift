@@ -2,11 +2,12 @@ import SwiftUI
 import TokenometerCore
 
 public extension Provider {
-    /// Brand-adjacent and separable for the common color-vision deficiencies: clay, teal, blue.
+    /// Identity color, used on the logo tile and the menu bar: clay, light purple, blue. The window
+    /// fills do not use it; they take the status color (`UsageStatus`).
     var color: Color {
         switch self {
         case .anthropic: Color(red: 0.85, green: 0.47, blue: 0.34)
-        case .openAI: Color(red: 0.06, green: 0.64, blue: 0.50)
+        case .openAI: Color(red: 0.66, green: 0.55, blue: 1.0)
         case .google: Color(red: 0.26, green: 0.52, blue: 0.96)
         }
     }

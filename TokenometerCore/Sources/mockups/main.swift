@@ -6,7 +6,7 @@ import TokenometerUI
 // Renders the README screenshots from the real views with sample data:
 // swift run mockups ../docs/images   (from TokenometerCore)
 let outDir = URL(fileURLWithPath: CommandLine.arguments.count > 1 ? CommandLine.arguments[1] : "docs/images")
-try FileManager.default.createDirectory(at: outDir, withIntermediateDirectories: true)
+try FileManager.default.createDirectory(at: outDir.appendingPathComponent("widgets"), withIntermediateDirectories: true)
 let now = Date(timeIntervalSince1970: 1_790_000_000)
 var sample = SampleData.snapshot(now: now)
 // `--two` keeps only the first two providers, to see the roomier widget variants with reset times.
@@ -30,6 +30,16 @@ if CommandLine.arguments.contains("--enterprise"), !sample.providers.isEmpty {
     sample.providers[0].surfaces = nil
     sample.providers[0].grants = [CreditGrant(id: "extra_usage", label: "Monthly budget", used: 648.20, limit: 800)]
 }
+// `--near` pushes Claude toward its limits (session 88%, weekly 82%, Fable 94%) to see yellow and red.
+if CommandLine.arguments.contains("--near"), !sample.providers.isEmpty {
+    sample.providers[0].session?.usedPercent = 88
+    sample.providers[0].weekly?.usedPercent = 82
+    if !sample.providers[0].scoped.isEmpty { sample.providers[0].scoped[0].usedPercent = 94 }
+}
+// `--colorblind` stamps the color-blind palette, as the app does when the setting is on.
+if CommandLine.arguments.contains("--colorblind") { sample.palette = "colorBlind" }
+let onlyWidgets = CommandLine.arguments.contains("--only-widgets")
+let lightScheme = CommandLine.arguments.contains("--light")
 if CommandLine.arguments.contains("--two") { sample = Snapshot(generatedAt: sample.generatedAt, providers: Array(sample.providers.prefix(2))) }
 
 @MainActor
@@ -115,7 +125,72 @@ struct RingMock: View {
     }
 }
 
+/// A widget at its WidgetKit size on a card-colored ground, like the container background.
+struct WidgetFrame<Content: View>: View {
+    let width: CGFloat
+    let height: CGFloat
+    let content: Content
+    init(width: CGFloat, height: CGFloat, @ViewBuilder content: () -> Content) {
+        self.width = width
+        self.height = height
+        self.content = content()
+    }
+    var body: some View {
+        content
+            .frame(width: width, height: height)
+            .background(Color(nsColor: .windowBackgroundColor))
+            .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+    }
+}
+
+/// Every size of both new widgets for each provider choice: all three, two, and one.
+@MainActor
+func renderWidgetSets() {
+    let sets: [(String, Set<Provider>)] = [
+        ("3", []), ("2-claude-codex", [.anthropic, .openAI]), ("2-claude-gemini", [.anthropic, .google]), ("2-codex-gemini", [.openAI, .google]),
+        ("1-claude", [.anthropic]), ("1-codex", [.openAI]), ("1-gemini", [.google]),
+    ]
+    let scheme: ColorScheme = lightScheme ? .light : .dark
+    for (tag, providers) in sets {
+        for (sizeName, width, height, bars, gauge) in [
+            ("small", 164.0, 164.0, BarsWidgetView.Size.small, GaugeWidgetView.Size.small),
+            ("medium", 344.0, 164.0, .medium, .medium),
+            ("large", 344.0, 344.0, .large, .large),
+        ] as [(String, CGFloat, CGFloat, BarsWidgetView.Size, GaugeWidgetView.Size)] {
+            render(WidgetFrame(width: width, height: height) { BarsWidgetView(snapshot: sample, size: bars, providers: providers, now: now) }, name: "widgets/bars-\(sizeName)-\(tag).png", scheme: scheme)
+            render(WidgetFrame(width: width, height: height) { GaugeWidgetView(snapshot: sample, size: gauge, providers: providers, now: now) }, name: "widgets/gauge-\(sizeName)-\(tag).png", scheme: scheme)
+        }
+    }
+}
+
+/// The shared pieces on their own: tiles, gauges at three statuses, bars.
+struct PrimitivesMock: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(spacing: 10) { ForEach(Provider.allCases) { ProviderTile($0, size: 28) } }
+            HStack(spacing: 16) {
+                ArcGauge(percent: 42, pace: 0.73, width: 104, numberSize: 24, caption: "Session")
+                ArcGauge(percent: 61, pace: 0.38, width: 104, numberSize: 24, caption: "Weekly")
+                ArcGauge(percent: 94, pace: 0.66, width: 104, numberSize: 24, caption: "Fable")
+                ArcGauge(percent: 0, pace: 0.2, width: 60, numberSize: 14)
+            }
+            VStack(spacing: 4) {
+                StatusBar(percent: 42, pace: 0.73, height: 8)
+                StatusBar(percent: 61, pace: 0.38, height: 8)
+                StatusBar(percent: 94, pace: 0.66, height: 8)
+                StatusBar(percent: 0, pace: nil, height: 8)
+            }
+        }
+        .padding(16)
+        .frame(width: 520)
+        .background(Color(nsColor: .windowBackgroundColor))
+    }
+}
+
 Task { @MainActor in
+    render(PrimitivesMock(), name: "primitives.png")
+    if onlyWidgets { renderWidgetSets(); exit(0) }
+    renderWidgetSets()
     render(MenuMock(), name: "menu-dark.png")
     render(MenuMock(), name: "menu-light.png", scheme: .light)
     render(MenuBarStrip(style: .gauge), name: "menubar.png")

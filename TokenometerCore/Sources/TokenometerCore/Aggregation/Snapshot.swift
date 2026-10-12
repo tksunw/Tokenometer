@@ -100,11 +100,15 @@ public struct Snapshot: Codable, Sendable, Equatable {
     public var version: Int
     public var generatedAt: Date
     public var providers: [ProviderSnapshot]
+    /// Which status colors the widget draws: "standard" or "colorBlind". The widget cannot read the
+    /// app's preferences, so the app stamps its setting here. Optional so an older file still decodes.
+    public var palette: String?
 
-    public init(generatedAt: Date, providers: [ProviderSnapshot]) {
+    public init(generatedAt: Date, providers: [ProviderSnapshot], palette: String? = nil) {
         self.version = Self.currentVersion
         self.generatedAt = generatedAt
         self.providers = providers
+        self.palette = palette
     }
 
     public func provider(_ provider: Provider) -> ProviderSnapshot? {
@@ -112,9 +116,9 @@ public struct Snapshot: Codable, Sendable, Equatable {
     }
 
     /// Equal apart from `generatedAt`: nothing the menu or widget draws differs except the "as of"
-    /// time, so the widget need not be reloaded.
+    /// time, so the widget need not be reloaded. A palette change does reload it.
     public func hasSameContent(as other: Snapshot?) -> Bool {
         guard let other else { return false }
-        return version == other.version && providers == other.providers
+        return version == other.version && providers == other.providers && palette == other.palette
     }
 }
