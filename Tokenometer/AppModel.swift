@@ -5,7 +5,8 @@ import WidgetKit
 import TokenometerCore
 
 /// Owns the latest snapshot and drives refreshes: FSEvents on log change, a 60 s timer as backstop,
-/// the Antigravity localhost call at a 2 min floor while logs are active and every 5 min when idle.
+/// the Antigravity localhost call at a 2 min floor while logs are active and every 5 min when idle,
+/// and a pull through a throwaway Claude Code session when the usage-reporter file ages (ADR-0006).
 @MainActor
 @Observable
 final class AppModel {
@@ -30,6 +31,10 @@ final class AppModel {
     private var lastWindowFetch: Date = .distantPast
     private var lastLogChange: Date = .distantPast
     private var windowSources: [any UsageWindowSource] = []
+    private let pull = ClaudeUsagePull()
+    private var pullPolicy = PullPolicy()
+    private var pullTask: Task<Void, Never>?
+    private var resetTimer: Timer?
 
     init() {
         let previous = SnapshotStore().load()
@@ -55,6 +60,13 @@ final class AppModel {
         cycleTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { [weak self] _ in
             Task { @MainActor in self?.cycleIndex += 1 }
         }
+        // Windows may have reset and the file aged while the Mac slept; give the network a moment first.
+        NSWorkspace.shared.notificationCenter.addObserver(forName: NSWorkspace.didWakeNotification, object: nil, queue: .main) { [weak self] _ in
+            Task { @MainActor in
+                try? await Task.sleep(for: .seconds(5))
+                self?.requestRefresh(logChanged: false, force: true)
+            }
+        }
         requestRefresh(logChanged: true)
     }
 
@@ -67,9 +79,11 @@ final class AppModel {
         return providers[cycleIndex % providers.count]
     }
 
+    /// `force` is a prompt (Refresh now, wake, a window's reset): network sources are asked again
+    /// regardless of pace, and the mod is asked to report if its floor allows.
     func requestRefresh(logChanged: Bool, force: Bool = false) {
         if logChanged { lastLogChange = .now }
-        if force { lastWindowFetch = .distantPast }
+        if force { lastWindowFetch = .distantPast; requestPull(.prompted) }
         guard refreshTask == nil else { refreshPending = true; return }
         refreshTask = Task { [weak self] in
             await self?.performRefresh()
@@ -99,6 +113,36 @@ final class AppModel {
         if !result.hasSameContent(as: previous) { WidgetCenter.shared.reloadAllTimelines() }
         if settings.notifyAtCritical { Notifier.notifyCrossings(from: previous, to: result) }
         restartWatcher()
+        scheduleResetWakeup(for: result)
+        requestPull(.idle)
+    }
+
+    /// Starts a pull if the policy allows and there is a Claude plan account to pull for. The session
+    /// blocks for up to twenty seconds, so it runs off the main actor; the file watcher and an explicit
+    /// refresh pick up the report.
+    private func requestPull(_ trigger: PullPolicy.Trigger) {
+        guard pullTask == nil, snapshot?.provider(.anthropic)?.accountKind == .plan else { return }
+        let now = Date.now
+        guard pullPolicy.shouldPull(trigger, now: now, lastFetch: pull.lastFetch()) else { return }
+        let pull = pull
+        pullTask = Task { [weak self] in
+            let outcome = await Task.detached(priority: .utility) { pull.run(now: now) }.value
+            guard let self else { return }
+            pullPolicy.record(outcome, at: .now)
+            pullTask = nil
+            if case .fetched = outcome { requestRefresh(logChanged: false) }
+        }
+    }
+
+    /// Wakes at the next window reset across every provider, so the bar empties on time and the
+    /// provider is asked for the new window instead of waiting for the next log change.
+    private func scheduleResetWakeup(for snapshot: Snapshot) {
+        resetTimer?.invalidate()
+        let windows = snapshot.providers.flatMap { [$0.session, $0.weekly].compactMap { $0 } + $0.scoped }
+        guard let next = windows.compactMap(\.resetsAt).filter({ $0 > .now }).min() else { return }
+        resetTimer = Timer.scheduledTimer(withTimeInterval: next.timeIntervalSinceNow + PullPolicy.resetGrace, repeats: false) { [weak self] _ in
+            Task { @MainActor in self?.requestRefresh(logChanged: false, force: true) }
+        }
     }
 
     private func restartWatcher() {

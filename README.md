@@ -98,7 +98,7 @@ rm -rf ~/.claude/mods/usage-reporter
 
 This setup works in the terminal and in the Claude desktop app's Code sessions alike. Cloning into `~/.claude/skills/usage-reporter` needs no settings line, but only terminal sessions load mods from there, so usage from the desktop app would never be reported.
 
-The bars update while a Claude Code session is running: session and weekly after each turn, the model-scoped bar at most every five minutes. Needs a Claude Code version with mods (2.1.287 or later). Tokenometer needs usage-reporter 0.3.0 or later for the by-surface rows in the menu and 0.5.0 or later for the Credits section; with an older mod those are absent and everything else works.
+The bars update while a Claude Code session is running: session and weekly after each turn, the model-scoped bar at most every five minutes. Between sessions Tokenometer asks the mod itself: every half hour, when a window resets, after the Mac wakes, and on Refresh now, it starts a Claude Code session with nothing loaded but the mod, waits for the report, and ends it. No prompt is sent and no token is spent; Claude Code makes the usage call on its own login as it does in any session. Needs a Claude Code version with mods (2.1.287 or later). Tokenometer needs usage-reporter 0.3.0 or later for the by-surface rows in the menu and 0.5.0 or later for the Credits section; with an older mod those are absent and everything else works.
 
 Updates: the app checks GitHub Releases once a day (Sparkle) and offers new versions; turn that off in Settings or check manually from the menu. The first time a new version launches it restarts the system's widget service once, so the widgets pick up the new version; all your widgets redraw for a moment.
 
@@ -110,7 +110,7 @@ Updates: the app checks GitHub Releases once a day (Sparkle) and offers new vers
 | OpenAI | Codex | `~/.codex/sessions/**/*.jsonl` | The same files: Codex writes its rate limits into every session log |
 | Google | Antigravity (IDE and `agy` CLI), Gemini CLI | Antigravity's conversation databases, Gemini CLI chat recordings | The Antigravity hub's local language server, the same source the IDE and `agy` show. Needs the Antigravity desktop app or the IDE running; an `agy` session on its own does not provide it |
 
-Refresh happens when a log file changes (FSEvents) and every 60 seconds as a backstop. Antigravity's local server is asked at most every two minutes while you are active and every five minutes when idle. Claude's numbers are as fresh as the mod's last report; if the logs run more than fifteen minutes ahead of it, the bars dim and say so.
+Refresh happens when a log file changes (FSEvents) and every 60 seconds as a backstop. Antigravity's local server is asked at most every two minutes while you are active and every five minutes when idle. Claude's numbers are as fresh as the mod's last report, which Tokenometer prompts between sessions as described under usage-reporter; if the logs run more than fifteen minutes ahead of it, the bars dim and say so.
 
 ### Plan versus metered accounts
 

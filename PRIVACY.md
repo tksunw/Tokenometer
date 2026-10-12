@@ -8,6 +8,7 @@ Everything Tokenometer computes stays on the Mac it runs on:
 
 - Token counts, cost estimates, and usage percentages, in memory and in one JSON file in the app's App Group container so the widget can read it.
 - Your settings, in the app's `UserDefaults`.
+- An empty folder, `~/Library/Application Support/Tokenometer/UsagePull/`, that the Claude Code session above runs in. Claude Code records it as a trusted folder in `~/.claude.json` and creates its usual per-project folder under `~/.claude/projects/`; the session writes no transcript.
 
 Nothing is synced, uploaded, or shared with other apps beyond the widget.
 
@@ -15,7 +16,7 @@ Nothing is synced, uploaded, or shared with other apps beyond the widget.
 
 Nothing goes to any AI provider. Tokenometer does not contact Anthropic, OpenAI, or Google, and does not read the logins their tools store.
 
-- Claude: if you install the usage-reporter mod, Claude Code itself asks Anthropic for your usage with its own login and the mod saves the answer to a file on your Mac. Tokenometer reads that file and never sees the login.
+- Claude: if you install the usage-reporter mod, Claude Code itself asks Anthropic for your usage with its own login and the mod saves the answer to a file on your Mac. Tokenometer reads that file and never sees the login. When no Claude Code session has run for a while, Tokenometer starts one of its own, with nothing loaded but the mod and no prompt, so the mod reports; that session makes the same usage call Claude Code makes at every start, spends no tokens, and ends as soon as the report lands. It happens at most every half hour, plus once after a window resets, after the Mac wakes, or when you press Refresh now, and never more often than the mod's own five-minute floor.
 - Google: the quota lookup is a localhost call to the Antigravity process already running on your Mac and does not leave it.
 - OpenAI: Codex writes its limits into its own logs, which Tokenometer reads like any other log.
 

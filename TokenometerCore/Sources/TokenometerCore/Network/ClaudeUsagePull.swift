@@ -163,3 +163,41 @@ public struct ClaudeUsagePull: Sendable {
         process.waitUntilExit()
     }
 }
+
+/// The app's pace for pulls (ADR-0006): every half hour while the file ages with no session to
+/// refresh it, and on a prompt (a window's reset, wake from sleep, Refresh now) as soon as the mod's
+/// floor allows. Backs off after a pull that failed to launch or report.
+public struct PullPolicy: Sendable, Equatable {
+    public enum Trigger: Sendable { case idle, prompted }
+
+    public static let idleInterval: TimeInterval = 30 * 60
+    /// How long after a window's reset time to ask: the provider rolls the window a moment late.
+    public static let resetGrace: TimeInterval = 45
+    /// Two prompted pulls at least this far apart, so a reset and a wake together start one session.
+    static let promptFloor: TimeInterval = 30
+    static let backoff: [TimeInterval] = [300, 600, 1200, 2400, 3600]
+
+    public var lastAttempt: Date = .distantPast
+    public var failures = 0
+
+    public init() {}
+
+    /// `lastFetch` is the file's fetch stamp; nil when the mod has never written.
+    public func shouldPull(_ trigger: Trigger, now: Date, lastFetch: Date?) -> Bool {
+        if failures > 0, now < lastAttempt.addingTimeInterval(Self.backoff[min(failures, Self.backoff.count) - 1]) { return false }
+        let age = now.timeIntervalSince(lastFetch ?? .distantPast)
+        switch trigger {
+        case .idle: return age >= Self.idleInterval
+        case .prompted: return age >= ClaudeUsagePull.floor && now.timeIntervalSince(lastAttempt) >= Self.promptFloor
+        }
+    }
+
+    public mutating func record(_ outcome: ClaudeUsagePull.Outcome, at now: Date) {
+        lastAttempt = now
+        switch outcome {
+        case .fetched: failures = 0
+        case .insideFloor: break
+        case .timedOut, .launchFailed, .modMissing, .claudeMissing: failures += 1
+        }
+    }
+}
