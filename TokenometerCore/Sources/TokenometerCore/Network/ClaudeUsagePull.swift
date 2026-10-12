@@ -70,12 +70,12 @@ public struct ClaudeUsagePull: Sendable {
     public func lastFetch() -> Date? { ClaudeUsageFile(file: locations.claudeUsageFile).lastFetch() }
 
     public func run(now: Date = .now, ignoringFloor: Bool = false) -> Outcome {
-        guard let plugin = UsageReporterLocator(claudeHome: locations.claudeHome).locate() else { return .modMissing }
-        guard let claude = Self.claudeExecutable() else { return .claudeMissing }
         let before = lastFetch()
         if !ignoringFloor, let before, before.addingTimeInterval(Self.floor) > now {
             return .insideFloor(until: before.addingTimeInterval(Self.floor))
         }
+        guard let plugin = UsageReporterLocator(claudeHome: locations.claudeHome).locate() else { return .modMissing }
+        guard let claude = Self.claudeExecutable() else { return .claudeMissing }
         try? FileManager.default.createDirectory(at: locations.claudePullDirectory, withIntermediateDirectories: true,
                                                  attributes: [.posixPermissions: 0o700])
 
