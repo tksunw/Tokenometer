@@ -74,6 +74,21 @@ private func splits(_ data: Data) -> [Int] {
         }
     }
 
+    @Test func codexRateLimitsComeFromOlderRolloutsWhenTheWindowHasNone() throws {
+        let full = try fixtureData("codex/rollout-small.jsonl")
+        let scratch = try Scratch(name: "rollout-small.jsonl")
+        defer { scratch.remove() }
+        try scratch.write(full)
+        let expected = CodexParser.parse(objects: JSONLines.objects(in: full), fallbackSessionID: "rollout-small")
+        try FileManager.default.setAttributes([.modificationDate: Date().addingTimeInterval(-30 * 86_400)], ofItemAtPath: scratch.file.path)
+
+        let result = CodexCollector(locations: scratch.locations).collect(modifiedAfter: Date().addingTimeInterval(-8 * 86_400))
+        #expect(result.records.isEmpty)
+        #expect(result.codexRateLimits == expected.rateLimits)
+        #expect(result.codexRateLimits != nil)
+        #expect(AccountDetector.codex(rateLimits: result.codexRateLimits).kind == .plan)
+    }
+
     @Test func aShorterRewriteIsParsedFromTheStart() throws {
         let full = try fixtureData("claude-code/project-a/session-main.jsonl")
         let firstTwoLines = full.split(separator: UInt8(ascii: "\n")).prefix(2).map { Data($0) + Data("\n".utf8) }.reduce(Data(), +)

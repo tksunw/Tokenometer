@@ -82,9 +82,30 @@ public struct CodexCollector: UsageCollector {
                 }
             } catch { result.failures.append((file.url, error)) }
         }
-        cache.retain(only: Set(files.map(\.url)))
+        var kept = Set(files.map(\.url))
+        // No rate limits in the window: a plan account that has been idle for a while. Take the newest
+        // report from older rollouts so the account still reads as a plan (its windows show as rolled
+        // over, since their reset times have passed). Only the limits are used, never the old records.
+        if result.codexRateLimits == nil {
+            let older = FileWalker.files(under: root, modifiedAfter: nil, where: { $0.pathExtension == "jsonl" })
+                .filter { !kept.contains($0.url) }
+                .sorted { $0.stamp.modified > $1.stamp.modified }
+                .prefix(Self.olderFileLimit)
+            for file in older {
+                kept.insert(file.url)
+                guard let session = try? cache.state(for: file) { CodexParser.State(fallbackSessionID: CodexParser.sessionID(for: file.url)) }.session,
+                      let limits = session.rateLimits
+                else { continue }
+                result.codexRateLimits = limits
+                break
+            }
+        }
+        cache.retain(only: kept)
         return result
     }
+
+    /// How many older rollouts to try, newest first, when the window holds no rate limits.
+    static let olderFileLimit = 20
 }
 
 public struct GeminiCLICollector: UsageCollector {
