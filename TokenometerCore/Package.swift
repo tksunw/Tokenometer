@@ -15,6 +15,7 @@ let package = Package(
         .target(name: "TokenometerUI", dependencies: ["TokenometerCore"]),
         .executableTarget(name: "tokenometerctl", dependencies: ["TokenometerCore"]),
         .executableTarget(name: "mockups", dependencies: ["TokenometerCore", "TokenometerUI"]),
+        .testTarget(name: "TokenometerUITests", dependencies: ["TokenometerCore", "TokenometerUI"]),
         .testTarget(
             name: "TokenometerCoreTests",
             dependencies: ["TokenometerCore"],

@@ -17,6 +17,8 @@ final class AppSettings {
     var menuBarProvider: MenuBarProviderChoice { didSet { defaults.set(menuBarProvider.rawValue, forKey: "menuBarProvider") } }
     /// How solid the menu's background is, 0 (the system's translucent panel alone) to 1 (opaque).
     var menuBackgroundOpacity: Double { didSet { defaults.set(menuBackgroundOpacity, forKey: "menuBackgroundOpacity") } }
+    /// Blue, orange, and vermilion in place of green, yellow, and red (Okabe-Ito), for the menu and widgets.
+    var colorBlindPalette: Bool { didSet { defaults.set(colorBlindPalette, forKey: "colorBlindPalette") } }
     var notifyAtCritical: Bool {
         didSet {
             defaults.set(notifyAtCritical, forKey: "notifyAtCritical")
@@ -41,6 +43,7 @@ final class AppSettings {
         menuBarProvider = MenuBarProviderChoice(rawValue: UserDefaults.standard.string(forKey: "menuBarProvider") ?? "") ?? .cycle
         // Mostly solid by default: the bare translucent panel is hard to read over a dark desktop.
         menuBackgroundOpacity = UserDefaults.standard.object(forKey: "menuBackgroundOpacity") as? Double ?? 0.6
+        colorBlindPalette = UserDefaults.standard.bool(forKey: "colorBlindPalette")
         notifyAtCritical = UserDefaults.standard.bool(forKey: "notifyAtCritical")
         launchAtLogin = SMAppService.mainApp.status == .enabled
     }

@@ -41,6 +41,15 @@ public enum Format {
         return "⟳ \(day(date, now: now)) \(time)"
     }
 
+    /// Bare reset time for the cards: "12:38 PM" today, "Wed 7:49 PM" within the week, "Oct 16, 7:49 PM" beyond.
+    public static func resetTime(_ date: Date?, now: Date = .now) -> String? {
+        guard let date else { return nil }
+        if date <= now { return "now" }
+        let time = date.formatted(.dateTime.hour().minute())
+        if Calendar.current.isDate(date, inSameDayAs: now) { return time }
+        return "\(day(date, now: now)) \(time)"
+    }
+
     /// A weekly window resets within seven days, so its weekday names the day without ambiguity;
     /// anything further out gets the date. "Sun" or "Oct 16,".
     private static func day(_ date: Date, now: Date) -> String {

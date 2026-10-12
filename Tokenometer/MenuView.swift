@@ -11,22 +11,20 @@ struct MenuView: View {
             Color.clear.frame(height: 0).onAppear { model.openSettingsAction = { openSettings() } }
             if let snapshot = model.snapshot, !snapshot.providers.isEmpty {
                 ForEach(snapshot.providers) { provider in
-                    ProviderSectionView(snapshot: provider)
-                    if provider.id != snapshot.providers.last?.id { Divider() }
+                    ProviderCardView(snapshot: provider)
                 }
             } else {
                 Text("No agent logs found yet").foregroundStyle(.secondary)
             }
-            Divider()
             if let pending = model.updater.pendingVersion {
                 Button("Tokenometer \(pending) is available. Update…") { model.updater.checkForUpdates() }
-                    .buttonStyle(.link).font(.caption)
+                    .buttonStyle(.link).font(.system(size: 12.5))
             }
             HStack {
                 if let generated = model.snapshot?.generatedAt {
                     TimelineView(.periodic(from: .now, by: 30)) { context in
                         Text("Updated \(Format.age(generated, now: context.date))")
-                            .font(.caption).foregroundStyle(.secondary)
+                            .font(.system(size: 12.5)).foregroundStyle(.secondary)
                     }
                 }
                 Spacer()
@@ -60,7 +58,8 @@ struct MenuView: View {
             }
         }
         .padding(12)
-        .frame(width: 320)
+        .frame(width: 340)
+        .environment(\.statusPalette, model.settings.colorBlindPalette ? .colorBlind : .standard)
         // The panel is translucent over whatever is behind it; this layer is the user's choice of
         // how much of that shows through.
         .background(Color(nsColor: .windowBackgroundColor).opacity(model.settings.menuBackgroundOpacity))

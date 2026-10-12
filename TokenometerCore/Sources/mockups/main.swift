@@ -57,21 +57,21 @@ struct MenuMock: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             ForEach(Array(sample.providers.enumerated()), id: \.offset) { index, provider in
-                ProviderSectionView(snapshot: provider, now: now, expanded: index == 0)
-                if index < sample.providers.count - 1 { Divider() }
+                ProviderCardView(snapshot: provider, now: now, expanded: index == 0)
             }
-            Divider()
             HStack {
-                Text("Updated \(Format.age(sample.generatedAt, now: now))").font(.caption).foregroundStyle(.secondary)
+                Text("Updated \(Format.age(sample.generatedAt, now: now))").font(.system(size: 12.5)).foregroundStyle(.secondary)
                 Spacer()
                 Image(systemName: "arrow.triangle.2.circlepath")
                 Image(systemName: "gearshape")
                 Image(systemName: "power")
             }
             .foregroundStyle(.secondary)
+            .padding(.horizontal, 4)
         }
         .padding(12)
-        .frame(width: 320)
+        .frame(width: 340)
+        .environment(\.statusPalette, PaletteChoice(rawValue: sample.palette ?? "")?.palette ?? .standard)
         .background(Color(nsColor: .windowBackgroundColor))
         .clipShape(RoundedRectangle(cornerRadius: 10))
     }
@@ -89,39 +89,6 @@ struct MenuBarStrip: View {
         .padding(.horizontal, 12)
         .frame(height: 28)
         .background(Color(nsColor: .windowBackgroundColor).opacity(0.9))
-    }
-}
-
-struct WidgetMock: View {
-    let size: WidgetContentView.Size
-    var frame: CGSize {
-        switch size {
-        // The sizes WidgetKit reported on macOS 27 (chronod log: 164x164, 344x164, 344x344).
-        case .small: CGSize(width: 164, height: 164)
-        case .medium: CGSize(width: 344, height: 164)
-        case .large: CGSize(width: 344, height: 344)
-        }
-    }
-    var body: some View {
-        WidgetContentView(snapshot: sample, size: size, now: now)
-            .padding(16)
-            .frame(width: frame.width, height: frame.height)
-            .background(Color(nsColor: .windowBackgroundColor))
-            .clipShape(RoundedRectangle(cornerRadius: 20))
-    }
-}
-
-/// The rings widget at a size, for a provider choice (nil is all of them) and ring shape.
-struct RingMock: View {
-    let size: RingWidgetView.Size
-    var providers: Set<Provider> = []
-    var style: SessionRingStyle = .ring
-    var body: some View {
-        RingWidgetView(snapshot: sample, size: size, providers: providers, style: style, now: now)
-            .padding(16)
-            .frame(width: size == .small ? 164 : 344, height: size == .large ? 344 : 164)
-            .background(Color(nsColor: .windowBackgroundColor))
-            .clipShape(RoundedRectangle(cornerRadius: 20))
     }
 }
 
@@ -197,18 +164,6 @@ Task { @MainActor in
     render(MenuBarStrip(style: .bars), name: "menubar-bars.png")
     render(MenuBarStrip(style: .horizontal), name: "menubar-horizontal.png")
     render(Image(nsImage: MenuBarImage.gauge(sample.providers)).interpolation(.none).resizable().frame(width: 24 * 6, height: 18 * 6).background(Color.black), name: "menubar-gauge-zoom.png")
-    render(WidgetMock(size: .small), name: "widget-small.png")
-    render(WidgetMock(size: .medium), name: "widget-medium.png")
-    render(WidgetMock(size: .large), name: "widget-large.png")
-    render(RingMock(size: .small), name: "rings-small.png")
-    render(RingMock(size: .medium), name: "rings-medium.png")
-    render(RingMock(size: .small, providers: [.anthropic]), name: "rings-small-one.png")
-    render(RingMock(size: .medium, providers: [.anthropic]), name: "rings-medium-one.png")
-    render(RingMock(size: .medium, style: .gauge), name: "rings-medium-gauge.png")
-    render(RingMock(size: .large), name: "rings-large.png")
-    render(RingMock(size: .large, providers: [.anthropic]), name: "rings-large-one.png")
-    render(RingMock(size: .small, providers: [.anthropic, .openAI]), name: "rings-small-two.png")
-    render(RingMock(size: .medium, providers: [.anthropic, .openAI]), name: "rings-medium-two.png")
     exit(0)
 }
 RunLoop.main.run()

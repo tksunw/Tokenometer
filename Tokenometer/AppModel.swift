@@ -70,6 +70,18 @@ final class AppModel {
         requestRefresh(logChanged: true)
     }
 
+    private var paletteName: String { settings.colorBlindPalette ? "colorBlind" : "standard" }
+
+    /// The widget cannot read the app's preferences, so the choice travels in the snapshot; rewrite it
+    /// now so the widgets recolor without waiting for the next refresh.
+    func paletteChanged() {
+        guard var current = snapshot else { return }
+        current.palette = paletteName
+        snapshot = current
+        try? store.save(current)
+        WidgetCenter.shared.reloadAllTimelines()
+    }
+
     /// The provider for the horizontal menu bar style: the pinned one, or the cycling one.
     var menuBarFocus: ProviderSnapshot? {
         guard let providers = snapshot?.providers, !providers.isEmpty else { return nil }
@@ -103,7 +115,8 @@ final class AppModel {
         let active = now.timeIntervalSince(lastLogChange) < 600
         let fetchWindows = now.timeIntervalSince(lastWindowFetch) >= (active ? 120 : 300)
         let previous = snapshot
-        let result = await refresher.refresh(settings: settings.engineSettings, fetchWindows: fetchWindows, now: now)
+        var result = await refresher.refresh(settings: settings.engineSettings, fetchWindows: fetchWindows, now: now)
+        result.palette = paletteName
         if fetchWindows { lastWindowFetch = now }
         snapshot = result
         // Saved every time so the widget's "as of" stays current when its timeline next ends (15 min).

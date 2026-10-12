@@ -18,7 +18,8 @@ public enum UsageStatus: Sendable, Equatable {
         let used = min(max(percent, 0), 100)
         if let pace {
             if used >= criticalPercent, used / 100 > pace { return .critical }
-            return used / 100 - pace >= leadToCaution ? .caution : .ok
+            // Compared in points with a hair of tolerance: 61 against a 51 pace is exactly 10 ahead, not 9.999999.
+            return used - pace * 100 >= leadToCaution * 100 - 1e-9 ? .caution : .ok
         }
         if used >= criticalPercent { return .critical }
         return used >= UsageLevel.warning ? .caution : .ok

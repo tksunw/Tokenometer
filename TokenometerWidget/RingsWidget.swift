@@ -4,12 +4,12 @@ import WidgetKit
 import TokenometerCore
 import TokenometerUI
 
-/// The widget's edit sheet (right-click, Edit Widget): which providers to show and the ring's
-/// shape. Each placed widget keeps its own, so several can sit side by side showing different
-/// providers. All three switched off means all three, so the widget never goes blank.
+/// The Gauge widget's edit sheet: which providers to show. Kept under its old name so a placed
+/// widget keeps its provider choice across the redesign; the ring-shape parameter is gone, since the
+/// half-circle gauge replaces both shapes. All three off means all three.
 struct RingsConfigurationIntent: WidgetConfigurationIntent {
-    static let title: LocalizedStringResource = "Session Rings"
-    static let description = IntentDescription("Choose the providers and the ring's shape.")
+    static let title: LocalizedStringResource = "Session Gauges"
+    static let description = IntentDescription("Choose the providers to show.")
 
     @Parameter(title: "Anthropic", default: true)
     var anthropic: Bool
@@ -20,9 +20,6 @@ struct RingsConfigurationIntent: WidgetConfigurationIntent {
     @Parameter(title: "Google", default: true)
     var google: Bool
 
-    @Parameter(title: "Shape", default: .ring)
-    var shape: RingShape
-
     var providers: Set<Provider> {
         var chosen = Set<Provider>()
         if anthropic { chosen.insert(.anthropic) }
@@ -32,57 +29,39 @@ struct RingsConfigurationIntent: WidgetConfigurationIntent {
     }
 }
 
-enum RingShape: String, AppEnum {
-    case ring, gauge
-
-    static let typeDisplayRepresentation = TypeDisplayRepresentation(name: "Shape")
-    static let caseDisplayRepresentations: [RingShape: DisplayRepresentation] = [.ring: "Ring", .gauge: "Gauge"]
-
-    var style: SessionRingStyle { self == .ring ? .ring : .gauge }
-}
-
-struct RingsEntry: TimelineEntry {
-    let date: Date
-    let snapshot: Snapshot?
-    let configuration: RingsConfigurationIntent
-}
-
-/// Same timeline shape as `SnapshotProvider`: entries every 5 min for the pace ticks, 15 min backstop.
 struct RingsProvider: AppIntentTimelineProvider {
-    func placeholder(in context: Context) -> RingsEntry {
-        RingsEntry(date: .now, snapshot: nil, configuration: RingsConfigurationIntent())
+    func placeholder(in context: Context) -> ProvidersEntry {
+        ProvidersEntry(date: .now, snapshot: nil, providers: [])
     }
 
-    func snapshot(for configuration: RingsConfigurationIntent, in context: Context) async -> RingsEntry {
-        RingsEntry(date: .now, snapshot: SnapshotStore().load(), configuration: configuration)
+    func snapshot(for configuration: RingsConfigurationIntent, in context: Context) async -> ProvidersEntry {
+        ProvidersEntry(date: .now, snapshot: SnapshotStore().load(), providers: configuration.providers)
     }
 
-    func timeline(for configuration: RingsConfigurationIntent, in context: Context) async -> Timeline<RingsEntry> {
-        let snapshot = SnapshotStore().load()
-        let now = Date.now
-        let entries = stride(from: 0.0, to: 15 * 60, by: 5 * 60).map { RingsEntry(date: now.addingTimeInterval($0), snapshot: snapshot, configuration: configuration) }
-        return Timeline(entries: entries, policy: .after(now.addingTimeInterval(15 * 60)))
+    func timeline(for configuration: RingsConfigurationIntent, in context: Context) async -> Timeline<ProvidersEntry> {
+        providersTimeline(providers: configuration.providers)
     }
 }
 
 struct RingsWidget: Widget {
     var body: some WidgetConfiguration {
         AppIntentConfiguration(kind: "TokenometerRings", intent: RingsConfigurationIntent.self, provider: RingsProvider()) { entry in
-            RingsView(entry: entry)
+            GaugeView(entry: entry)
                 .containerBackground(.fill.tertiary, for: .widget)
         }
-        .configurationDisplayName("Session Rings")
-        .description("Session usage as a ring per provider, weekly too on the large, or one provider large.")
+        .configurationDisplayName("Session Gauges")
+        .description("Usage as half-circle gauges in a card per provider. Choose one, two, or all three providers.")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+        .contentMarginsDisabled()
     }
 }
 
-struct RingsView: View {
+struct GaugeView: View {
     @Environment(\.widgetFamily) private var family
-    let entry: RingsEntry
+    let entry: ProvidersEntry
 
     var body: some View {
-        RingWidgetView(snapshot: entry.snapshot, size: family == .systemSmall ? .small : (family == .systemLarge ? .large : .medium),
-                       providers: entry.configuration.providers, style: entry.configuration.shape.style, now: entry.date)
+        GaugeWidgetView(snapshot: entry.snapshot, size: family == .systemSmall ? .small : (family == .systemLarge ? .large : .medium),
+                        providers: entry.providers, now: entry.date)
     }
 }
