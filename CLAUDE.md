@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project goal
 
-Tokenometer is a macOS menu bar app with desktop widgets that show, per AI provider, how much of the session window and weekly window has been used, as bars or as rings. One color per provider (Anthropic, OpenAI, Google). Audience is a household (three Macs, all on macOS 27), distributed as a signed, notarized GitHub release with Sparkle updates. Read `GLOSSARY.md` for terms, `docs/adr/` for the decisions that shape the design, and `docs/widgets.md` before touching a widget: the layout rules both widgets follow and the chronod descriptor cache.
+Tokenometer is a macOS menu bar app with desktop widgets that show, per AI provider, how much of the session window and weekly window has been used, as bars or as rings. One identity color per provider (Anthropic, OpenAI, Google) on its logo tile; every fill takes a pace status color instead (ADR-0007). Audience is a household (three Macs, all on macOS 27), distributed as a signed, notarized GitHub release with Sparkle updates. Read `GLOSSARY.md` for terms, `docs/adr/` for the decisions that shape the design, and `docs/widgets.md` before touching a widget: the layout rules both widgets follow and the chronod descriptor cache.
 
 ## Current state
 
