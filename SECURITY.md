@@ -24,6 +24,8 @@ Usage percent comes from [usage-reporter](https://github.com/tksunw/usage-report
 - **What the file holds**: percentages, reset times, credit figures, Anthropic's per-surface breakdown, and `raw`, Anthropic's last response as given. No token, no prompts. Tokenometer reads only the percentages, reset times, breakdown, and the `grants` list of credit figures.
 - **Source**: `hooks/register.ts` in the usage-reporter repository; the file is read by `TokenometerCore/Sources/TokenometerCore/Network/ClaudeUsageFile.swift`.
 
+The mod runs only inside a Claude Code session. Between sessions Tokenometer starts one for it (ADR-0006): `claude --setting-sources "" --plugin-dir <mod> --tools "" --strict-mcp-config --mcp-config '{"mcpServers":{}}' --no-chrome`, in a pseudo-terminal, from `~/Library/Application Support/Tokenometer/UsagePull/`, with no prompt. Only the mod loads: none of your settings, hooks, other plugins, CLAUDE.md files, MCP servers or tools. Claude Code makes its usual usage call on its own login, the mod writes the file, and Tokenometer ends the session (SIGTERM, at most twenty seconds after launch). No token is spent. The first run answers Claude Code's "trust this folder" prompt for that folder. Pace: every thirty minutes while the file ages, plus once after a window's reset, after wake from sleep, or on Refresh now, never inside the mod's five-minute floor, backing off up to an hour after a failed launch. The mod is located through `~/.claude/plugins/installed_plugins.json` or `CLAUDE_CODE_PLUGIN_DIRS` in `~/.claude/settings.json`; with no mod installed, no session is started. Source: `TokenometerCore/Sources/TokenometerCore/Network/ClaudeUsagePull.swift`; pace in `PullPolicy` in the same file and `Tokenometer/AppModel.swift`.
+
 ### Gemini CLI login (Google)
 
 Not read. Tokenometer does not open `~/.gemini/oauth_creds.json` and makes no request to Google. An earlier version called Google's Code Assist quota endpoint with that login for licensed Workspace accounts; that was removed (ADR-0005).
@@ -43,6 +45,7 @@ No credentials. Codex writes its rate limits into its own session logs, which ar
 All read-only, all under your home directory:
 
 - `~/.claude/projects/**/*.jsonl`, `~/.claude.json` (for the `oauthAccount` block that says whether a login exists and which plan), `~/.claude/usage-reporter/usage.json` (written by the usage-reporter mod)
+- `~/.claude/settings.json` (`env.CLAUDE_CODE_PLUGIN_DIRS` and `enabledPlugins`), `~/.claude/plugins/installed_plugins.json`, and each candidate mod folder's `.claude-plugin/plugin.json`, to find the usage-reporter mod
 - `~/Library/Application Support/Claude/local-agent-mode-sessions/**/*.jsonl`
 - `~/.codex/sessions/**/*.jsonl`
 - `~/.gemini/tmp/**/chats/session-*.jsonl` and `.json`, and the same under `~/.cache/.gemini/tmp/`, where Gemini CLI writes when it runs under its seatbelt sandbox; `~/.gemini/settings.json` (auth type)
@@ -57,12 +60,14 @@ Transcripts contain your prompts and the model's replies. Tokenometer parses onl
 - `~/Library/Group Containers/F5ED28X889.net.timkennedy.tokenometer/snapshot.json`: the current numbers, for the widget. Percentages, token counts, cost estimates, plan name, tool names. No credentials, no transcript content.
 - `UserDefaults` for the app: settings only.
 - A temporary copy of each Antigravity database during parsing, deleted immediately after.
+- `~/Library/Application Support/Tokenometer/UsagePull/`, an empty folder (mode 0700) the throwaway Claude Code session runs in. Claude Code itself then records that folder as trusted in `~/.claude.json` and creates its per-project folder under `~/.claude/projects/`; the session is started with `CLAUDE_CODE_SKIP_PROMPT_HISTORY=1` and writes no transcript.
 
 ## Commands run
 
-Tokenometer runs four system tools, all as you, none with elevated privileges:
+Tokenometer runs four system tools and Claude Code, all as you, none with elevated privileges:
 
 - `ps` and `lsof`, to find the Antigravity language server and its localhost ports (above).
+- `claude`, found at `~/.local/bin`, `~/.claude/local`, `/opt/homebrew/bin`, `/usr/local/bin`, or on `PATH`, with the arguments listed under Claude Code login, so the usage-reporter mod can report between your own sessions. Its environment is built from scratch (`HOME`, `PATH`, `TERM`, `LANG`, `USER`, `SHELL`, `TMPDIR`, and `CLAUDE_CODE_SKIP_PROMPT_HISTORY=1`); nothing else from Tokenometer's environment is passed.
 - `pluginkit -a` on its own widget extension and `killall chronod`, once, the first time a new version of the app launches. Replacing the app makes macOS drop the old widget extension, and without this the widget stays on its old drawing or goes blank. `chronod` is the system's widget service and restarts by itself; every app's widgets redraw for a moment. Source: `Tokenometer/WidgetRepair.swift`.
 
 ## Network
@@ -74,7 +79,7 @@ Every outbound request, with purpose:
 | `127.0.0.1:<port>` (Antigravity language server) | at most every 2 min active, 5 min idle, only while Antigravity runs | CSRF token | quota groups, plan name |
 | `github.com/tksunw/Tokenometer/releases/…` (Sparkle) | once a day when "Check for updates automatically" is on (the default), or when you choose Check for Updates | nothing beyond a plain HTTPS GET; Sparkle's system profiling is disabled in `Info.plist` (`SUEnableSystemProfiling = false`) | `appcast.xml`, then the release disk image if you accept an update |
 
-That is the complete list for Tokenometer. The usage-reporter mod's one request, to `api.anthropic.com/api/oauth/usage`, is made by Claude Code, not by Tokenometer. Updates are verified two ways before Sparkle installs them: an EdDSA signature in the appcast against the public key baked into the app (`SUPublicEDKey`), and Apple's code signature on the downloaded app. `Scripts/release.sh` produces the appcast with Sparkle's `generate_appcast`, which signs with the private key held in the author's login keychain; the private key is not in the repository.
+That is the complete list for Tokenometer. The usage-reporter mod's one request, to `api.anthropic.com/api/oauth/usage`, is made by Claude Code, not by Tokenometer, in your sessions and in the sessions Tokenometer starts for the mod; those add at most one such call per half hour while no session of yours is running, and one at a reset, a wake, or Refresh now, plus whatever Claude Code does on its own at every start. Updates are verified two ways before Sparkle installs them: an EdDSA signature in the appcast against the public key baked into the app (`SUPublicEDKey`), and Apple's code signature on the downloaded app. `Scripts/release.sh` produces the appcast with Sparkle's `generate_appcast`, which signs with the private key held in the author's login keychain; the private key is not in the repository.
 
 ## Build integrity
 

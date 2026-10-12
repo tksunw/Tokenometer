@@ -78,6 +78,45 @@ import Testing
     }
 }
 
+@Suite struct PullPolicyTests {
+    let t0 = Timestamps.parse("2026-10-11T12:00:00.000Z")!
+    func at(_ seconds: TimeInterval) -> Date { t0.addingTimeInterval(seconds) }
+
+    @Test func idlePullsOnceTheFileIsHalfAnHourOld() {
+        let policy = PullPolicy()
+        #expect(!policy.shouldPull(.idle, now: at(29 * 60), lastFetch: t0))
+        #expect(policy.shouldPull(.idle, now: at(30 * 60), lastFetch: t0))
+        #expect(policy.shouldPull(.idle, now: t0, lastFetch: nil))
+    }
+
+    @Test func promptedPullsWaitForTheModFloorAndSpaceThemselves() {
+        var policy = PullPolicy()
+        #expect(!policy.shouldPull(.prompted, now: at(300), lastFetch: t0))
+        #expect(policy.shouldPull(.prompted, now: at(310), lastFetch: t0))
+        policy.record(.fetched(after: 2), at: at(310))
+        // A wake ten seconds after a reset pull: one session, not two.
+        #expect(!policy.shouldPull(.prompted, now: at(320), lastFetch: nil))
+        #expect(policy.shouldPull(.prompted, now: at(340), lastFetch: nil))
+    }
+
+    @Test func failuresBackOffAndAFetchClearsThem() {
+        var policy = PullPolicy()
+        policy.record(.timedOut, at: t0)
+        #expect(!policy.shouldPull(.idle, now: at(299), lastFetch: nil))
+        #expect(policy.shouldPull(.idle, now: at(300), lastFetch: nil))
+        policy.record(.modMissing, at: at(300))
+        #expect(!policy.shouldPull(.prompted, now: at(300 + 599), lastFetch: nil))
+        #expect(policy.shouldPull(.prompted, now: at(300 + 600), lastFetch: nil))
+        for _ in 0..<10 { policy.record(.launchFailed("x"), at: at(1000)) }
+        #expect(!policy.shouldPull(.idle, now: at(1000 + 3599), lastFetch: nil))
+        #expect(policy.shouldPull(.idle, now: at(1000 + 3600), lastFetch: nil))
+        policy.record(.fetched(after: 2), at: at(5000))
+        #expect(policy.failures == 0)
+        policy.record(.insideFloor(until: at(5300)), at: at(5100))
+        #expect(policy.failures == 0)
+    }
+}
+
 private extension UsageReporterLocatorTests {
     /// A `~/.claude` under `home` with one mod installed, for tests that need the locator to succeed.
     func claudeHomeForPull(_ home: URL) throws -> URL {
