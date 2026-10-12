@@ -118,7 +118,9 @@ func renderWidgetSets() {
         ("1-claude", [.anthropic]), ("1-codex", [.openAI]), ("1-gemini", [.google]),
     ]
     let scheme: ColorScheme = lightScheme ? .light : .dark
-    for (tag, providers) in sets {
+    // The README uses three of the seven sets; `--only-widgets` renders all of them to review every layout.
+    let curated: Set<String> = ["3", "1-claude", "2-claude-codex"]
+    for (tag, providers) in sets where onlyWidgets || curated.contains(tag) {
         for (sizeName, width, height, bars, gauge) in [
             ("small", 164.0, 164.0, BarsWidgetView.Size.small, GaugeWidgetView.Size.small),
             ("medium", 344.0, 164.0, .medium, .medium),
@@ -155,7 +157,7 @@ struct PrimitivesMock: View {
 }
 
 Task { @MainActor in
-    render(PrimitivesMock(), name: "primitives.png")
+    if onlyWidgets { render(PrimitivesMock(), name: "primitives.png") }
     if onlyWidgets { renderWidgetSets(); exit(0) }
     renderWidgetSets()
     render(MenuMock(), name: "menu-dark.png")

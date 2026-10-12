@@ -1,6 +1,6 @@
 # Tokenometer
 
-A macOS menu bar app and desktop widgets that show how much of your AI coding assistants' usage limits you have used. A tiny gauge in the menu bar with one hand per provider (or one bar per provider, your choice); session and weekly bars, spend, and a per-tool breakdown in the menu; the same on a widget, as bars or as rings.
+A macOS menu bar app and desktop widgets that show how much of your AI coding assistants' usage limits you have used. A tiny gauge in the menu bar with one hand per provider (or one bar per provider, your choice); session and weekly bars, spend, and a per-tool breakdown in the menu; the same on widgets, as bars or as half-circle gauges.
 
 <p align="center"><img src="docs/images/menubar.png" alt="Menu bar gauge with one hand per provider" width="390"></p>
 
@@ -14,35 +14,34 @@ It reads the logs that Claude Code, Claude Desktop, Codex, Gemini CLI, and Antig
 
 ## What it shows
 
-<p align="center"><img src="docs/images/menu-dark.png" alt="The menu, dark mode" width="320"> <img src="docs/images/menu-light.png" alt="The menu, light mode" width="320"></p>
+<p align="center"><img src="docs/images/menu-dark.png" alt="The menu, dark mode" width="340"> <img src="docs/images/menu-light.png" alt="The menu, light mode" width="340"></p>
 
-For each provider:
+One card per provider, with its logo, plan, and whether the numbers are live:
 
 - **Session** and **weekly** bars, as the provider reports them. Claude's 5-hour and 7-day windows, Codex's primary and secondary windows, Google's per-group 5-hour and weekly windows.
 - **Scoped** bars where the provider has them: Claude's per-model weekly cap ("Fable weekly"), Antigravity's second model group ("Claude and GPT").
-- A **pace tick** on every bar marking how far through the window the clock is. The fill stays in the provider's color while usage is at or behind the tick. Ahead of it, amber from 75% and red from 90%.
+- A **pace tick** on every bar marking how far through the window the clock is, and the share of the window's time that has passed as a small white number beside it. The whole fill is green while usage is at or behind the tick, yellow once it leads the tick by 10 points, and red when it is past the tick at 90% or more. A color-blind palette (blue, orange, vermilion) is one toggle in Settings.
 - **Spend**: tokens and dollars for the session and the week. On a subscription the dollar figure is what the same tokens would have cost at API rates, labeled as such; the subscription is the real bill.
-- **Tools and models** this week, under a disclosure. Those rows are summed from this Mac's logs. For Claude the disclosure also shows the week split by surface (Claude Code, Chats, Cowork, Other) for the whole account, as Anthropic reports it, which covers your other devices and claude.ai chat too.
-- **Credits**, under a second disclosure, for Claude: every dollar credit on the account (extra usage, cloud sessions, the Projects setup credit, and any Anthropic adds later), each with dollars used of its limit, a bar, and when it resets or expires. A credit past its expiry drops off.
+- **Tools and models** this week, under one disclosure. Those rows are summed from this Mac's logs. For Claude the disclosure also shows the week split by surface (Claude Code, Chats, Cowork, Other) for the whole account, as Anthropic reports it, which covers your other devices and claude.ai chat too.
+- **Credits**, in the same disclosure, for Claude: every dollar credit on the account (extra usage, cloud sessions, the Projects setup credit, and any Anthropic adds later), each with dollars used of its limit, a bar, and when it resets or expires. A credit past its expiry drops off.
 
 Providers appear only when their logs exist on the Mac. If a source cannot be refreshed, the bar keeps its last value, dims, and shows why on hover.
 
-### Widget
+### Widgets
 
-Two widgets, both listed under Tokenometer in the widget gallery. Tokenometer, in bars: small shows the session bar per provider, medium session and weekly side by side, large every window and spend, each with its reset time. A reset within the week reads as the weekday ("Sun 7:00 PM"); further out, the date.
+Two widgets, both listed under Tokenometer in the widget gallery, each in small, medium, and large, and each showing one, two, or all three providers. Right-click a placed widget and choose Edit Widget to pick the providers; place several and give each a different one. Every widget opens with a header that says what it shows ("Session", "Session and weekly", or the provider's name when it shows one) and an "as of" time. A reset within the week reads as the weekday ("Sun 7:00 PM"); further out, the date.
 
-<p align="center"><img src="docs/images/widget-small.png" alt="Small widget" width="170"> <img src="docs/images/widget-medium.png" alt="Medium widget" width="364"></p>
-<p align="center"><img src="docs/images/widget-large.png" alt="Large widget" width="364"></p>
+**Tokenometer Bars**: a card per provider with status-colored bars. Small is the session bar for each provider, medium session and weekly side by side, large every window with weekly spend on the card.
 
-Session Rings, in the style of the battery widget: a ring per provider with the session percent inside and the reset time under it; the large adds a row of weekly rings. Right-click it and choose Edit Widget to pick which providers it shows (one alone draws large, with its weekly ring beside it on the medium and large) or a gauge arc instead of a full ring. Place several and give each a different provider.
+<p align="center"><img src="docs/images/widgets/bars-small-3.png" alt="Small bars widget" width="164"> <img src="docs/images/widgets/bars-medium-3.png" alt="Medium bars widget" width="344"> <img src="docs/images/widgets/bars-large-3.png" alt="Large bars widget" width="344"></p>
 
-<p align="center"><img src="docs/images/rings-small.png" alt="Small rings widget" width="170"> <img src="docs/images/rings-medium.png" alt="Medium rings widget" width="364"></p>
-<p align="center"><img src="docs/images/rings-small-one.png" alt="Small rings widget, one provider" width="170"> <img src="docs/images/rings-medium-one.png" alt="Medium rings widget, one provider" width="364"></p>
-<p align="center"><img src="docs/images/rings-large.png" alt="Large rings widget" width="364"></p>
+**Session Gauges**: the same cards with half-circle gauges, a bar bent over the top with the pace tick across the arc. Small is a gauge per provider, medium a card per provider, large session over weekly.
 
-The gauge shape, a 240° arc open at the bottom, from the same Edit Widget sheet:
+<p align="center"><img src="docs/images/widgets/gauge-small-3.png" alt="Small gauge widget" width="164"> <img src="docs/images/widgets/gauge-medium-3.png" alt="Medium gauge widget" width="344"> <img src="docs/images/widgets/gauge-large-3.png" alt="Large gauge widget" width="344"></p>
 
-<p align="center"><img src="docs/images/rings-medium-gauge.png" alt="Medium rings widget, gauge shape" width="364"></p>
+With fewer providers each size uses the room: two providers get bigger gauges and bars, one provider gets a cell or card per window (Claude's weekly and Fable, Antigravity's two groups) and a weekly spend card.
+
+<p align="center"><img src="docs/images/widgets/gauge-medium-2-claude-codex.png" alt="Medium gauge widget, two providers" width="344"> <img src="docs/images/widgets/gauge-large-1-claude.png" alt="Large gauge widget, one provider" width="344"></p>
 
 Screenshots are rendered from the app's own views with sample data (`swift run mockups`), so they match the real thing pixel for pixel but not your numbers.
 
@@ -51,7 +50,7 @@ Screenshots are rendered from the app's own views with sample data (`swift run m
 1. Download `Tokenometer-<version>.dmg` from the [latest release](https://github.com/tksunw/Tokenometer/releases/latest) and open it.
 2. Drag Tokenometer onto the Applications folder in the installer window, then open it from Applications. The app and the disk image are Developer ID signed and notarized. A plain zip of the app is on the release page too.
 3. It lives in the menu bar only; there is no Dock icon. Click the bars for the menu, the gear for Settings.
-4. For the widgets: right-click the desktop, Edit Widgets, search Tokenometer. Both widgets are there in every size. To change what a placed Session Rings widget shows, right-click it and choose Edit Widget.
+4. For the widgets: right-click the desktop, Edit Widgets, search Tokenometer. Both widgets are there in every size. To change what a placed widget shows, right-click it and choose Edit Widget.
 5. If you use Claude, install the usage-reporter mod (below). Claude's usage bars do not work without it; only spend does.
 
 ### usage-reporter
@@ -139,7 +138,7 @@ swift run tokenometerctl                  # prints what the app would show on th
 
 Signing is set to a Developer ID identity for team `F5ED28X889`; change `DEVELOPMENT_TEAM` and the App Group prefix in `project.yml` (and `SnapshotStore.appGroup`) to build under your own team.
 
-Layout: `TokenometerCore/` is a Swift package with the model, log parsers, collectors, pricing table, aggregation, and the usage clients, tested against scrubbed fixture logs. `Tokenometer/` is the menu bar app, `TokenometerWidget/` the WidgetKit extension with both widgets; the views they share, including the rings, are in `TokenometerCore/Sources/TokenometerUI/`. `docs/adr/` records the design decisions, `docs/widgets.md` the widgets' layout rules and the chronod lesson, `GLOSSARY.md` the vocabulary.
+Layout: `TokenometerCore/` is a Swift package with the model, log parsers, collectors, pricing table, aggregation, and the usage clients, tested against scrubbed fixture logs. `Tokenometer/` is the menu bar app, `TokenometerWidget/` the WidgetKit extension with both widgets; the views they share, including the gauges and cards, are in `TokenometerCore/Sources/TokenometerUI/`. `docs/adr/` records the design decisions, `docs/widgets.md` the widgets' layout rules and the chronod lesson, `GLOSSARY.md` the vocabulary.
 
 ## Limitations
 

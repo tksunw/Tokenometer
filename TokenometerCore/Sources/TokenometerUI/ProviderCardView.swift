@@ -120,12 +120,12 @@ public struct ProviderCardView: View {
     }
 
     @ViewBuilder
-    private func resetText(_ window: UsageWindow, size: CGFloat, withRemaining: Bool = false) -> some View {
+    private func resetText(_ window: UsageWindow, size: CGFloat, withRemaining: Bool = false, word: Bool = true) -> some View {
         if let time = Format.resetTime(window.resetsAt, now: now) {
             HStack(spacing: 5) {
                 Image(systemName: "clock").font(.system(size: size - 1))
                 let remaining = withRemaining ? (Format.remaining(window, now: now).map { " · \($0)" } ?? "") : ""
-                Text("Resets \(Text(time).fontWeight(.semibold).foregroundColor(.primary))\(remaining)")
+                Text("\(word ? "Resets " : "")\(Text(time).fontWeight(.semibold).foregroundColor(.primary))\(remaining)")
                     .font(.system(size: size)).lineLimit(1)
             }
             .foregroundStyle(.secondary)
@@ -218,7 +218,7 @@ public struct ProviderCardView: View {
             Spacer(minLength: 2)
             StatusBar(percent: window.usedPercent, pace: window.elapsedFraction(now: now), height: 5)
             Spacer(minLength: 2)
-            resetText(window, size: 11)
+            resetText(window, size: 11.5, word: false)
         }
         .padding(.horizontal, 10).padding(.vertical, 9)
         .background(RoundedRectangle(cornerRadius: 11, style: .continuous).fill(inset))
@@ -231,7 +231,7 @@ public struct ProviderCardView: View {
             miniRow("Session", session.window)
             miniRow("Weekly", weekly.window)
             Spacer(minLength: 2)
-            resetText(session.window, size: 11)
+            resetText(session.window, size: 11.5, word: false)
         }
         .padding(.horizontal, 10).padding(.vertical, 9)
         .background(RoundedRectangle(cornerRadius: 11, style: .continuous).fill(inset))

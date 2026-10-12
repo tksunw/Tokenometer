@@ -5,7 +5,7 @@ Real-time view of how much of each AI provider's usage allowance a person has co
 ## Language
 
 **Provider**:
-The company whose account and limits usage counts against: Anthropic, OpenAI, Google. Colors are assigned per provider.
+The company whose account and limits usage counts against: Anthropic, OpenAI, Google. Each has an identity color, shown on its logo tile.
 _Avoid_: Agent, vendor, service
 
 **Tool**:
@@ -23,6 +23,14 @@ _Avoid_: Session, 5-hour limit
 **Weekly window**:
 The provider's long usage window. Claude: 7 days. Codex: the secondary window. Google: the weekly bucket of the first model group.
 _Avoid_: Week, weekly limit
+
+**Pace**:
+How much of a usage window's time has already passed, 0 to 100%. The tick on a bar, gauge, or ring marks it, and the cards show it as a small white number beside it.
+_Avoid_: Elapsed, progress
+
+**Status**:
+What color a window's fill takes: ok (at or behind the pace, or under a 10 point lead), caution (10 or more points ahead of the pace), critical (past the pace at 90% or more). See ADR-0007.
+_Avoid_: Level, severity, tint
 
 **Usage percent**:
 How much of a usage window's allowance has been consumed, 0 to 100, as the provider reports it.

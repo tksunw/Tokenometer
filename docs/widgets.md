@@ -1,39 +1,36 @@
 # Widgets: layout rules and how they got here
 
-Handoff for whoever touches `TokenometerWidget/` or `TokenometerCore/Sources/TokenometerUI/` next. Covers releases 1.2.0 through 1.2.2 (October 2026): the Session Rings widget, the reset-time format, the layout rules both widgets follow, and the chronod bug that hid the new widget on one Mac.
+Handoff for whoever touches `TokenometerWidget/` or `TokenometerCore/Sources/TokenometerUI/` next. Covers the 1.4 redesign (October 2026): the Bars and Gauge widgets, the pace-status colors, the layout rules both follow, and the chronod bug that hid a widget on one Mac.
 
 ## What exists
 
 One extension, two widgets, registered in `TokenometerWidget/TokenometerWidget.swift`:
 
-- `TokenometerWidget` (kind `TokenometerWidget`), bars. `StaticConfiguration`, small, medium, large. Drawn by `WidgetContentView` over `UsageBarView` (per-row bar) and `WidgetProviderView` (the large's per-provider block). `ViewThatFits` tries type scales 1.4 down to 1, then a fallback without reset times.
-- `TokenometerRings` (kind `TokenometerRings`), rings. `AppIntentConfiguration` with `RingsConfigurationIntent` in `TokenometerWidget/RingsWidget.swift`: a Bool parameter per provider (Anthropic, OpenAI, Google, all default on; all off means all) and a `RingShape` enum (ring or 240° gauge). Each placed widget keeps its own, so several can sit side by side with one provider each. Drawn by `RingWidgetView` over `SessionRing`. Small, medium, large; the large adds a weekly row; one provider alone draws large with its weekly ring beside it on the medium and large.
+- `TokenometerWidget` (kind `TokenometerWidget`), Bars. `AppIntentConfiguration` with `BarsConfigurationIntent`: a Bool per provider, all default on, all off means all. Drawn by `BarsWidgetView`. Before 1.4 this was a `StaticConfiguration`; a placed widget may reset to showing every provider after the update.
+- `TokenometerRings` (kind `TokenometerRings`), now the Session Gauges widget. `RingsConfigurationIntent` keeps its name so a placed widget keeps its provider choice; the ring-shape parameter is gone, the half-circle gauge replaced both shapes. Drawn by `GaugeWidgetView`.
 
-Both share `TokenometerUI` with the menu and the `mockups` executable, so `swift run mockups ../docs/images` renders the README screenshots from the real views with `SampleData`. Run it after any view change; the `rings-*.png` files come from it too.
+Both have small, medium, and large, and one, two, or three providers. Both set `.contentMarginsDisabled()`: the views draw their own 12pt padding (11pt above the header) so the layouts match the mockups to the point. Both share `TokenometerUI` with the menu and the `mockups` executable. `swift run mockups ../docs/images` renders the README screenshots from the real views with `SampleData`; add `--only-widgets` to render all 42 widget variants (three providers, three two-provider pairs, three single providers) into `<dir>/widgets/`, and `--near`, `--colorblind`, `--light` to see yellow and red, the other palette, and light mode.
+
+The building blocks, all in `TokenometerUI`: `ProviderTile` and `ProviderGlyph` (neutral logo stand-ins, no trademarked artwork), `ArcGauge` (the half circle, 112 x 62 box scaled to a width), `StatusBar`, `UsageStatus` and `StatusPalette`, `ProviderSnapshot.windowRows` (every surface's window order and labels), `ProviderCardView` (the menu card).
 
 ## The rules
 
-Agreed in a design review on 2026-10-10 (canvas: Tokenometer Widget Review). Apply them to any new widget or row.
-
-1. Left is for names. Provider name, window label, column header, spend label. The provider dot appears only beside a left-aligned name.
-2. Right is for numbers. Percent, reset time, spend, "as of", all right-aligned on one trailing edge, the end of the bar.
-3. Centered only on a ring. Inside a ring column everything sits on the ring's axis. No centered text elsewhere, titles included.
-4. One footer. "as of 10:12 AM", bottom right, 10pt secondary, in every size that has a footer (medium and large). Never in a header.
-5. Two words for windows. "Session" and "Weekly". Never "5h", "wk", "Week". Scoped windows keep their group plus the word: "Fable weekly", "Gemini session", "Claude & GPT session".
-6. Session before weekly, in rows and ring rows, per group. `AntigravityLocalClient.parse` sorts each group's buckets that way; the server lists weekly first.
-7. One reset string. `Format.resetsShort`: "⟳ 12:38 PM" today, "⟳ Wed 7:49 PM" within six days, "⟳ Oct 16, 7:49 PM" beyond. The menu's `Format.resets` adds "today". Weekday rather than date because a weekly window never resets more than seven days out; the date form stays for anything further (the Enterprise monthly budget has no reset date at all).
-8. Names by width. Company name (Anthropic) in a column 100pt or wider, product name (`Provider.shortName`: Claude, Codex, Gemini) below that. A reset line only in a column 60pt or wider, so the small with three rings has none.
-9. One type scale. Provider name 10pt bold, row label 10pt, percent 10pt bold monospaced in the provider's color, secondary 10pt. Ring percent follows the ring: 10, 13, 15, 17, 20, 28pt for 40, 52, 64, 72, 88, 120pt rings; captions 9pt under a 52pt ring, 10pt above.
-10. Bars line up. Fixed label, percent and reset columns; the bar takes the rest. Large bars: label 112pt (fits "Claude & GPT session"), percent 30pt, reset 92pt (fits "⟳ Sep 28, 7:49 AM"), bar minimum 60pt. At scale 1 that is exactly the 312pt content width; a larger scale does not fit and `ViewThatFits` steps down.
-
-Rings skeleton, every size: a 12pt header line on the top padding (provider name with dot for one provider, "Session" or "Weekly" row label otherwise), 6pt gap, the rings, remaining space, footer. The header is fixed height so the rings start at the same y in every variant. Ring size by column count, not provider count: medium 64pt always (header + 64pt ring + name + reset + footer is 126 of 132pt; 72pt overflowed and SwiftUI squeezed the header down, which is how the misalignment in 1.2.1's follow-up was found), small 88/52/40 for one/two/three columns, large 72 and 120 for one provider.
+1. Fill color is status, not provider (ADR-0007). Green at or behind the pace tick or less than 10 points ahead, yellow at 10 or more ahead, red past the tick at 90% or more. Provider color is the logo tile only.
+2. Every widget has a header row: what it shows on the left ("Session", "Session and weekly", or the provider's logo and name for a single provider), "as of 10:12 AM" on the right. No separate footer row.
+3. Every window is labelled and has its reset time (a clock glyph and a bare time). "Session" and "Weekly" are spelled out; scoped windows keep their group plus the word ("Fable weekly", "Gemini session").
+4. Session before weekly, then scoped windows, per provider.
+5. Medium cards put the logo and provider name left-justified, as the small and large cards do.
+6. Fewer providers means bigger content: gauges and bars grow, or a single provider gets a cell per window and a weekly spend card. No dead space.
+7. Names in narrow places are `Provider.shortName` (Claude, Codex, Gemini); the menu card uses the product name (Claude, Codex, Antigravity).
+8. Frames are the sizes chronod reports on macOS 27: 164x164, 344x164, 344x344 pt, corner radius 22.
+9. Text must not wrap or clip at any size or provider combination. Reset times more than a week out lose their time ("Sep 28") where the column is narrow.
 
 ## Why some things are the way they are
 
-- Large bars keep the reset time on the row, not under the bar. Nine rows plus a line under each needs about 430pt; the large has 312. Measured by rendering the mock at 520pt tall. Hence the wider reset column and the narrower bar.
-- Small bars widget with three rings has no reset times: 44pt per column, "⟳ 12:38 PM" needs about 52.
-- The gallery shows each widget once per size with its default configuration. Single-provider and two-provider rings are reached by placing a widget, right-click, Edit Widget. WidgetKit offers no way to list configured variants in the gallery.
-- Scoped windows come with their labels from the sources (`"\(group) weekly"` from Antigravity, "Fable weekly" from usage-reporter). The old widget abbreviated them with string replacement (`compactLabel`); that is gone. If a label ever exceeds 112pt at 10pt, widen the column and shrink the bar minimum, or shorten the group name in `AntigravityLocalClient.shortName`, not the window word.
+- The palette choice rides in `Snapshot.palette` because the widget is sandboxed and cannot read the app's preferences. `hasSameContent` includes it, so toggling the setting reloads the timelines; `AppModel.paletteChanged()` rewrites the snapshot at once.
+- Large Bars show only weekly spend (on the card header); the old widget's separate session spend line is gone. Large Gauge shows session and weekly per provider only; scoped windows (Fable, Claude & GPT) appear in the Bars widget, the menu, and the one-provider gauge layouts.
+- Small single-provider Gemini shows only its own session and weekly, not the Claude & GPT windows.
+- The gallery shows each widget once per size with its default configuration (all providers). One- and two-provider layouts are reached by placing a widget, right-click, Edit Widget.
 
 ## The chronod descriptor cache
 
@@ -57,11 +54,12 @@ Not fixed and not fixable from the app: the race itself. The refetch at registra
 - 1.1.9 and before: one widget, bars, reset times left-aligned under the bar, "tomorrow" wording.
 - 1.2.0: Session Rings widget; reset times right-aligned and weekday-formatted; large bars show glyph, day and time on the row.
 - 1.2.1: `WidgetRepair` and `install-debug.sh` use the unregister, restart, kill, register sequence.
-- 1.2.2: the ten rules above; large bars labels spelled out and columns resized; scoped windows ordered session first; rings skeleton with fixed header and column-based ring sizes.
+- 1.2.2: large bars labels spelled out and columns resized; scoped windows ordered session first; rings skeleton with fixed header and column-based ring sizes.
+- 1.4.0: card layouts with logo tiles for both widgets; the Rings widget becomes Session Gauges (half-circle arcs); both take a provider choice; fills colored by pace status (ADR-0007) with an optional color-blind palette; headers on every widget; elapsed share of each window.
 
 ## Checks before changing a widget
 
-- `cd TokenometerCore && swift run mockups ../docs/images` and look at every `widget-*.png` and `rings-*.png`. The renderer frames are the sizes chronod reports on macOS 27 (164x164, 344x164, 344x344), so a layout that fits the mock fits the widget.
+- `cd TokenometerCore && swift run mockups <scratch dir> --only-widgets` (and again with `--near`, `--light --colorblind`) and look at every `widgets/bars-*.png` and `widgets/gauge-*.png`. The renderer frames are the sizes chronod reports on macOS 27 (164x164, 344x164, 344x344), so a layout that fits the mock fits the widget.
 - `swift test`; `UsageClientTests.firstGroupIsSessionAndWeeklyOthersAreScoped` pins the scoped order.
 - `Scripts/install-debug.sh`, then look at the real widgets. Never build to DerivedData while the app sits in /Applications.
 - A new widget kind or a new `AppIntent` parameter needs a build number bump to reach other Macs' galleries; see the chronod section.
