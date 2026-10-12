@@ -5,8 +5,12 @@ public struct LogLocations: Sendable, Equatable {
     public var claudeCodeProjects: URL
     public var claudeDesktopSessions: URL
     public var claudeConfig: URL
+    /// Claude Code's own folder: settings, plugin registry, mods.
+    public var claudeHome: URL
     /// Written by the `usage-reporter` Claude Code mod (ADR-0004).
     public var claudeUsageFile: URL
+    /// Working directory of the throwaway Claude Code session that asks the mod to report (ADR-0006).
+    public var claudePullDirectory: URL
     public var codexSessions: URL
     public var geminiHome: URL
     public var geminiTemp: URL
@@ -16,7 +20,9 @@ public struct LogLocations: Sendable, Equatable {
         claudeCodeProjects = home.appendingPathComponent(".claude/projects", isDirectory: true)
         claudeDesktopSessions = home.appendingPathComponent("Library/Application Support/Claude/local-agent-mode-sessions", isDirectory: true)
         claudeConfig = home.appendingPathComponent(".claude.json")
+        claudeHome = home.appendingPathComponent(".claude", isDirectory: true)
         claudeUsageFile = home.appendingPathComponent(".claude/usage-reporter/usage.json")
+        claudePullDirectory = home.appendingPathComponent("Library/Application Support/Tokenometer/UsagePull", isDirectory: true)
         codexSessions = home.appendingPathComponent(".codex/sessions", isDirectory: true)
         geminiHome = home.appendingPathComponent(".gemini", isDirectory: true)
         // Under the seatbelt sandbox Gemini CLI relocates its runtime dir; the collector checks both.

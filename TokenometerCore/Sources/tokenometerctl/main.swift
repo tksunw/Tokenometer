@@ -22,6 +22,19 @@ if CommandLine.arguments.contains("--claude-raw") {
     exit(0)
 }
 
+if CommandLine.arguments.contains("--pull") {
+    // Starts a throwaway Claude Code session so the usage-reporter mod reports once (ADR-0006). The mod
+    // skips the call inside its five-minute floor; `--force` launches anyway, for diagnosing the launch.
+    let pull = ClaudeUsagePull()
+    print("mod: \(UsageReporterLocator(claudeHome: LogLocations.standard.claudeHome).locate()?.path ?? "not found")")
+    print("claude: \(ClaudeUsagePull.claudeExecutable()?.path ?? "not found")")
+    print("last fetch: \(pull.lastFetch().map { "\($0)" } ?? "never")")
+    let outcome = pull.run(ignoringFloor: CommandLine.arguments.contains("--force"))
+    print("outcome: \(outcome)")
+    print("last fetch now: \(pull.lastFetch().map { "\($0)" } ?? "never")")
+    exit(0)
+}
+
 if CommandLine.arguments.contains("--google") {
     // Asks only the running Antigravity language server on localhost.
     do {

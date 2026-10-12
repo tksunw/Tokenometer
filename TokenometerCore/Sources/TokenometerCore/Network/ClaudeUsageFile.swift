@@ -27,6 +27,24 @@ public struct ClaudeUsageFile: UsageWindowSource {
         return try Self.parse(report: data)
     }
 
+    /// When the mod last took its fetch path. A labelled window, the weekly breakdown, and the grants are
+    /// rewritten only by a full response, so their `at` is the fetch time; the status-line merge path
+    /// restamps only the file's own `at`, which is the fallback for an account with none of those.
+    static func lastFetch(report root: [String: Any]) -> Date? {
+        let windows = root["windows"] as? [[String: Any]] ?? []
+        let grants = root["grants"] as? [[String: Any]] ?? []
+        let stamps = windows.filter { $0.string("label") != nil }.map { $0["at"] }
+            + grants.map { $0["at"] }
+            + [root.dict("weeklyBreakdown")?["at"], root.dict("credits")?["at"]]
+        return stamps.compactMap(Timestamps.parse).max() ?? Timestamps.parse(root["at"])
+    }
+
+    /// `lastFetch` of the file on disk, nil when the mod has never reported.
+    func lastFetch() -> Date? {
+        guard let root = try? JSONLines.object(in: file) else { return nil }
+        return Self.lastFetch(report: root)
+    }
+
     static func parse(report data: Data) throws -> ProviderWindows {
         guard let root = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
               let version = (root["version"] as? NSNumber)?.intValue
