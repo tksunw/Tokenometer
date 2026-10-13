@@ -98,4 +98,16 @@ import TokenometerCore
         let stamped = Snapshot(generatedAt: .now, providers: [provider]).stamped().providers[0]
         #expect(stamped.windowRows.allSatisfy { $0.window.provider == .google })
     }
+
+    @Test func aResetIsAlwaysWeekdayAndTimeNeverADate() {
+        var calendar = Calendar.current
+        calendar.timeZone = .current
+        let now = Date(timeIntervalSince1970: 1_790_000_000)
+        let sameTimeNextWeek = now.addingTimeInterval(7 * 86400)
+        let text = Format.resetTime(sameTimeNextWeek, now: now) ?? ""
+        #expect(!text.contains(","))
+        #expect(text.contains(now.formatted(.dateTime.weekday(.abbreviated))))
+        // Later today there is no weekday at all.
+        #expect(Format.resetTime(now.addingTimeInterval(60), now: now)?.contains(now.formatted(.dateTime.weekday(.abbreviated))) == false)
+    }
 }

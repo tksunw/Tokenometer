@@ -25,7 +25,7 @@ The building blocks, all in `TokenometerUI`: `ProviderTile` and `ProviderGlyph` 
 8. Frames are the sizes chronod reports on macOS 27: 164x164, 344x164, 344x344 pt, corner radius 22.
 9. The small two- and three-provider gauge widgets write a reset's weekday with two letters ("Tu 12:20 PM") and draw the gauge 62pt wide, because "Tue 12:20 PM" does not fit beside a wider gauge at a readable size. `mockups --tomorrow` renders the widest case.
 10. A window with no reset time (an idle session that has not started) shows "No reset" where the time would be, so its row is as tall as its neighbors'. `mockups --idle` renders it.
-11. Text must not wrap or clip at any size or provider combination. Reset times more than a week out lose their time ("Sep 28") where the column is narrow.
+11. Text must not wrap or clip at any size or provider combination. Reset times are weekday and time only, never a date.
 
 ## Why some things are the way they are
 

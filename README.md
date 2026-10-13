@@ -29,7 +29,7 @@ Providers appear only when their logs exist on the Mac. If a source cannot be re
 
 ### Widgets
 
-Two widgets, both listed under Tokenometer in the widget gallery, each in small, medium, and large, and each showing one, two, or all three providers. Right-click a placed widget and choose Edit Widget to pick the providers; place several and give each a different one. Every widget opens with a header that says what it shows ("Session", "Session and weekly", or the provider's name when it shows one) and an "as of" time. A reset within the week reads as the weekday ("Sun 7:00 PM"); further out, the date.
+Two widgets, both listed under Tokenometer in the widget gallery, each in small, medium, and large, and each showing one, two, or all three providers. Right-click a placed widget and choose Edit Widget to pick the providers; place several and give each a different one. Every widget opens with a header that says what it shows ("Session", "Session and weekly", or the provider's name when it shows one) and an "as of" time. A reset reads as the weekday and time ("Sun 7:00 PM"); a window never resets more than a week out, and the pace tick tells a reset a full week away from one today.
 
 **Tokenometer Bars**: a card per provider with status-colored bars. Small is the session bar for each provider, medium session and weekly side by side, large every window with weekly spend on the card.
 

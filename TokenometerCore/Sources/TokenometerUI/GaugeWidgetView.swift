@@ -540,10 +540,8 @@ private struct GaugeReset: View {
     /// less than the weekday-and-time needs once the hour is two digits.
     var shortDay = false
 
-    /// Bare lines sit in narrow columns, so a reset more than a week out drops its time ("Oct 16").
     private var time: String? {
-        guard let full = Format.resetTime(window?.resetsAt, now: now) else { return nil }
-        let text = !prefixed && full.contains(",") ? Format.resetsCompact(window?.resetsAt, now: now) : full
+        let text = Format.resetTime(window?.resetsAt, now: now)
         guard shortDay, let text, !text.contains(","), let space = text.firstIndex(of: " "),
               text[..<space].count == 3, text[..<space].allSatisfy(\.isLetter) else { return text }
         return String(text[..<space].prefix(2)) + text[space...]

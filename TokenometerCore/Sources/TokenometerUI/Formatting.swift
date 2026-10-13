@@ -23,7 +23,7 @@ public enum Format {
         "\(Int(min(max(value, 0), 100).rounded()))%"
     }
 
-    /// Menu: "⟳ today 11:49 PM", "⟳ Sun 6:59 AM" within the week, "⟳ Oct 16, 6:59 AM" beyond.
+    /// Menu: "⟳ today 11:49 PM", "⟳ Sun 6:59 AM" otherwise.
     public static func resets(_ date: Date?, now: Date = .now) -> String? {
         guard let date else { return nil }
         if date <= now { return "⟳ now" }
@@ -32,7 +32,7 @@ public enum Format {
         return "⟳ \(day(date, now: now)) \(time)"
     }
 
-    /// Widgets: "⟳ 3:49 PM" today, "⟳ Sun 3:49 PM" within the week, "⟳ Oct 16, 3:49 PM" beyond.
+    /// Widgets: "⟳ 3:49 PM" today, "⟳ Sun 3:49 PM" otherwise.
     public static func resetsShort(_ date: Date?, now: Date = .now) -> String? {
         guard let date else { return nil }
         if date <= now { return "⟳ now" }
@@ -41,7 +41,7 @@ public enum Format {
         return "⟳ \(day(date, now: now)) \(time)"
     }
 
-    /// Bare reset time for the cards: "12:38 PM" today, "Wed 7:49 PM" within the week, "Oct 16, 7:49 PM" beyond.
+    /// Bare reset time for the cards: "12:38 PM" today, "Wed 7:49 PM" otherwise.
     public static func resetTime(_ date: Date?, now: Date = .now) -> String? {
         guard let date else { return nil }
         if date <= now { return "now" }
@@ -50,20 +50,10 @@ public enum Format {
         return "\(day(date, now: now)) \(time)"
     }
 
-    /// A weekly window resets within seven days, so its weekday names the day without ambiguity;
-    /// anything further out gets the date. "Sun" or "Oct 16,".
+    /// The weekday names the day. A window resets within seven days, and a reset exactly a week out
+    /// reads as today's weekday, which the pace tick and the time of day tell apart from today.
     private static func day(_ date: Date, now: Date) -> String {
-        let calendar = Calendar.current
-        let days = calendar.dateComponents([.day], from: calendar.startOfDay(for: now), to: calendar.startOfDay(for: date)).day ?? 7
-        return days < 7 ? date.formatted(.dateTime.weekday(.abbreviated)) : date.formatted(.dateTime.month(.abbreviated).day()) + ","
-    }
-
-    /// Large widget's narrow column: the time today, else the date, no symbol.
-    public static func resetsCompact(_ date: Date?, now: Date = .now) -> String? {
-        guard let date else { return nil }
-        if date <= now { return "now" }
-        if Calendar.current.isDate(date, inSameDayAs: now) { return date.formatted(.dateTime.hour().minute()) }
-        return date.formatted(.dateTime.month(.abbreviated).day())
+        date.formatted(.dateTime.weekday(.abbreviated))
     }
 
     public static func age(_ date: Date, now: Date = .now) -> String {
