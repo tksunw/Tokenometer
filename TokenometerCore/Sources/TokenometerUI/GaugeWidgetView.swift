@@ -104,12 +104,12 @@ public struct GaugeWidgetView: View {
                 VStack(spacing: 0) {
                     ForEach(Array(list.enumerated()), id: \.offset) { index, p in
                         if index > 0 { Spacer(minLength: 0) }
-                        GaugeSideRow(gaugeWidth: 68, gap: 4, whoSpacing: 3) {
+                        GaugeSideRow(gaugeWidth: 62, gap: 2, whoSpacing: 3) {
                             nameLabel(p, tile: 18, size: 12.5, spacing: 5)
                         } reset: {
-                            GaugeReset(window: primary(p), now: now, size: 10.5, iconSize: 10, spacing: 4)
+                            GaugeReset(window: primary(p), now: now, size: 10.5, iconSize: 10, spacing: 3, shortDay: true)
                         } gauge: {
-                            gauge(p, primary(p), width: 68, numberSize: 16)
+                            gauge(p, primary(p), width: 62, numberSize: 15)
                         }
                     }
                 }
@@ -536,11 +536,17 @@ private struct GaugeReset: View {
     let iconSize: CGFloat
     let spacing: CGFloat
     var prefixed = false
+    /// "Tu 12:20 PM" for "Tue 12:20 PM": the small three-provider widget has room for one character
+    /// less than the weekday-and-time needs once the hour is two digits.
+    var shortDay = false
 
     /// Bare lines sit in narrow columns, so a reset more than a week out drops its time ("Oct 16").
     private var time: String? {
         guard let full = Format.resetTime(window?.resetsAt, now: now) else { return nil }
-        return !prefixed && full.contains(",") ? Format.resetsCompact(window?.resetsAt, now: now) : full
+        let text = !prefixed && full.contains(",") ? Format.resetsCompact(window?.resetsAt, now: now) : full
+        guard shortDay, let text, !text.contains(","), let space = text.firstIndex(of: " "),
+              text[..<space].count == 3, text[..<space].allSatisfy(\.isLetter) else { return text }
+        return String(text[..<space].prefix(2)) + text[space...]
     }
 
     var body: some View {

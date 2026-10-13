@@ -23,7 +23,8 @@ The building blocks, all in `TokenometerUI`: `ProviderTile` and `ProviderGlyph` 
 6. Fewer providers means bigger content: gauges and bars grow, or a single provider gets a cell per window and a weekly spend card. No dead space.
 7. Names in narrow places are `Provider.shortName` (Claude, Codex, Gemini); the menu card uses the product name (Claude, Codex, Antigravity).
 8. Frames are the sizes chronod reports on macOS 27: 164x164, 344x164, 344x344 pt, corner radius 22.
-9. Text must not wrap or clip at any size or provider combination. Reset times more than a week out lose their time ("Sep 28") where the column is narrow.
+9. The small three-provider gauge widget writes a reset's weekday with two letters ("Tu 12:20 PM"), because "Tue 12:20 PM" does not fit beside the gauge at a readable size. `mockups --tomorrow` renders the widest case.
+10. Text must not wrap or clip at any size or provider combination. Reset times more than a week out lose their time ("Sep 28") where the column is narrow.
 
 ## Why some things are the way they are
 

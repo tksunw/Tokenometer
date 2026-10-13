@@ -36,6 +36,11 @@ if CommandLine.arguments.contains("--near"), !sample.providers.isEmpty {
     sample.providers[0].weekly?.usedPercent = 82
     if !sample.providers[0].scoped.isEmpty { sample.providers[0].scoped[0].usedPercent = 94 }
 }
+// `--tomorrow` moves every session reset to tomorrow at 12:20 PM, the widest "Tue 12:20 PM" a bare reset can be.
+if CommandLine.arguments.contains("--tomorrow") {
+    let tomorrow = Calendar.current.date(bySettingHour: 12, minute: 20, second: 0, of: now.addingTimeInterval(86_400)) ?? now
+    for index in sample.providers.indices { sample.providers[index].session?.resetsAt = tomorrow }
+}
 // `--colorblind` and `--provider-colors` stamp that palette, as the app does when the setting is chosen.
 if CommandLine.arguments.contains("--colorblind") { sample.palette = "colorBlind" }
 if CommandLine.arguments.contains("--provider-colors") { sample.palette = "provider" }
