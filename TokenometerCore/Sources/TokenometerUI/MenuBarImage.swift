@@ -23,7 +23,8 @@ public enum MenuBarProviderChoice: String, Codable, Sendable, CaseIterable {
 /// template image, which drops color and gives GeometryReader-based views no size; an NSImage with
 /// `isTemplate = false` keeps the provider colors and a fixed size.
 public enum MenuBarImage {
-    public static let height: CGFloat = 18
+    /// The menu bar is 22 pt thick; the image fills it, leaving the outline's dark edge a point of room.
+    public static let height: CGFloat = 22
 
     /// The menu bar item for one provider (`focus`, the first when nil). `showsWeekly` stacks the weekly
     /// bar under the session bar; `palette` colors the fills.
@@ -40,16 +41,16 @@ public enum MenuBarImage {
     /// digits are white over a dark outline, so they read on either. The fill is the status color of
     /// the chosen palette, which is the provider's own color under the Provider palette.
     public static func horizontal(_ provider: ProviderSnapshot, showsWeekly: Bool = true, palette: StatusPalette = .trafficLight, now: Date = .now) -> NSImage {
-        let tile: CGFloat = 15
+        let tile: CGFloat = 18
         let barWidth: CGFloat = 40
-        let textWidth: CGFloat = 26
+        let textWidth: CGFloat = 29
         let weekly = showsWeekly ? provider.weekly : nil
         let session = provider.session
         // The size and shape of the system battery indicator when alone; two thinner bars when stacked.
-        let barHeight: CGFloat = weekly == nil ? 11 : 7
-        let radius: CGFloat = weekly == nil ? 3.5 : 2.5
+        let barHeight: CGFloat = weekly == nil ? 14 : 9
+        let radius: CGFloat = weekly == nil ? 4.5 : 3
         // "5H" and "7D" sit between the logo and the bars, so each bar says which window it is.
-        let labelWidth: CGFloat = 13
+        let labelWidth: CGFloat = 14
         let barsX = tile + 4 + labelWidth + 3
         let width = barsX + barWidth + 4 + textWidth
 
@@ -71,7 +72,7 @@ public enum MenuBarImage {
         }
 
         func drawLabel(_ text: String, y: CGFloat) {
-            let font = NSFont.systemFont(ofSize: weekly == nil ? 7.5 : 6.5, weight: .bold)
+            let font = NSFont.systemFont(ofSize: weekly == nil ? 8.5 : 7.5, weight: .bold)
             let size = NSAttributedString(string: text, attributes: [.font: font]).size()
             let origin = NSPoint(x: tile + 4 + labelWidth - size.width, y: y + (barHeight - size.height) / 2)
             NSAttributedString(string: text, attributes: [.font: font, .strokeColor: NSColor(white: 0, alpha: 0.6), .strokeWidth: 18.0]).draw(at: origin)
@@ -84,7 +85,7 @@ public enum MenuBarImage {
             NSColor(white: 0, alpha: 0.25).setFill()
             NSBezierPath(roundedRect: track, xRadius: radius, yRadius: radius).fill()
             // A sliver stays at 0% so the bar still reads as a bar.
-            let inset: CGFloat = weekly == nil ? 2 : 1.25
+            let inset: CGFloat = weekly == nil ? 2 : 1.5
             let inner = track.insetBy(dx: inset, dy: inset)
             fill(for: window).setFill()
             NSBezierPath(roundedRect: NSRect(x: inner.minX, y: inner.minY, width: max(3, inner.width * percent / 100), height: inner.height), xRadius: max(0.5, radius - inset), yRadius: max(0.5, radius - inset)).fill()
@@ -126,7 +127,7 @@ public enum MenuBarImage {
                 drawLabel(windowLabel(session, session: true), y: (height - barHeight) / 2)
             }
             // White digits over a dark outline of the same glyphs; a soft shadow washes out on a light bar.
-            let font = NSFont.monospacedDigitSystemFont(ofSize: 11, weight: .semibold)
+            let font = NSFont.monospacedDigitSystemFont(ofSize: 12, weight: .semibold)
             let label = Format.percent(percent)
             let size = NSAttributedString(string: label, attributes: [.font: font]).size()
             let origin = NSPoint(x: barsX + barWidth + 4 + textWidth - size.width, y: (height - size.height) / 2)
