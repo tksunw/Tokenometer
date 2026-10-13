@@ -121,6 +121,8 @@ Launch at login. Menu bar style: gauge (one hand per provider, long to short in 
 
 <p align="center"><img src="docs/images/menubar-bars.png" alt="Menu bar bars style" width="390"> <img src="docs/images/menubar-horizontal.png" alt="Menu bar horizontal style" width="390"></p>
 
+Colors: how the fills are colored. Traffic light (the default) is green, yellow, red by pace. Color-blind friendly swaps in blue, orange, and vermilion (the Okabe-Ito set). Provider draws every fill in its provider's own color, clay for Claude, light purple for Codex, blue for Antigravity, with no yellow or red at all. It applies to the menu and both widgets.
+
 Menu background: a slider from translucent to solid, for how much of the desktop shows through the menu; mostly solid by default, since the bare translucent panel is hard to read over a dark desktop.
 
 Per provider: enabled or not (so a leftover `~/.gemini` from a cancelled plan can be ignored), show even when no logs are found, plan or metered override, session and weekly budgets. Notifications when a session or weekly window crosses 90% while ahead of pace, and again when it resets, off by default.

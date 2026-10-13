@@ -21,7 +21,7 @@ cd TokenometerCore && swift run tokenometerctl         # live diagnostic: collec
 cd TokenometerCore && swift run tokenometerctl --json  # the full snapshot as JSON; add --no-network to skip the Antigravity call
 cd TokenometerCore && swift run tokenometerctl --collectors   # per-collector record and failure counts, no network
 cd TokenometerCore && swift run tokenometerctl --pull         # one idle pull: starts Claude Code with only the mod loaded so it reports (ADR-0006); --force ignores the mod's floor
-cd TokenometerCore && swift run mockups ../docs/images       # re-render README screenshots from the real views with SampleData
+cd TokenometerCore && swift run mockups ../docs/images       # re-render README screenshots from the real views with SampleData; add --only-widgets for all 42 widget layouts, and --near, --colorblind, --provider-colors, --light, --tomorrow, --idle to see yellow and red, the other palettes, light mode, the widest reset, and an idle window
 xcodegen generate                                     # regenerate Tokenometer.xcodeproj after editing project.yml
 xcodebuild -project Tokenometer.xcodeproj -scheme Tokenometer -configuration Debug -destination 'platform=macOS' build
 Scripts/install-debug.sh                              # build Debug, install over /Applications, re-register the widget, restart chronod

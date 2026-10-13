@@ -57,7 +57,7 @@ Transcripts contain your prompts and the model's replies. Tokenometer parses onl
 
 ## Files written
 
-- `~/Library/Group Containers/F5ED28X889.net.timkennedy.tokenometer/snapshot.json`: the current numbers, for the widget. Percentages, token counts, cost estimates, plan name, tool names. No credentials, no transcript content.
+- `~/Library/Group Containers/F5ED28X889.net.timkennedy.tokenometer/snapshot.json`: the current numbers, for the widget. Percentages, token counts, cost estimates, plan name, tool names, and which Colors choice you made (traffic light, color-blind, or provider), which the widget cannot read from the app's preferences. No credentials, no transcript content.
 - `UserDefaults` for the app: settings only.
 - A temporary copy of each Antigravity database during parsing, deleted immediately after.
 - `~/Library/Application Support/Tokenometer/UsagePull/`, an empty folder (mode 0700) the throwaway Claude Code session runs in. Claude Code itself then records that folder as trusted in `~/.claude.json` and creates its per-project folder under `~/.claude/projects/`; the session is started with `CLAUDE_CODE_SKIP_PROMPT_HISTORY=1` and writes no transcript.
