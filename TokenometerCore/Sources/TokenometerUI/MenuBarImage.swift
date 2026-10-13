@@ -2,17 +2,7 @@ import AppKit
 import SwiftUI
 import TokenometerCore
 
-/// How the menu bar item draws usage.
-public enum MenuBarStyle: String, Codable, Sendable, CaseIterable {
-    /// A speedometer: one hand per provider, staggered long to short, pointing at session usage.
-    case gauge
-    /// One tiny vertical bar per provider.
-    case bars
-    /// A single horizontal session bar with its percent, for one provider at a time.
-    case horizontal
-}
-
-/// Which provider the horizontal style shows.
+/// Which provider the menu bar item shows: the next one every 10 seconds, or one you pick.
 public enum MenuBarProviderChoice: String, Codable, Sendable, CaseIterable {
     case cycle
     case anthropic
@@ -35,15 +25,11 @@ public enum MenuBarProviderChoice: String, Codable, Sendable, CaseIterable {
 public enum MenuBarImage {
     public static let height: CGFloat = 18
 
-    /// `focus`, `showsWeekly`, and `palette` apply to the horizontal style only; the gauge and bars
-    /// keep the provider's color, which is all that tells their hands and bars apart.
-    public static func render(_ providers: [ProviderSnapshot], style: MenuBarStyle, focus: ProviderSnapshot? = nil,
+    /// The menu bar item for one provider (`focus`, the first when nil). `showsWeekly` stacks the weekly
+    /// bar under the session bar; `palette` colors the fills.
+    public static func render(_ providers: [ProviderSnapshot], focus: ProviderSnapshot? = nil,
                               showsWeekly: Bool = true, palette: StatusPalette = .trafficLight, now: Date = .now) -> NSImage {
-        switch style {
-        case .gauge: gauge(providers)
-        case .bars: bars(providers)
-        case .horizontal: horizontal(focus ?? providers[0], showsWeekly: showsWeekly, palette: palette, now: now)
-        }
+        horizontal(focus ?? providers[0], showsWeekly: showsWeekly, palette: palette, now: now)
     }
 
     // MARK: Horizontal
@@ -161,93 +147,5 @@ public enum MenuBarImage {
             path.lineJoinStyle = .round
             path.stroke()
         }
-    }
-
-    // MARK: Gauge
-
-    /// Like the other styles, the rim and hub are white with a dark edge, so they read on any
-    /// wallpaper whatever the app's appearance; the menu bar's own look follows the wallpaper.
-    public static func gauge(_ providers: [ProviderSnapshot]) -> NSImage {
-        let width: CGFloat = 24
-        let image = NSImage(size: NSSize(width: width, height: height), flipped: false) { _ in
-            let edge = NSColor(white: 0, alpha: 0.55)
-            let center = NSPoint(x: width / 2, y: 3.5)
-            let radius: CGFloat = 9.5
-
-            // Rim: provider-neutral up to 75%, amber to 90%, red to 100%. Angles run 180° (0%) to 0° (100%).
-            func arc(from startPercent: Double, to endPercent: Double, color: NSColor, width: CGFloat = 2) {
-                let path = NSBezierPath()
-                path.appendArc(withCenter: center, radius: radius, startAngle: 180 - 180 * startPercent / 100, endAngle: 180 - 180 * endPercent / 100, clockwise: true)
-                path.lineWidth = width
-                path.lineCapStyle = .round
-                color.setStroke()
-                path.stroke()
-            }
-            arc(from: 0, to: 100, color: edge, width: 3.5)
-            arc(from: 0, to: UsageLevel.warning, color: .white)
-            arc(from: UsageLevel.warning, to: UsageLevel.critical, color: .systemOrange)
-            arc(from: UsageLevel.critical, to: 100, color: .systemRed)
-
-            // Hands, staggered long to short in provider order.
-            let lengths: [CGFloat] = [8.5, 7, 5.5]
-            for (index, provider) in providers.prefix(3).enumerated() {
-                let percent = min(max(provider.session?.usedPercent ?? 0, 0), 100)
-                let angle = (180 - 180 * percent / 100) * .pi / 180
-                let length = lengths[min(index, lengths.count - 1)]
-                let tip = NSPoint(x: center.x + cos(angle) * length, y: center.y + sin(angle) * length)
-                let hand = NSBezierPath()
-                hand.move(to: center)
-                hand.line(to: tip)
-                hand.lineWidth = 2
-                hand.lineCapStyle = .round
-                NSColor(provider.provider.color).setStroke()
-                hand.stroke()
-            }
-
-            // Hub.
-            edge.setFill()
-            NSBezierPath(ovalIn: NSRect(x: center.x - 2.5, y: center.y - 2.5, width: 5, height: 5)).fill()
-            NSColor.white.setFill()
-            NSBezierPath(ovalIn: NSRect(x: center.x - 1.75, y: center.y - 1.75, width: 3.5, height: 3.5)).fill()
-            return true
-        }
-        image.isTemplate = false
-        return image
-    }
-
-    // MARK: Bars
-
-    static let barWidth: CGFloat = 6
-    static let gap: CGFloat = 4
-
-    /// One vertical session bar per provider. Like the horizontal style, each track has a white
-    /// outline with a dark edge so it reads on any wallpaper, and the provider's color is the fill.
-    public static func bars(_ providers: [ProviderSnapshot]) -> NSImage {
-        // One point of margin each side for the outline's dark edge.
-        let width = CGFloat(providers.count) * barWidth + CGFloat(max(0, providers.count - 1)) * gap + 2
-        let image = NSImage(size: NSSize(width: max(width, 1), height: height), flipped: false) { _ in
-            var x: CGFloat = 1
-            for provider in providers {
-                let percent = min(max(provider.session?.usedPercent ?? 0, 0), 100)
-                let fill = NSColor(UsageLevel.tint(for: percent, base: provider.provider.color, pace: provider.session?.elapsedFraction()))
-                let track = NSRect(x: x, y: 1, width: barWidth, height: height - 2)
-                NSColor(white: 0, alpha: 0.25).setFill()
-                NSBezierPath(roundedRect: track, xRadius: 2, yRadius: 2).fill()
-                fill.setFill()
-                NSBezierPath(roundedRect: NSRect(x: x, y: 1, width: barWidth, height: max(2, (height - 2) * percent / 100)), xRadius: 2, yRadius: 2).fill()
-                let edge = NSBezierPath(roundedRect: track.insetBy(dx: -0.5, dy: -0.5), xRadius: 2.5, yRadius: 2.5)
-                edge.lineWidth = 1
-                NSColor(white: 0, alpha: 0.55).setStroke()
-                edge.stroke()
-                let outline = NSBezierPath(roundedRect: track.insetBy(dx: 0.5, dy: 0.5), xRadius: 1.5, yRadius: 1.5)
-                outline.lineWidth = 1
-                NSColor.white.setStroke()
-                outline.stroke()
-                x += barWidth + gap
-            }
-            return true
-        }
-        image.isTemplate = false
-        return image
     }
 }

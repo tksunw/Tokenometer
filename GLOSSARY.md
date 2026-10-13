@@ -25,7 +25,7 @@ The provider's long usage window. Claude: 7 days. Codex: the secondary window. G
 _Avoid_: Week, weekly limit
 
 **Pace**:
-How much of a usage window's time has already passed, 0 to 100%. The tick on a bar, gauge, or ring marks it, and the cards show it as a small white number beside it.
+How much of a usage window's time has already passed, 0 to 100%. The tick on a bar or gauge marks it, and the cards show it as a small white number beside it.
 _Avoid_: Elapsed, progress
 
 **Status**:

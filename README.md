@@ -1,8 +1,8 @@
 # Tokenometer
 
-A macOS menu bar app and desktop widgets that show how much of your AI coding assistants' usage limits you have used. A tiny gauge in the menu bar with one hand per provider (or one bar per provider, your choice); session and weekly bars, spend, and a per-tool breakdown in the menu; the same on widgets, as bars or as half-circle gauges.
+A macOS menu bar app and desktop widgets that show how much of your AI coding assistants' usage limits you have used. The menu bar item shows a provider's logo with its session and weekly bars, cycling through your providers or staying on one; a card per provider in the menu with session and weekly windows, spend, and a per-tool breakdown; the same on widgets, as bars or as half-circle gauges.
 
-<p align="center"><img src="docs/images/menubar.png" alt="Menu bar gauge with one hand per provider" width="390"></p>
+<p align="center"><img src="docs/images/menubar.png" alt="The menu bar item: Claude's logo, a session bar over a weekly bar, and the session percent" width="264"></p>
 
 It reads the logs that Claude Code, Claude Desktop, Codex, Gemini CLI, and Antigravity already write on your Mac, and gets each provider's percent-of-limit from that provider's own tool: Codex's logs, Antigravity's local server, and for Claude a separate Claude Code mod, usage-reporter, that has Claude Code ask on its own login. It never wraps or proxies an agent session, it never touches your Claude login, and nothing about your usage leaves the machine. See [PRIVACY.md](PRIVACY.md) and [SECURITY.md](SECURITY.md) for exactly what is read and what is sent.
 
@@ -117,13 +117,13 @@ A subscription (Pro, Max, Team, ChatGPT Team, Google AI Pro) has usage windows, 
 
 ## Settings
 
-Launch at login. Menu bar style: gauge (one hand per provider, long to short in provider order, rim amber from 75% and red from 90%), bars (one per provider), or a horizontal session bar with its percent that either cycles through your providers every 10 seconds or stays on one you pick.
+Launch at login. The menu bar item draws one provider's logo, a session bar with the weekly bar under it, and the session percent. It either cycles through your providers every 10 seconds or stays on the one you pick. Each bar has the pace tick and the Colors fill, and a white outline with a dark edge so it reads on any wallpaper.
 
-<p align="center"><img src="docs/images/menubar-bars.png" alt="Menu bar bars style" width="390"> <img src="docs/images/menubar-horizontal.png" alt="Menu bar horizontal style" width="390"></p>
+<p align="center"><img src="docs/images/menubar.png" alt="Menu bar item with the weekly bar" width="264"> <img src="docs/images/menubar-single.png" alt="Menu bar item with the weekly bar hidden" width="264"></p>
 
 Colors: how the fills are colored. Traffic light (the default) is green, yellow, red by pace. Color-blind friendly swaps in blue, orange, and vermilion (the Okabe-Ito set). Provider draws every fill in its provider's own color, clay for Claude, light purple for Codex, blue for Antigravity, with no yellow or red at all. It applies to the menu and both widgets.
 
-The horizontal style draws the provider's logo, then a session bar with the weekly bar under it and the session percent beside them. A toggle in the same section hides the weekly bar. The fills follow the Colors choice below.
+A toggle hides the weekly bar, leaving one larger session bar. A provider with no weekly window gets the single bar too. The fills follow the Colors choice.
 
 Menu background: a slider from translucent to solid, for how much of the desktop shows through the menu; mostly solid by default, since the bare translucent panel is hard to read over a dark desktop.
 

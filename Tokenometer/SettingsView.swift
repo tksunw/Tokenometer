@@ -13,18 +13,11 @@ struct SettingsView: View {
                 Toggle("Check for updates automatically", isOn: Binding(
                     get: { model.updater.automaticallyChecks },
                     set: { model.updater.automaticallyChecks = $0 }))
-                Picker("Menu bar", selection: $settings.menuBarStyle) {
-                    Text("Gauge").tag(MenuBarStyle.gauge)
-                    Text("Bars").tag(MenuBarStyle.bars)
-                    Text("Horizontal bar").tag(MenuBarStyle.horizontal)
-                }
-                if settings.menuBarStyle == .horizontal {
-                    Toggle("Show weekly bar under the session bar", isOn: $settings.menuBarShowsWeekly)
-                    Picker("Show", selection: $settings.menuBarProvider) {
-                        Text("Cycle every 10 seconds").tag(MenuBarProviderChoice.cycle)
-                        ForEach(Provider.allCases) { provider in
-                            Text(provider.displayName).tag(MenuBarProviderChoice(rawValue: provider.rawValue) ?? .cycle)
-                        }
+                Toggle("Show weekly bar under the session bar", isOn: $settings.menuBarShowsWeekly)
+                Picker("Menu bar shows", selection: $settings.menuBarProvider) {
+                    Text("Cycle every 10 seconds").tag(MenuBarProviderChoice.cycle)
+                    ForEach(Provider.allCases) { provider in
+                        Text(provider.displayName).tag(MenuBarProviderChoice(rawValue: provider.rawValue) ?? .cycle)
                     }
                 }
                 Slider(value: $settings.menuBackgroundOpacity, in: 0...1) {

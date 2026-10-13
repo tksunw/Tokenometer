@@ -13,7 +13,6 @@ final class AppSettings {
     var visibility: [Provider: ProviderVisibility] { didSet { save(visibility, key: "visibility") } }
     var accountOverrides: [Provider: AccountKind] { didSet { save(accountOverrides, key: "accountOverrides") } }
     var budgets: [Provider: Budget] { didSet { save(budgets, key: "budgets") } }
-    var menuBarStyle: MenuBarStyle { didSet { defaults.set(menuBarStyle.rawValue, forKey: "menuBarStyle") } }
     var menuBarProvider: MenuBarProviderChoice { didSet { defaults.set(menuBarProvider.rawValue, forKey: "menuBarProvider") } }
     /// The horizontal menu bar style draws the weekly bar under the session bar.
     var menuBarShowsWeekly: Bool { didSet { defaults.set(menuBarShowsWeekly, forKey: "menuBarShowsWeekly") } }
@@ -41,7 +40,6 @@ final class AppSettings {
         visibility = Self.load(key: "visibility") ?? [:]
         accountOverrides = Self.load(key: "accountOverrides") ?? [:]
         budgets = Self.load(key: "budgets") ?? [:]
-        menuBarStyle = MenuBarStyle(rawValue: UserDefaults.standard.string(forKey: "menuBarStyle") ?? "") ?? .gauge
         menuBarProvider = MenuBarProviderChoice(rawValue: UserDefaults.standard.string(forKey: "menuBarProvider") ?? "") ?? .cycle
         menuBarShowsWeekly = UserDefaults.standard.object(forKey: "menuBarShowsWeekly") as? Bool ?? true
         // Mostly solid by default: the bare translucent panel is hard to read over a dark desktop.
