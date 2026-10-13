@@ -195,12 +195,12 @@ public struct GaugeWidgetView: View {
                 header("Session")
                 ForEach(list) { p in
                     Spacer(minLength: 0)
-                    GaugeSideRow(gaugeWidth: 70, gap: 4, whoSpacing: 1) {
+                    GaugeSideRow(gaugeWidth: 62, gap: 2, whoSpacing: 1) {
                         nameLabel(p, tile: 20, size: 12.5, spacing: 5).padding(.bottom, 1)
                     } reset: {
-                        GaugeReset(window: primary(p), now: now, size: 10.5, iconSize: 10, spacing: 3)
+                        GaugeReset(window: primary(p), now: now, size: 10.5, iconSize: 10, spacing: 3, shortDay: true)
                     } gauge: {
-                        gauge(p, primary(p), width: 70, numberSize: 18)
+                        gauge(p, primary(p), width: 62, numberSize: 16)
                     }
                 }
                 Spacer(minLength: 0)
@@ -552,10 +552,15 @@ private struct GaugeReset: View {
     var body: some View {
         HStack(spacing: spacing) {
             Image(systemName: "clock").font(.system(size: iconSize))
-            if prefixed {
-                Text("Resets \(Text(time ?? "").fontWeight(.semibold).foregroundStyle(.primary))")
+            if let time {
+                if prefixed {
+                    Text("Resets \(Text(time).fontWeight(.semibold).foregroundStyle(.primary))")
+                } else {
+                    Text(time)
+                }
             } else {
-                Text(time ?? " ")
+                // An idle window has no reset time; the line stays so its row matches the others.
+                Text("No reset")
             }
         }
         .font(.system(size: size))
@@ -563,7 +568,7 @@ private struct GaugeReset: View {
         .foregroundStyle(.secondary)
         .lineLimit(1)
         .minimumScaleFactor(0.8)
-        .opacity(time == nil ? 0 : 1)
+        .opacity(window == nil ? 0 : 1)
     }
 }
 

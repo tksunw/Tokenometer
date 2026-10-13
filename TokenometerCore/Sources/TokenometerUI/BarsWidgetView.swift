@@ -605,7 +605,8 @@ private enum BarsLargeCell {
 }
 
 /// A clock glyph and the reset time: bare ("12:38 PM", "Wed 7:49 PM") or "Resets 12:38 PM" with the
-/// time in bold. Nothing when the window has no reset time.
+/// time in bold. A window with no reset time (idle, not started) says "No reset" so its row has the
+/// same height as its neighbors'.
 private struct BarsReset: View {
     let date: Date?
     let now: Date
@@ -615,19 +616,22 @@ private struct BarsReset: View {
     var prefixed = false
 
     var body: some View {
-        if let time = Format.resetTime(date, now: now) {
-            HStack(spacing: gap) {
-                Image(systemName: "clock").font(.system(size: icon - 1))
+        let time = Format.resetTime(date, now: now)
+        HStack(spacing: gap) {
+            Image(systemName: "clock").font(.system(size: icon - 1))
+            if let time {
                 if prefixed {
                     Text("Resets \(Text(time).fontWeight(.semibold).foregroundStyle(.primary))")
                 } else {
                     Text(time)
                 }
+            } else {
+                Text("No reset")
             }
-            .font(.system(size: size).monospacedDigit())
-            .foregroundStyle(.secondary)
-            .lineLimit(1)
-            .minimumScaleFactor(0.7)
         }
+        .font(.system(size: size).monospacedDigit())
+        .foregroundStyle(.secondary)
+        .lineLimit(1)
+        .minimumScaleFactor(0.7)
     }
 }
