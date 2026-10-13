@@ -51,6 +51,10 @@ The 4 s wait matters: chronod has to come back and read the registry without the
 
 Not fixed and not fixable from the app: the race itself. The refetch at registration time happens before the new app launches. Any Mac updating from a build without the sequence (1.2.0 or earlier) to one with it can still land in the bad state once; the next version bump, or the sequence above, clears it.
 
+## App intents and the build number (1.4.0)
+
+A widget's edit sheet is an app intent, and macOS indexes intents per app build (`linkd`). Changing an intent's parameters, or turning a `StaticConfiguration` widget into an `AppIntentConfiguration` one, without a new `CURRENT_PROJECT_VERSION` leaves the old index in place. Symptoms in `log show --predicate 'process == "TokenometerWidget"'`: "Failed to create LinkAction", "No AppIntent in timeline(for:with:)", "Intent configuration is required but was not provided" (error 1103), and every reload ending "Returned view collection was either nil or empty" (1101). The widgets keep showing their last render, so a layout change looks like it did not ship. A new build number fixes it; so does a reinstall under a new number during development. A placed widget whose saved parameters no longer match its intent (1.4.0 removed the Rings widget's `shape`, and made the Bars widget configurable) fails the same way until it is removed and added again; say so in the release notes.
+
 ## Version history
 
 - 1.1.9 and before: one widget, bars, reset times left-aligned under the bar, "tomorrow" wording.
