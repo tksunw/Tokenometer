@@ -47,3 +47,18 @@ public extension Format {
         return "in \(minutes / (24 * 60)) d \((minutes % (24 * 60)) / 60) h"
     }
 }
+
+public extension Snapshot {
+    /// The same snapshot with every window tagged with its provider, so the widget views can draw a
+    /// window in its provider's color. The tag is for drawing only and is never saved.
+    func stamped() -> Snapshot {
+        var copy = self
+        for index in copy.providers.indices {
+            let provider = copy.providers[index].provider
+            copy.providers[index].session?.provider = provider
+            copy.providers[index].weekly?.provider = provider
+            for scopedIndex in copy.providers[index].scoped.indices { copy.providers[index].scoped[scopedIndex].provider = provider }
+        }
+        return copy
+    }
+}

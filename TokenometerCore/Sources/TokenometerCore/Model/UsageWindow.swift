@@ -14,13 +14,17 @@ public struct UsageWindow: Codable, Sendable, Equatable {
     public var length: TimeInterval?
     /// Set on model-scoped windows, e.g. "Fable" for Claude's per-model weekly cap.
     public var label: String?
+    /// Which provider the window belongs to. Never stored: the views stamp it at their root so a
+    /// window can be drawn in its provider's color without every helper being handed the provider.
+    public var provider: Provider?
 
-    public init(kind: WindowKind, usedPercent: Double, resetsAt: Date? = nil, length: TimeInterval? = nil, label: String? = nil) {
+    public init(kind: WindowKind, usedPercent: Double, resetsAt: Date? = nil, length: TimeInterval? = nil, label: String? = nil, provider: Provider? = nil) {
         self.kind = kind
         self.usedPercent = usedPercent
         self.resetsAt = resetsAt
         self.length = length
         self.label = label
+        self.provider = provider
     }
 
     /// Start of the window when both reset time and length are known, else nil.

@@ -29,7 +29,7 @@ How much of a usage window's time has already passed, 0 to 100%. The tick on a b
 _Avoid_: Elapsed, progress
 
 **Status**:
-What color a window's fill takes: ok (at or behind the pace, or under a 10 point lead), caution (10 or more points ahead of the pace), critical (past the pace at 90% or more). See ADR-0007.
+What color a window's fill takes: ok (at or behind the pace, or under a 10 point lead), caution (10 or more points ahead of the pace), critical (past the pace at 90% or more). See ADR-0007. The Provider palette ignores it and draws every fill in its provider's color.
 _Avoid_: Level, severity, tint
 
 **Usage percent**:

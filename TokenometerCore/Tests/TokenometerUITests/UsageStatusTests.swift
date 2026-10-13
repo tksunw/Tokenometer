@@ -54,10 +54,10 @@ import TokenometerCore
 
     @Test func aPaletteChangeCountsAsNewContent() {
         let now = Date.now
-        let standard = Snapshot(generatedAt: now, providers: [], palette: "standard")
+        let standard = Snapshot(generatedAt: now, providers: [], palette: "trafficLight")
         let colorBlind = Snapshot(generatedAt: now, providers: [], palette: "colorBlind")
         #expect(!colorBlind.hasSameContent(as: standard))
-        #expect(standard.hasSameContent(as: Snapshot(generatedAt: now.addingTimeInterval(60), providers: [], palette: "standard")))
+        #expect(standard.hasSameContent(as: Snapshot(generatedAt: now.addingTimeInterval(60), providers: [], palette: "trafficLight")))
     }
 
     @Test func anOldSnapshotFileWithoutAPaletteStillDecodes() throws {
@@ -74,5 +74,28 @@ import TokenometerCore
         #expect(provider.windowRows.map(\.label) == ["Session", "All models weekly", "Fable weekly"])
         let alone = ProviderSnapshot(provider: .openAI, accountKind: .plan, session: session, weekly: weekly)
         #expect(alone.windowRows.map(\.label) == ["Session", "Weekly"])
+    }
+
+    @Test func providerPaletteIgnoresStatus() {
+        for status in [UsageStatus.ok, .caution, .critical] {
+            #expect(StatusPalette.provider.color(status, .dark, provider: .openAI) == Provider.openAI.color)
+        }
+        // The other palettes ignore the provider.
+        #expect(StatusPalette.trafficLight.color(.ok, .dark, provider: .openAI) == StatusPalette.trafficLight.color(.ok, .dark))
+    }
+
+    @Test func paletteNamesDecodeIncludingTheOldDevelopmentName() {
+        #expect(PaletteChoice(stored: "standard") == .trafficLight)
+        #expect(PaletteChoice(stored: "colorBlind") == .colorBlind)
+        #expect(PaletteChoice(stored: "provider") == .provider)
+        #expect(PaletteChoice(stored: nil) == .trafficLight)
+    }
+
+    @Test func stampingTagsEveryWindowWithItsProvider() {
+        let provider = ProviderSnapshot(provider: .google, accountKind: .plan,
+                                        session: UsageWindow(kind: .session, usedPercent: 1), weekly: UsageWindow(kind: .weekly, usedPercent: 2),
+                                        scoped: [UsageWindow(kind: .weekly, usedPercent: 3, label: "x")])
+        let stamped = Snapshot(generatedAt: .now, providers: [provider]).stamped().providers[0]
+        #expect(stamped.windowRows.allSatisfy { $0.window.provider == .google })
     }
 }

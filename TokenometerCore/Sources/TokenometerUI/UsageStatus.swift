@@ -26,9 +26,13 @@ public enum UsageStatus: Sendable, Equatable {
     }
 }
 
-/// The three status colors. `standard` is green, yellow, red; `colorBlind` is the Okabe-Ito set
-/// (sky blue, orange, vermilion), the same in light and dark.
+/// How fills are colored. `trafficLight` is green, yellow, red (RAG status); `colorBlind` is the
+/// Okabe-Ito set (sky blue, orange, vermilion), the same in light and dark; `provider` is each
+/// provider's own color whatever the status, with no warning or critical change.
 public struct StatusPalette: Sendable, Equatable {
+    /// Draws every fill in its provider's color. The status colors below are then only a fallback
+    /// for a fill with no provider.
+    let usesProviderColor: Bool
     struct Pair: Sendable, Equatable {
         var light: UInt32
         var dark: UInt32
@@ -37,16 +41,23 @@ public struct StatusPalette: Sendable, Equatable {
     let caution: Pair
     let critical: Pair
 
-    public static let standard = StatusPalette(
+    public static let trafficLight = StatusPalette(
+        usesProviderColor: false,
         ok: Pair(light: 0x1F9D63, dark: 0x3FC58B),
         caution: Pair(light: 0xD9A400, dark: 0xF5CF4A),
         critical: Pair(light: 0xD93036, dark: 0xE5484D))
     public static let colorBlind = StatusPalette(
+        usesProviderColor: false,
         ok: Pair(light: 0x56B4E9, dark: 0x56B4E9),
         caution: Pair(light: 0xE69F00, dark: 0xE69F00),
         critical: Pair(light: 0xD55E00, dark: 0xD55E00))
 
-    public func color(_ status: UsageStatus, _ scheme: ColorScheme) -> Color {
+    public static let provider = StatusPalette(
+        usesProviderColor: true,
+        ok: trafficLight.ok, caution: trafficLight.caution, critical: trafficLight.critical)
+
+    public func color(_ status: UsageStatus, _ scheme: ColorScheme, provider: Provider? = nil) -> Color {
+        if usesProviderColor, let provider { return provider.color }
         let pair = switch status {
         case .ok: ok
         case .caution: caution
@@ -59,12 +70,33 @@ public struct StatusPalette: Sendable, Equatable {
 
 /// The user's palette choice, carried in the snapshot so the widget (a separate, sandboxed process
 /// that cannot read the app's preferences) draws the same colors as the menu.
-public enum PaletteChoice: String, Codable, Sendable {
-    case standard, colorBlind
+public enum PaletteChoice: String, Codable, Sendable, CaseIterable, Identifiable {
+    case trafficLight, colorBlind, provider
 
-    public var palette: StatusPalette { self == .colorBlind ? .colorBlind : .standard }
+    public var id: String { rawValue }
+
+    public var palette: StatusPalette {
+        switch self {
+        case .trafficLight: .trafficLight
+        case .colorBlind: .colorBlind
+        case .provider: .provider
+        }
+    }
+
+    public var displayName: String {
+        switch self {
+        case .trafficLight: "Traffic light"
+        case .colorBlind: "Color-blind friendly"
+        case .provider: "Provider"
+        }
+    }
+
+    /// Reads the stored name. A snapshot written by a development build called traffic light "standard".
+    public init(stored: String?) {
+        self = stored == "standard" ? .trafficLight : (stored.flatMap(PaletteChoice.init(rawValue:)) ?? .trafficLight)
+    }
 }
 
 extension EnvironmentValues {
-    @Entry public var statusPalette: StatusPalette = .standard
+    @Entry public var statusPalette: StatusPalette = .trafficLight
 }

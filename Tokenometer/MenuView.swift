@@ -59,7 +59,7 @@ struct MenuView: View {
         }
         .padding(12)
         .frame(width: 340)
-        .environment(\.statusPalette, model.settings.colorBlindPalette ? .colorBlind : .standard)
+        .environment(\.statusPalette, model.settings.colorPalette.palette)
         // The panel is translucent over whatever is behind it; this layer is the user's choice of
         // how much of that shows through.
         .background(Color(nsColor: .windowBackgroundColor).opacity(model.settings.menuBackgroundOpacity))

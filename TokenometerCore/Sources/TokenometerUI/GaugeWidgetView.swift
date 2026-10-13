@@ -14,7 +14,7 @@ public struct GaugeWidgetView: View {
     let now: Date
 
     public init(snapshot: Snapshot?, size: Size, providers: Set<Provider> = [], now: Date = .now) {
-        self.snapshot = snapshot
+        self.snapshot = snapshot?.stamped()
         self.size = size
         self.providers = providers
         self.now = now
@@ -33,7 +33,7 @@ public struct GaugeWidgetView: View {
     public var body: some View {
         content
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            .environment(\.statusPalette, PaletteChoice(rawValue: snapshot?.palette ?? "")?.palette ?? .standard)
+            .environment(\.statusPalette, PaletteChoice(stored: snapshot?.palette).palette)
     }
 
     @ViewBuilder
@@ -516,13 +516,13 @@ private struct GaugeArc: View {
     var body: some View {
         let pace = window.elapsedFraction(now: now)
         if let caption {
-            ArcGauge(percent: window.usedPercent, pace: pace, width: width, numberSize: numberSize, caption: " ")
+            ArcGauge(percent: window.usedPercent, pace: pace, width: width, numberSize: numberSize, caption: " ", provider: window.provider)
                 .overlay(alignment: .bottom) {
                     Text(caption).font(.system(size: captionSize, weight: .medium)).foregroundStyle(.secondary)
                         .lineLimit(1).fixedSize()
                 }
         } else {
-            ArcGauge(percent: window.usedPercent, pace: pace, width: width, numberSize: numberSize)
+            ArcGauge(percent: window.usedPercent, pace: pace, width: width, numberSize: numberSize, provider: window.provider)
         }
     }
 }

@@ -33,7 +33,10 @@ struct SettingsView: View {
                 } maximumValueLabel: {
                     Text("Solid").font(.caption).foregroundStyle(.secondary)
                 }
-                Toggle("Color-blind friendly colors", isOn: $settings.colorBlindPalette)
+                Picker("Colors", selection: $settings.colorPalette) {
+                    ForEach(PaletteChoice.allCases) { Text($0.displayName).tag($0) }
+                }
+                .help("Traffic light: green, yellow, red by pace. Color-blind friendly: blue, orange, vermilion. Provider: each provider's own color, no warning colors.")
                 Toggle("Notify when a window passes 90%", isOn: $settings.notifyAtCritical)
             }
             ForEach(Provider.allCases) { provider in
@@ -69,7 +72,7 @@ struct SettingsView: View {
         }
         .formStyle(.grouped)
         .frame(width: 420, height: 560)
-        .onChange(of: settings.colorBlindPalette) { model.paletteChanged() }
+        .onChange(of: settings.colorPalette) { model.paletteChanged() }
         .onChange(of: settings.visibility) { model.requestRefresh(logChanged: false) }
         .onChange(of: settings.accountOverrides) { model.requestRefresh(logChanged: false) }
         .onChange(of: settings.budgets) { model.requestRefresh(logChanged: false) }

@@ -70,7 +70,7 @@ final class AppModel {
         requestRefresh(logChanged: true)
     }
 
-    private var paletteName: String { settings.colorBlindPalette ? "colorBlind" : "standard" }
+    private var paletteName: String { settings.colorPalette.rawValue }
 
     /// The widget cannot read the app's preferences, so the choice travels in the snapshot; rewrite it
     /// now so the widgets recolor without waiting for the next refresh.

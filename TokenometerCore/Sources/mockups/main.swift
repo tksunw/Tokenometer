@@ -36,8 +36,9 @@ if CommandLine.arguments.contains("--near"), !sample.providers.isEmpty {
     sample.providers[0].weekly?.usedPercent = 82
     if !sample.providers[0].scoped.isEmpty { sample.providers[0].scoped[0].usedPercent = 94 }
 }
-// `--colorblind` stamps the color-blind palette, as the app does when the setting is on.
+// `--colorblind` and `--provider-colors` stamp that palette, as the app does when the setting is chosen.
 if CommandLine.arguments.contains("--colorblind") { sample.palette = "colorBlind" }
+if CommandLine.arguments.contains("--provider-colors") { sample.palette = "provider" }
 let onlyWidgets = CommandLine.arguments.contains("--only-widgets")
 let lightScheme = CommandLine.arguments.contains("--light")
 if CommandLine.arguments.contains("--two") { sample = Snapshot(generatedAt: sample.generatedAt, providers: Array(sample.providers.prefix(2))) }
@@ -71,7 +72,7 @@ struct MenuMock: View {
         }
         .padding(12)
         .frame(width: 340)
-        .environment(\.statusPalette, PaletteChoice(rawValue: sample.palette ?? "")?.palette ?? .standard)
+        .environment(\.statusPalette, PaletteChoice(stored: sample.palette).palette)
         .background(Color(nsColor: .windowBackgroundColor))
         .clipShape(RoundedRectangle(cornerRadius: 10))
     }

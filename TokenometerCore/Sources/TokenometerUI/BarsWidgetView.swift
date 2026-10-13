@@ -15,7 +15,7 @@ public struct BarsWidgetView: View {
     let now: Date
 
     public init(snapshot: Snapshot?, size: Size, providers: Set<Provider> = [], now: Date = .now) {
-        self.snapshot = snapshot
+        self.snapshot = snapshot?.stamped()
         self.size = size
         self.providers = providers
         self.now = now
@@ -41,7 +41,7 @@ public struct BarsWidgetView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
-        .environment(\.statusPalette, PaletteChoice(rawValue: snapshot?.palette ?? "")?.palette ?? .standard)
+        .environment(\.statusPalette, PaletteChoice(stored: snapshot?.palette).palette)
     }
 }
 
@@ -541,13 +541,13 @@ private struct BarsLayout: View {
     private func pct(_ window: UsageWindow, size: CGFloat) -> some View {
         Text(Format.percent(window.usedPercent))
             .font(.system(size: size, weight: .semibold).monospacedDigit())
-            .foregroundStyle(palette.color(UsageStatus.of(percent: window.usedPercent, pace: window.elapsedFraction(now: now)), scheme))
+            .foregroundStyle(palette.color(UsageStatus.of(percent: window.usedPercent, pace: window.elapsedFraction(now: now)), scheme, provider: window.provider))
             .lineLimit(1).fixedSize()
     }
 
     /// Stale windows keep their last value, dimmed.
     private func bar(_ window: UsageWindow, _ p: ProviderSnapshot, height: CGFloat) -> some View {
-        StatusBar(percent: window.usedPercent, pace: window.elapsedFraction(now: now), height: height)
+        StatusBar(percent: window.usedPercent, pace: window.elapsedFraction(now: now), height: height, provider: window.provider)
             .opacity(p.windowsStale == nil ? 1 : 0.6)
     }
 

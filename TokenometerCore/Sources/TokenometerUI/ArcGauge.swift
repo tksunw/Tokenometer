@@ -10,19 +10,21 @@ public struct ArcGauge: View {
     let width: CGFloat
     let numberSize: CGFloat
     let caption: String?
+    let provider: Provider?
     @Environment(\.statusPalette) private var palette
     @Environment(\.colorScheme) private var scheme
 
-    public init(percent: Double, pace: Double?, width: CGFloat, numberSize: CGFloat, caption: String? = nil) {
+    public init(percent: Double, pace: Double?, width: CGFloat, numberSize: CGFloat, caption: String? = nil, provider: Provider? = nil) {
         self.percent = min(max(percent, 0), 100)
         self.pace = pace
         self.width = width
         self.numberSize = numberSize
         self.caption = caption
+        self.provider = provider
     }
 
     private var height: CGFloat { width * 62 / 112 }
-    private var fill: Color { palette.color(UsageStatus.of(percent: percent, pace: pace), scheme) }
+    private var fill: Color { palette.color(UsageStatus.of(percent: percent, pace: pace), scheme, provider: provider) }
 
     /// Left end to right end over the top; SwiftUI's arc direction is flipped by its y-down space.
     private func arc(_ fraction: Double) -> Path {
@@ -70,17 +72,19 @@ public struct StatusBar: View {
     let percent: Double
     let pace: Double?
     let height: CGFloat
+    let provider: Provider?
     @Environment(\.statusPalette) private var palette
     @Environment(\.colorScheme) private var scheme
 
-    public init(percent: Double, pace: Double?, height: CGFloat = 6) {
+    public init(percent: Double, pace: Double?, height: CGFloat = 6, provider: Provider? = nil) {
         self.percent = min(max(percent, 0), 100)
         self.pace = pace
         self.height = height
+        self.provider = provider
     }
 
     public var body: some View {
-        let fill = palette.color(UsageStatus.of(percent: percent, pace: pace), scheme)
+        let fill = palette.color(UsageStatus.of(percent: percent, pace: pace), scheme, provider: provider)
         GeometryReader { geo in
             ZStack(alignment: .leading) {
                 Capsule().fill(Color.primary.opacity(0.12))

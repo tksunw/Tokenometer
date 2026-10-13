@@ -9,13 +9,13 @@ One extension, two widgets, registered in `TokenometerWidget/TokenometerWidget.s
 - `TokenometerWidget` (kind `TokenometerWidget`), Bars. `AppIntentConfiguration` with `BarsConfigurationIntent`: a Bool per provider, all default on, all off means all. Drawn by `BarsWidgetView`. Before 1.4 this was a `StaticConfiguration`; a placed widget may reset to showing every provider after the update.
 - `TokenometerRings` (kind `TokenometerRings`), now the Session Gauges widget. `RingsConfigurationIntent` keeps its name so a placed widget keeps its provider choice; the ring-shape parameter is gone, the half-circle gauge replaced both shapes. Drawn by `GaugeWidgetView`.
 
-Both have small, medium, and large, and one, two, or three providers. Both set `.contentMarginsDisabled()`: the views draw their own 12pt padding (11pt above the header) so the layouts match the mockups to the point. Both share `TokenometerUI` with the menu and the `mockups` executable. `swift run mockups ../docs/images` renders the README screenshots from the real views with `SampleData`; add `--only-widgets` to render all 42 widget variants (three providers, three two-provider pairs, three single providers) into `<dir>/widgets/`, and `--near`, `--colorblind`, `--light` to see yellow and red, the other palette, and light mode.
+Both have small, medium, and large, and one, two, or three providers. Both set `.contentMarginsDisabled()`: the views draw their own 12pt padding (11pt above the header) so the layouts match the mockups to the point. Both share `TokenometerUI` with the menu and the `mockups` executable. `swift run mockups ../docs/images` renders the README screenshots from the real views with `SampleData`; add `--only-widgets` to render all 42 widget variants (three providers, three two-provider pairs, three single providers) into `<dir>/widgets/`, and `--near`, `--colorblind`, `--provider-colors`, `--light` to see yellow and red, the other palettes, and light mode.
 
 The building blocks, all in `TokenometerUI`: `ProviderTile` and `ProviderGlyph` (neutral logo stand-ins, no trademarked artwork), `ArcGauge` (the half circle, 112 x 62 box scaled to a width), `StatusBar`, `UsageStatus` and `StatusPalette`, `ProviderSnapshot.windowRows` (every surface's window order and labels), `ProviderCardView` (the menu card).
 
 ## The rules
 
-1. Fill color is status, not provider (ADR-0007). Green at or behind the pace tick or less than 10 points ahead, yellow at 10 or more ahead, red past the tick at 90% or more. Provider color is the logo tile only.
+1. Fill color is status, not provider (ADR-0007). Traffic light: green at or behind the pace tick or less than 10 points ahead, yellow at 10 or more ahead, red past the tick at 90% or more. Provider color is then the logo tile only. Settings, Colors, can instead pick the color-blind set or Provider, which draws every fill in its provider's color with no status change.
 2. Every widget has a header row: what it shows on the left ("Session", "Session and weekly", or the provider's logo and name for a single provider), "as of 10:12 AM" on the right. No separate footer row.
 3. Every window is labelled and has its reset time (a clock glyph and a bare time). "Session" and "Weekly" are spelled out; scoped windows keep their group plus the word ("Fable weekly", "Gemini session").
 4. Session before weekly, then scoped windows, per provider.
@@ -27,7 +27,7 @@ The building blocks, all in `TokenometerUI`: `ProviderTile` and `ProviderGlyph` 
 
 ## Why some things are the way they are
 
-- The palette choice rides in `Snapshot.palette` because the widget is sandboxed and cannot read the app's preferences. `hasSameContent` includes it, so toggling the setting reloads the timelines; `AppModel.paletteChanged()` rewrites the snapshot at once.
+- The Colors choice (`PaletteChoice`: trafficLight, colorBlind, provider) rides in `Snapshot.palette` because the widget is sandboxed and cannot read the app's preferences. `hasSameContent` includes it, so toggling the setting reloads the timelines; `AppModel.paletteChanged()` rewrites the snapshot at once.
 - Large Bars show only weekly spend (on the card header); the old widget's separate session spend line is gone. Large Gauge shows session and weekly per provider only; scoped windows (Fable, Claude & GPT) appear in the Bars widget, the menu, and the one-provider gauge layouts.
 - Small single-provider Gemini shows only its own session and weekly, not the Claude & GPT windows.
 - The gallery shows each widget once per size with its default configuration (all providers). One- and two-provider layouts are reached by placing a widget, right-click, Edit Widget.
@@ -59,7 +59,7 @@ Not fixed and not fixable from the app: the race itself. The refetch at registra
 
 ## Checks before changing a widget
 
-- `cd TokenometerCore && swift run mockups <scratch dir> --only-widgets` (and again with `--near`, `--light --colorblind`) and look at every `widgets/bars-*.png` and `widgets/gauge-*.png`. The renderer frames are the sizes chronod reports on macOS 27 (164x164, 344x164, 344x344), so a layout that fits the mock fits the widget.
+- `cd TokenometerCore && swift run mockups <scratch dir> --only-widgets` (and again with `--near`, `--light --colorblind`, `--provider-colors`) and look at every `widgets/bars-*.png` and `widgets/gauge-*.png`. The renderer frames are the sizes chronod reports on macOS 27 (164x164, 344x164, 344x344), so a layout that fits the mock fits the widget.
 - `swift test`; `UsageClientTests.firstGroupIsSessionAndWeeklyOthersAreScoped` pins the scoped order.
 - `Scripts/install-debug.sh`, then look at the real widgets. Never build to DerivedData while the app sits in /Applications.
 - A new widget kind or a new `AppIntent` parameter needs a build number bump to reach other Macs' galleries; see the chronod section.

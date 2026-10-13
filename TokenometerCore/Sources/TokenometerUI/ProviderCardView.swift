@@ -24,7 +24,7 @@ public struct ProviderCardView: View {
     private var inset: Color { scheme == .dark ? Color.black.opacity(0.22) : Color.primary.opacity(0.05) }
 
     private func statusColor(_ window: UsageWindow) -> Color {
-        palette.color(UsageStatus.of(percent: window.usedPercent, pace: window.elapsedFraction(now: now)), scheme)
+        palette.color(UsageStatus.of(percent: window.usedPercent, pace: window.elapsedFraction(now: now)), scheme, provider: snapshot.provider)
     }
 
     /// A grant past its expiry is gone; one past a reset is shown until the next report replaces it.
@@ -78,10 +78,10 @@ public struct ProviderCardView: View {
                     .help("Stale since \(Format.age(stale.since, now: now)): \(stale.reason)")
             } else {
                 HStack(spacing: 5) {
-                    Circle().fill(palette.color(.ok, scheme)).frame(width: 6, height: 6)
+                    Circle().fill(palette.color(.ok, scheme, provider: snapshot.provider)).frame(width: 6, height: 6)
                     Text("live").font(.system(size: 12, weight: .medium))
                 }
-                .foregroundStyle(palette.color(.ok, scheme))
+                .foregroundStyle(palette.color(.ok, scheme, provider: snapshot.provider))
             }
         }
     }
@@ -102,7 +102,7 @@ public struct ProviderCardView: View {
                 Spacer()
                 percentLabel(window, size: 24)
             }
-            StatusBar(percent: window.usedPercent, pace: window.elapsedFraction(now: now), height: 8)
+            StatusBar(percent: window.usedPercent, pace: window.elapsedFraction(now: now), height: 8, provider: snapshot.provider)
             HStack(spacing: 5) {
                 resetText(window, size: 12.5, withRemaining: true)
                 Spacer(minLength: 4)
@@ -216,7 +216,7 @@ public struct ProviderCardView: View {
             }
             HStack { Spacer(); elapsedText(window, size: 12) }.frame(height: 14)
             Spacer(minLength: 2)
-            StatusBar(percent: window.usedPercent, pace: window.elapsedFraction(now: now), height: 5)
+            StatusBar(percent: window.usedPercent, pace: window.elapsedFraction(now: now), height: 5, provider: snapshot.provider)
             Spacer(minLength: 2)
             resetText(window, size: 11.5, word: false)
         }
@@ -240,7 +240,7 @@ public struct ProviderCardView: View {
     private func miniRow(_ label: String, _ window: UsageWindow) -> some View {
         HStack(spacing: 8) {
             Text(label).font(.system(size: 12)).foregroundStyle(.secondary).frame(width: 46, alignment: .leading)
-            StatusBar(percent: window.usedPercent, pace: window.elapsedFraction(now: now), height: 5)
+            StatusBar(percent: window.usedPercent, pace: window.elapsedFraction(now: now), height: 5, provider: snapshot.provider)
             Text(Format.percent(window.usedPercent)).font(.system(size: 12, weight: .semibold).monospacedDigit())
                 .foregroundStyle(statusColor(window)).frame(width: 34, alignment: .trailing)
         }
