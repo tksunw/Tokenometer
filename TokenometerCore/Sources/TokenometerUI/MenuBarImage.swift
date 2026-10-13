@@ -48,7 +48,9 @@ public enum MenuBarImage {
         // The size and shape of the system battery indicator when alone; two thinner bars when stacked.
         let barHeight: CGFloat = weekly == nil ? 11 : 7
         let radius: CGFloat = weekly == nil ? 3.5 : 2.5
-        let barsX = tile + 5
+        // "5H" and "7D" sit between the logo and the bars, so each bar says which window it is.
+        let labelWidth: CGFloat = 13
+        let barsX = tile + 4 + labelWidth + 3
         let width = barsX + barWidth + 4 + textWidth
 
         func fill(for window: UsageWindow?) -> NSColor {
@@ -56,6 +58,24 @@ public enum MenuBarImage {
             let status = UsageStatus.of(percent: percent, pace: window?.elapsedFraction(now: now))
             // The menu bar's own look follows the wallpaper, so the dark-mode shades are the ones that read.
             return NSColor(palette.color(status, .dark, provider: provider.provider))
+        }
+
+        /// "5H" for a window five hours long, "7D" for seven days; the usual lengths when it has none.
+        func windowLabel(_ window: UsageWindow?, session: Bool) -> String {
+            if session {
+                let hours = window?.length.map { Int(($0 / 3600).rounded()) } ?? 5
+                return "\(hours)H"
+            }
+            let days = window?.length.map { Int(($0 / 86400).rounded()) } ?? 7
+            return "\(days)D"
+        }
+
+        func drawLabel(_ text: String, y: CGFloat) {
+            let font = NSFont.systemFont(ofSize: weekly == nil ? 7.5 : 6.5, weight: .bold)
+            let size = NSAttributedString(string: text, attributes: [.font: font]).size()
+            let origin = NSPoint(x: tile + 4 + labelWidth - size.width, y: y + (barHeight - size.height) / 2)
+            NSAttributedString(string: text, attributes: [.font: font, .strokeColor: NSColor(white: 0, alpha: 0.6), .strokeWidth: 18.0]).draw(at: origin)
+            NSAttributedString(string: text, attributes: [.font: font, .foregroundColor: NSColor.white]).draw(at: origin)
         }
 
         func drawBar(_ window: UsageWindow?, y: CGFloat) {
@@ -99,8 +119,11 @@ public enum MenuBarImage {
                 let bottom = (height - stack) / 2
                 drawBar(weekly, y: bottom)
                 drawBar(session, y: bottom + barHeight + gap)
+                drawLabel(windowLabel(weekly, session: false), y: bottom)
+                drawLabel(windowLabel(session, session: true), y: bottom + barHeight + gap)
             } else {
                 drawBar(session, y: (height - barHeight) / 2)
+                drawLabel(windowLabel(session, session: true), y: (height - barHeight) / 2)
             }
             // White digits over a dark outline of the same glyphs; a soft shadow washes out on a light bar.
             let font = NSFont.monospacedDigitSystemFont(ofSize: 11, weight: .semibold)

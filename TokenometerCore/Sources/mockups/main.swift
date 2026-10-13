@@ -172,6 +172,7 @@ Task { @MainActor in
     render(MenuMock(), name: "menu-light.png", scheme: .light)
     render(MenuBarStrip(), name: "menubar.png")
     render(MenuBarStrip(provider: 1, showsWeekly: false), name: "menubar-single.png")
+    render(MenuBarStrip().scaleEffect(5).frame(width: 264 * 5, height: 28 * 5), name: "menubar-zoom.png")
     exit(0)
 }
 RunLoop.main.run()
