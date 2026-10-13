@@ -68,6 +68,12 @@ final class AppModel {
             }
         }
         requestRefresh(logChanged: true)
+        // Every launch asks the widgets to draw again, so one stuck on empty after an update or a
+        // sleep recovers without a manual restart. One reload per launch is well inside WidgetKit's budget.
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(8))
+            WidgetCenter.shared.reloadAllTimelines()
+        }
     }
 
     private var paletteName: String { settings.colorPalette.rawValue }

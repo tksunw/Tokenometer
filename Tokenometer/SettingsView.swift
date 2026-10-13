@@ -19,6 +19,7 @@ struct SettingsView: View {
                     Text("Horizontal bar").tag(MenuBarStyle.horizontal)
                 }
                 if settings.menuBarStyle == .horizontal {
+                    Toggle("Show weekly bar under the session bar", isOn: $settings.menuBarShowsWeekly)
                     Picker("Show", selection: $settings.menuBarProvider) {
                         Text("Cycle every 10 seconds").tag(MenuBarProviderChoice.cycle)
                         ForEach(Provider.allCases) { provider in

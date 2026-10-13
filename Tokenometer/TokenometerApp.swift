@@ -10,7 +10,8 @@ struct TokenometerApp: App {
             MenuView(model: model)
                 .onAppear { model.requestRefresh(logChanged: false) }
         } label: {
-            MenuBarLabel(snapshot: model.snapshot, style: model.settings.menuBarStyle, focus: model.menuBarFocus)
+            MenuBarLabel(snapshot: model.snapshot, style: model.settings.menuBarStyle, focus: model.menuBarFocus,
+                         showsWeekly: model.settings.menuBarShowsWeekly, palette: model.settings.colorPalette.palette)
                 .task { model.start(windowSources: [ClaudeUsageFile(), AntigravityLocalClient()]) }
         }
         .menuBarExtraStyle(.window)

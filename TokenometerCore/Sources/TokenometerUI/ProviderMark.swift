@@ -50,7 +50,7 @@ private struct SparkleShape: Shape {
 
 /// Seven overlapping circles make the cloud; a `>_` prompt is cut out of it.
 private struct CloudPromptGlyph: View {
-    private struct Cloud: Shape {
+    fileprivate struct Cloud: Shape {
         func path(in rect: CGRect) -> Path {
             let s = rect.width / 24
             var p = Path()
@@ -62,7 +62,7 @@ private struct CloudPromptGlyph: View {
             return p
         }
     }
-    private struct Prompt: Shape {
+    fileprivate struct Prompt: Shape {
         func path(in rect: CGRect) -> Path {
             let s = rect.width / 24
             func pt(_ x: Double, _ y: Double) -> CGPoint { CGPoint(x: rect.minX + x * s, y: rect.minY + y * s) }
@@ -104,5 +104,28 @@ public struct ProviderTile: View {
                     .foregroundStyle(provider.color)
                     .frame(width: size * 0.6, height: size * 0.6)
             }
+    }
+}
+
+/// The glyphs as plain paths, for drawing where SwiftUI views cannot go (the menu bar image is drawn
+/// with AppKit). `fill` is filled, `stroke` is stroked at `strokeWidth`; the Codex cloud also has a
+/// `prompt` to stroke over it in the background color.
+struct ProviderGlyphPaths {
+    var fill: CGPath?
+    var stroke: CGPath?
+    var strokeWidth: CGFloat = 0
+    var prompt: CGPath?
+    var promptWidth: CGFloat = 0
+
+    static func make(_ provider: Provider, in rect: CGRect) -> ProviderGlyphPaths {
+        let unit = rect.width / 24
+        switch provider {
+        case .anthropic:
+            return ProviderGlyphPaths(stroke: BurstShape().path(in: rect).cgPath, strokeWidth: 2.4 * unit)
+        case .google:
+            return ProviderGlyphPaths(fill: SparkleShape().path(in: rect).cgPath)
+        case .openAI:
+            return ProviderGlyphPaths(fill: CloudPromptGlyph.Cloud().path(in: rect).cgPath, prompt: CloudPromptGlyph.Prompt().path(in: rect).cgPath, promptWidth: 1.8 * unit)
+        }
     }
 }

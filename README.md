@@ -123,9 +123,26 @@ Launch at login. Menu bar style: gauge (one hand per provider, long to short in 
 
 Colors: how the fills are colored. Traffic light (the default) is green, yellow, red by pace. Color-blind friendly swaps in blue, orange, and vermilion (the Okabe-Ito set). Provider draws every fill in its provider's own color, clay for Claude, light purple for Codex, blue for Antigravity, with no yellow or red at all. It applies to the menu and both widgets.
 
+The horizontal style draws the provider's logo, then a session bar with the weekly bar under it and the session percent beside them. A toggle in the same section hides the weekly bar. The fills follow the Colors choice below.
+
 Menu background: a slider from translucent to solid, for how much of the desktop shows through the menu; mostly solid by default, since the bare translucent panel is hard to read over a dark desktop.
 
 Per provider: enabled or not (so a leftover `~/.gemini` from a cancelled plan can be ignored), show even when no logs are found, plan or metered override, session and weekly budgets. Notifications when a session or weekly window crosses 90% while ahead of pace, and again when it resets, off by default.
+
+## If the widgets are blank after an update
+
+Updating replaces the app, and macOS can keep showing the old, now empty widgets. In order:
+
+1. Quit Tokenometer from the menu and open it again. It asks every widget to redraw on launch.
+2. Remove the placed widgets and add them again from Edit Widgets, then right-click one and choose Edit Widget to pick providers. Updating from 1.3 to 1.4 changed both widgets' settings, so copies placed before that need this once.
+3. Restart the system's widget service from Terminal:
+
+```bash
+APPEX=/Applications/Tokenometer.app/Contents/PlugIns/TokenometerWidget.appex
+pluginkit -r "$APPEX"; killall chronod; sleep 4; killall TokenometerWidget; pluginkit -a "$APPEX"
+```
+
+4. Restart the Mac.
 
 ## Build from source
 

@@ -1,4 +1,5 @@
 import Foundation
+import WidgetKit
 
 /// Makes the widgets pick up a new version of the app.
 ///
@@ -18,6 +19,10 @@ import Foundation
 /// extension process, register the extension again so chronod sees a new one and asks it afresh.
 /// The app does that once, the first time a new build launches. Every app's widgets redraw for a
 /// second or two when that happens.
+///
+/// The repair leaves placed widgets on whatever they last drew, which after an update is often
+/// nothing: 1.4.0 left two Macs on empty cards until the app was quit and opened again. So the app
+/// asks every widget to reload once the registration has settled.
 enum WidgetRepair {
     private static let key = "lastLaunchedBuild"
 
@@ -36,6 +41,9 @@ enum WidgetRepair {
             try? await Task.sleep(for: .seconds(4))
             run("/usr/bin/killall", ["TokenometerWidget"])
             run("/usr/bin/pluginkit", ["-a", appex.path])
+            // Let chronod fetch the new widget list, then ask each placed widget to draw.
+            try? await Task.sleep(for: .seconds(10))
+            await MainActor.run { WidgetCenter.shared.reloadAllTimelines() }
         }
     }
 

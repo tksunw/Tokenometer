@@ -89,7 +89,7 @@ struct MenuBarStrip: View {
         HStack(spacing: 14) {
             Image(systemName: "wifi")
             Image(systemName: "battery.75percent")
-            Image(nsImage: MenuBarImage.render(sample.providers, style: style))
+            Image(nsImage: MenuBarImage.render(sample.providers, style: style, palette: PaletteChoice(stored: sample.palette).palette, now: now))
             Text("Fri 9:41 AM").font(.system(size: 13))
         }
         .padding(.horizontal, 12)
@@ -171,6 +171,10 @@ Task { @MainActor in
     render(MenuBarStrip(style: .gauge), name: "menubar.png")
     render(MenuBarStrip(style: .bars), name: "menubar-bars.png")
     render(MenuBarStrip(style: .horizontal), name: "menubar-horizontal.png")
+    for (index, provider) in sample.providers.enumerated() {
+        render(Image(nsImage: MenuBarImage.horizontal(provider, showsWeekly: true, palette: PaletteChoice(stored: sample.palette).palette, now: now)).interpolation(.none).resizable().frame(width: 90 * 6, height: 18 * 6).background(Color.black), name: "menubar-horizontal-zoom-\(index).png")
+    }
+    render(Image(nsImage: MenuBarImage.horizontal(sample.providers[0], showsWeekly: false, now: now)).interpolation(.none).resizable().frame(width: 90 * 6, height: 18 * 6).background(Color.black), name: "menubar-horizontal-zoom-single.png")
     render(Image(nsImage: MenuBarImage.gauge(sample.providers)).interpolation(.none).resizable().frame(width: 24 * 6, height: 18 * 6).background(Color.black), name: "menubar-gauge-zoom.png")
     exit(0)
 }
