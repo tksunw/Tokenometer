@@ -56,6 +56,14 @@ public enum Format {
         date.formatted(.dateTime.weekday(.abbreviated))
     }
 
+    /// Menu footer: "3:49 PM" today, "Wed 7:49 PM" within a week, the date beyond that.
+    public static func updated(_ date: Date, now: Date = .now) -> String {
+        let time = date.formatted(.dateTime.hour().minute())
+        if Calendar.current.isDate(date, inSameDayAs: now) { return time }
+        if now.timeIntervalSince(date) < 6 * 86_400 { return "\(day(date, now: now)) \(time)" }
+        return date.formatted(.dateTime.month(.abbreviated).day()) + " \(time)"
+    }
+
     public static func age(_ date: Date, now: Date = .now) -> String {
         let seconds = Int(now.timeIntervalSince(date))
         switch seconds {

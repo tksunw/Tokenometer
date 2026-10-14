@@ -21,10 +21,11 @@ struct MenuView: View {
                     .buttonStyle(.link).font(.system(size: 12.5))
             }
             HStack {
-                if let generated = model.snapshot?.generatedAt {
-                    TimelineView(.periodic(from: .now, by: 30)) { context in
-                        Text("Updated \(Format.age(generated, now: context.date))")
+                if let changed = model.lastChange {
+                    TimelineView(.periodic(from: .now, by: 60)) { context in
+                        Text("Updated \(Format.updated(changed, now: context.date))")
                             .font(.system(size: 12.5)).foregroundStyle(.secondary)
+                            .help("When a number last changed; checked every minute")
                     }
                 }
                 Spacer()

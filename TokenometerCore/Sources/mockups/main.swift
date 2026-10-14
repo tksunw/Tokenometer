@@ -66,7 +66,7 @@ struct MenuMock: View {
                 ProviderCardView(snapshot: provider, now: now, expanded: index == 0)
             }
             HStack {
-                Text("Updated \(Format.age(sample.generatedAt, now: now))").font(.system(size: 12.5)).foregroundStyle(.secondary)
+                Text("Updated \(Format.updated(sample.generatedAt, now: now))").font(.system(size: 12.5)).foregroundStyle(.secondary)
                 Spacer()
                 Image(systemName: "arrow.triangle.2.circlepath")
                 Image(systemName: "gearshape")

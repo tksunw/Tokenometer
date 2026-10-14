@@ -30,6 +30,9 @@ final class AppModel {
     private var refreshPending = false
     private var lastWindowFetch: Date = .distantPast
     private var lastLogChange: Date = .distantPast
+    /// When the snapshot last changed something the menu draws. A refresh runs every minute and
+    /// restamps `generatedAt` even when nothing moved, so the footer shows this instead.
+    private(set) var lastChange: Date?
     private var windowSources: [any UsageWindowSource] = []
     private let pull = ClaudeUsagePull()
     private var pullPolicy = PullPolicy()
@@ -39,6 +42,7 @@ final class AppModel {
     init() {
         let previous = SnapshotStore().load()
         snapshot = previous
+        lastChange = previous?.generatedAt
         refresher = UsageRefresher(collectors: Collectors.all(), windowSources: [], previous: previous)
     }
 
@@ -124,6 +128,7 @@ final class AppModel {
         var result = await refresher.refresh(settings: settings.engineSettings, fetchWindows: fetchWindows, now: now)
         result.palette = paletteName
         if fetchWindows { lastWindowFetch = now }
+        if !result.hasSameContent(as: previous) { lastChange = now }
         snapshot = result
         // Saved every time so the widget's "as of" stays current when its timeline next ends (15 min).
         // Most refreshes change nothing visible; a reload for each one wakes the widget extension
