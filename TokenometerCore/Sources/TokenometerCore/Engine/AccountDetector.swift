@@ -28,12 +28,13 @@ public enum AccountDetector {
         return AccountInfo(kind: .plan, planName: claudePlanName(orgType: orgType, tier: tier))
     }
 
-    /// The seat behind the login. A Team Premium seat carries Max 5x's rate tier, so the tier tells the two
-    /// Team seats apart; Max is 5x unless its tier says 20x.
+    /// The seat behind the login. A Team Premium seat carries Max's rate tier (`default_claude_max_5x`), so the
+    /// tier tells the two Team seats apart; a Max organization is Ultra on `default_claude_max_20x`, else Max.
+    /// Anthropic renamed Max 5x to Max and Max 20x to Ultra in 2026-10; the tier strings did not change.
     static func claudePlanName(orgType: String, tier: String?) -> String {
         switch orgType {
         case "claude_team": tier == "default_claude_max_5x" ? "Team Premium" : "Team Standard"
-        case "claude_max": tier == "default_claude_max_20x" ? "Max 20x" : "Max 5x"
+        case "claude_max": tier == "default_claude_max_20x" ? "Ultra" : "Max"
         case "claude_pro": "Pro"
         default: "Free"
         }

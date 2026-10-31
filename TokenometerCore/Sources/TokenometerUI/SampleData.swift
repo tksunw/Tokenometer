@@ -8,7 +8,7 @@ public enum SampleData {
             Spend(tokens: TokenCounts(input: input, output: output, cacheRead: cacheRead), costUSD: cost, calls: calls)
         }
         let anthropic = ProviderSnapshot(
-            provider: .anthropic, accountKind: .plan, planName: "Max 5x",
+            provider: .anthropic, accountKind: .plan, planName: "Max",
             session: UsageWindow(kind: .session, usedPercent: 42, resetsAt: now.addingTimeInterval(2 * 3600 + 1500), length: 5 * 3600),
             weekly: UsageWindow(kind: .weekly, usedPercent: 61, resetsAt: now.addingTimeInterval(2.4 * 86400), length: 7 * 86400),
             scoped: [UsageWindow(kind: .weekly, usedPercent: 73, resetsAt: now.addingTimeInterval(2.4 * 86400), length: 7 * 86400, label: "Fable weekly")],
