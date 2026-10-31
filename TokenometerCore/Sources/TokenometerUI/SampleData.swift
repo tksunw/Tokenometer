@@ -23,9 +23,10 @@ public enum SampleData {
                 ModelSpend(model: "claude-opus-5-5", weekly: spend(110_000, 40_000, 4_400_000, cost: 6.50, calls: 102)),
             ],
             surfaces: [
-                SurfaceShare(key: "claude_code", label: "Claude Code", percent: 82),
-                SurfaceShare(key: "chat", label: "Chats", percent: 13),
+                SurfaceShare(key: "claude_code", label: "Claude Code", percent: 61),
+                SurfaceShare(key: "chat", label: "Chats", percent: 10),
                 SurfaceShare(key: "cowork", label: "Cowork", percent: 5),
+                SurfaceShare(key: "claude_duet", label: "Claude Duet", percent: 24),
                 SurfaceShare(key: "other", label: "Other", percent: 0),
             ],
             grants: [
